@@ -113,6 +113,7 @@
   .lezioni { display: grid; grid-template-columns: 320px 1fr; gap: 12px; max-width: 1200px; }
   .voce-lezione { position: relative; display: flex; justify-content: space-between; gap: 8px; width: 100%; text-align: left; margin: 4px 0; overflow: hidden; }
   .voce-lezione.scelta { border-color: var(--accent); }
+  [data-lingua-lezioni].attivo { border-color: var(--accent); color: var(--accent); }
   .voce-lezione i { position: absolute; left: 0; bottom: 0; height: 2px; background: var(--ok); }
   ol.esercizi { padding-left: 20px; margin: 4px 0 10px; }
   ol.esercizi li { margin: 4px 0; }
@@ -328,7 +329,8 @@
   <section id="lezioni"><div class="scorre"><div class="lezioni">
     <div>
       <div class="card">
-        <h2>Orbinel Learn · Kheiron</h2>
+        <div class="riga" style="justify-content:space-between"><h2 style="margin:0">Orbinel Learn · Kheiron</h2>
+          <span class="riga" style="gap:4px"><button class="piccolo" data-lingua-lezioni="it">IT</button><button class="piccolo" data-lingua-lezioni="en">EN</button></span></div>
         <p class="muted" style="margin-top:0;font-size:12px">Sei lezioni da fare nel simulatore. Gli esercizi si verificano da soli mentre muovi il robot; il robot vero non serve.</p>
         <div id="elencoLezioni"></div>
       </div>
