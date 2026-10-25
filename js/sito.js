@@ -54,16 +54,16 @@
   // --- risposte automatiche: FormSubmit le manda a chi compila il modulo (campo «email») ---
   const risposte = {
     lista: {
-      it: "Ciao!\n\nGrazie per esserti iscritto alla lista d'attesa di Orbinel Robotics. Ti scriveremo solo quando c'è qualcosa di concreto da mostrare: i progressi di Kheiron, l'uscita del Build Pack, le novità su simulatore e lezioni.\n\nSe nel frattempo hai domande, rispondi pure a questa email: ti rispondiamo entro 48 ore.\n\nOrbinel Robotics · Engineering Motion\nhttps://chrigia12.github.io/orbinel/",
-      en: "Hi!\n\nThanks for joining the Orbinel Robotics waitlist. We will only write when there is something real to show: Kheiron's progress, the Build Pack release, news about the simulator and lessons.\n\nIf you have questions in the meantime, just reply to this email: we answer within 48 hours.\n\nOrbinel Robotics · Engineering Motion\nhttps://chrigia12.github.io/orbinel/",
+      it: "Ciao!\n\nGrazie per esserti iscritto alla lista d'attesa di Orbinel Robotics. Ti scriveremo solo quando c'è qualcosa di concreto da mostrare: i progressi di Kheiron, l'uscita del Build Pack, le novità su simulatore e lezioni.\n\nSe nel frattempo hai domande, rispondi pure a questa email: ti rispondiamo entro 48 ore.\n\nOrbinel Robotics · Engineering Motion\nhttps://orbinel.it/",
+      en: "Hi!\n\nThanks for joining the Orbinel Robotics waitlist. We will only write when there is something real to show: Kheiron's progress, the Build Pack release, news about the simulator and lessons.\n\nIf you have questions in the meantime, just reply to this email: we answer within 48 hours.\n\nOrbinel Robotics · Engineering Motion\nhttps://orbinel.it/",
     },
     make: {
-      it: "Ciao!\n\nAbbiamo ricevuto la tua richiesta di stampa. Controlliamo il file (stampabilità, orientamento, materiale) e ti rispondiamo entro 48 ore con un preventivo o con qualche domanda.\n\nSe vuoi aggiungere dettagli, rispondi pure a questa email.\n\nOrbinel Make · Orbinel Robotics\nhttps://chrigia12.github.io/orbinel/make.html",
-      en: "Hi!\n\nWe have received your print request. We will check the file (printability, orientation, material) and reply within 48 hours with a quote or a few questions.\n\nTo add details, just reply to this email.\n\nOrbinel Make · Orbinel Robotics\nhttps://chrigia12.github.io/orbinel/make.html",
+      it: "Ciao!\n\nAbbiamo ricevuto la tua richiesta di stampa. Controlliamo il file (stampabilità, orientamento, materiale) e ti rispondiamo entro 48 ore con un preventivo o con qualche domanda.\n\nSe vuoi aggiungere dettagli, rispondi pure a questa email.\n\nOrbinel Make · Orbinel Robotics\nhttps://orbinel.it/make.html",
+      en: "Hi!\n\nWe have received your print request. We will check the file (printability, orientation, material) and reply within 48 hours with a quote or a few questions.\n\nTo add details, just reply to this email.\n\nOrbinel Make · Orbinel Robotics\nhttps://orbinel.it/make.html",
     },
     'learn-pilota': {
-      it: "Buongiorno,\n\ngrazie per l'interesse al progetto pilota di Orbinel Learn. Leggiamo con attenzione ogni candidatura e la ricontattiamo entro 48 ore per capire classi, tempi e strumenti a disposizione.\n\nNel frattempo può provare le lezioni nel simulatore: https://chrigia12.github.io/orbinel/motion/ (sezione «Lezioni»).\n\nOrbinel Learn · Orbinel Robotics",
-      en: "Hello,\n\nthank you for your interest in the Orbinel Learn pilot. We read every application carefully and will contact you within 48 hours to discuss classes, timing and available equipment.\n\nMeanwhile, you can try the lessons in the simulator: https://chrigia12.github.io/orbinel/motion/ (\"Lessons\" tab).\n\nOrbinel Learn · Orbinel Robotics",
+      it: "Buongiorno,\n\ngrazie per l'interesse al progetto pilota di Orbinel Learn. Leggiamo con attenzione ogni candidatura e la ricontattiamo entro 48 ore per capire classi, tempi e strumenti a disposizione.\n\nNel frattempo può provare le lezioni nel simulatore: https://orbinel.it/motion/ (sezione «Lezioni»).\n\nOrbinel Learn · Orbinel Robotics",
+      en: "Hello,\n\nthank you for your interest in the Orbinel Learn pilot. We read every application carefully and will contact you within 48 hours to discuss classes, timing and available equipment.\n\nMeanwhile, you can try the lessons in the simulator: https://orbinel.it/motion/ (\"Lessons\" tab).\n\nOrbinel Learn · Orbinel Robotics",
     },
   };
 
