@@ -98,7 +98,8 @@
     const oggetti = { lista: 'lista d\'attesa', make: 'richiesta di stampa (Make)', 'learn-pilota': 'candidatura scuola (Learn)' };
     dati._subject = `Orbinel · ${oggetti[dati.modulo] || dati.modulo}`;
     dati._template = 'table';
-    if (risposte[dati.modulo]) dati._autoresponse = risposte[dati.modulo][dati.lingua] || risposte[dati.modulo].en;
+    // la lista d'attesa la conferma Brevo (doppia conferma + benvenuto): niente risposta di FormSubmit, se Brevo è attivo
+    if (risposte[dati.modulo] && !(dati.modulo === 'lista' && conf.newsletter)) dati._autoresponse = risposte[dati.modulo][dati.lingua] || risposte[dati.modulo].en;
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(dati.email || '')) { esito.className = 'esito no'; esito.textContent = t.email; return; }
     if (!conf.moduli) { esito.className = 'esito no'; esito.textContent = t.manca; return; }
     // anti-spam: campo trappola compilato o invio troppo rapido dopo l'apertura della pagina → si finge un invio riuscito
