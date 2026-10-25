@@ -51,6 +51,35 @@
     if (conf.email) { a.href = 'mailto:' + conf.email; a.textContent = conf.email; } else a.hidden = true;
   });
 
+  // --- risposte automatiche: FormSubmit le manda a chi compila il modulo (campo «email») ---
+  const risposte = {
+    lista: {
+      it: "Ciao!\n\nGrazie per esserti iscritto alla lista d'attesa di Orbinel Robotics. Ti scriveremo solo quando c'è qualcosa di concreto da mostrare: i progressi di Kheiron, l'uscita del Build Pack, le novità su simulatore e lezioni.\n\nSe nel frattempo hai domande, rispondi pure a questa email: ti rispondiamo entro 48 ore.\n\nOrbinel Robotics · Engineering Motion\nhttps://chrigia12.github.io/orbinel/",
+      en: "Hi!\n\nThanks for joining the Orbinel Robotics waitlist. We will only write when there is something real to show: Kheiron's progress, the Build Pack release, news about the simulator and lessons.\n\nIf you have questions in the meantime, just reply to this email: we answer within 48 hours.\n\nOrbinel Robotics · Engineering Motion\nhttps://chrigia12.github.io/orbinel/",
+    },
+    make: {
+      it: "Ciao!\n\nAbbiamo ricevuto la tua richiesta di stampa. Controlliamo il file (stampabilità, orientamento, materiale) e ti rispondiamo entro 48 ore con un preventivo o con qualche domanda.\n\nSe vuoi aggiungere dettagli, rispondi pure a questa email.\n\nOrbinel Make · Orbinel Robotics\nhttps://chrigia12.github.io/orbinel/make.html",
+      en: "Hi!\n\nWe have received your print request. We will check the file (printability, orientation, material) and reply within 48 hours with a quote or a few questions.\n\nTo add details, just reply to this email.\n\nOrbinel Make · Orbinel Robotics\nhttps://chrigia12.github.io/orbinel/make.html",
+    },
+    'learn-pilota': {
+      it: "Buongiorno,\n\ngrazie per l'interesse al progetto pilota di Orbinel Learn. Leggiamo con attenzione ogni candidatura e la ricontattiamo entro 48 ore per capire classi, tempi e strumenti a disposizione.\n\nNel frattempo può provare le lezioni nel simulatore: https://chrigia12.github.io/orbinel/motion/ (sezione «Lezioni»).\n\nOrbinel Learn · Orbinel Robotics",
+      en: "Hello,\n\nthank you for your interest in the Orbinel Learn pilot. We read every application carefully and will contact you within 48 hours to discuss classes, timing and available equipment.\n\nMeanwhile, you can try the lessons in the simulator: https://chrigia12.github.io/orbinel/motion/ (\"Lessons\" tab).\n\nOrbinel Learn · Orbinel Robotics",
+    },
+  };
+
+  // --- lista d'attesa anche nel servizio di newsletter (MailerLite), se configurato ---
+  async function iscriviNewsletter(dati) {
+    if (!conf.newsletter || dati.modulo !== 'lista') return;
+    const corpo = new FormData();
+    corpo.append('fields[email]', dati.email);
+    if (dati.nome) corpo.append('fields[name]', dati.nome);
+    corpo.append('fields[lingua]', dati.lingua);
+    corpo.append('fields[interessi]', (dati.interessi || []).join(', '));
+    corpo.append('ml-submit', '1');
+    corpo.append('anticsrf', 'true');
+    try { await fetch(conf.newsletter, { method: 'POST', body: corpo, mode: 'no-cors' }); } catch {}
+  }
+
   // --- moduli: inviano JSON all'indirizzo configurato ---
   const testi = {
     it: { invio: 'Invio…', ok: 'Grazie! Ti scriveremo quando ci sono novità.', no: 'Invio non riuscito. Riprova tra poco.', manca: 'I moduli non sono ancora attivi: il sito è in anteprima.', email: 'Serve un indirizzo email valido.' },
@@ -67,6 +96,7 @@
     const oggetti = { lista: 'lista d\'attesa', make: 'richiesta di stampa (Make)', 'learn-pilota': 'candidatura scuola (Learn)' };
     dati._subject = `Orbinel · ${oggetti[dati.modulo] || dati.modulo}`;
     dati._template = 'table';
+    if (risposte[dati.modulo]) dati._autoresponse = risposte[dati.modulo][dati.lingua] || risposte[dati.modulo].en;
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(dati.email || '')) { esito.className = 'esito no'; esito.textContent = t.email; return; }
     if (!conf.moduli) { esito.className = 'esito no'; esito.textContent = t.manca; return; }
     esito.className = 'esito'; esito.textContent = t.invio;
@@ -74,6 +104,7 @@
       const r = await fetch(conf.moduli, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(dati) });
       const risposta = await r.json().catch(() => ({}));
       if (!r.ok || risposta.success === false || risposta.success === 'false') throw new Error(risposta.message || r.status);
+      await iscriviNewsletter(dati);
       esito.className = 'esito ok'; esito.textContent = t.ok; f.reset();
     } catch { esito.className = 'esito no'; esito.textContent = t.no; }
   }));
