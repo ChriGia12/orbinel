@@ -82,8 +82,8 @@
 
   // --- moduli: inviano JSON all'indirizzo configurato ---
   const testi = {
-    it: { invio: 'Invio…', ok: 'Grazie! Ti scriveremo quando ci sono novità.', no: 'Invio non riuscito. Riprova tra poco.', manca: 'I moduli non sono ancora attivi: il sito è in anteprima.', email: 'Serve un indirizzo email valido.' },
-    en: { invio: 'Sending…', ok: 'Thank you! We will write when there is news.', no: 'Could not send. Please try again shortly.', manca: 'Forms are not active yet: this is a preview.', email: 'Please enter a valid email address.' },
+    it: { invio: 'Invio…', ok: 'Grazie! Ti abbiamo mandato una conferma via email.', no: 'Invio non riuscito. Riprova tra poco.', manca: 'I moduli non sono ancora attivi: il sito è in anteprima.', email: 'Serve un indirizzo email valido.' },
+    en: { invio: 'Sending…', ok: 'Thank you! We have sent you a confirmation email.', no: 'Could not send. Please try again shortly.', manca: 'Forms are not active yet: this is a preview.', email: 'Please enter a valid email address.' },
   };
   document.querySelectorAll('form[data-modulo]').forEach(f => f.addEventListener('submit', async e => {
     e.preventDefault();
@@ -105,7 +105,11 @@
       const risposta = await r.json().catch(() => ({}));
       if (!r.ok || risposta.success === false || risposta.success === 'false') throw new Error(risposta.message || r.status);
       await iscriviNewsletter(dati);
-      esito.className = 'esito ok'; esito.textContent = t.ok; f.reset();
+      const conferme = {
+        it: { make: 'Richiesta ricevuta! Ti rispondiamo entro 48 ore: controlla anche la tua email.', 'learn-pilota': 'Candidatura ricevuta! La ricontattiamo entro 48 ore.' },
+        en: { make: 'Request received! We reply within 48 hours: check your inbox too.', 'learn-pilota': 'Application received! We will contact you within 48 hours.' },
+      };
+      esito.className = 'esito ok'; esito.textContent = (conferme[html.dataset.lingua] || conferme.en)[dati.modulo] || t.ok; f.reset();
     } catch { esito.className = 'esito no'; esito.textContent = t.no; }
   }));
 })();
