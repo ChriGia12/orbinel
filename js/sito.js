@@ -67,16 +67,18 @@
     },
   };
 
-  // --- lista d'attesa anche nel servizio di newsletter (MailerLite), se configurato ---
+  // --- lista d'attesa anche nella newsletter (Brevo), se configurata ---
+  // conf.newsletter è l'indirizzo «action» del modulo di iscrizione di Brevo (…sibforms.com/serve/…).
+  // Brevo accetta i campi che esistono nel suo modulo: EMAIL e FIRSTNAME sempre, LINGUA e INTERESSI se aggiunti.
   async function iscriviNewsletter(dati) {
     if (!conf.newsletter || dati.modulo !== 'lista') return;
     const corpo = new FormData();
-    corpo.append('fields[email]', dati.email);
-    if (dati.nome) corpo.append('fields[name]', dati.nome);
-    corpo.append('fields[lingua]', dati.lingua);
-    corpo.append('fields[interessi]', (dati.interessi || []).join(', '));
-    corpo.append('ml-submit', '1');
-    corpo.append('anticsrf', 'true');
+    corpo.append('EMAIL', dati.email);
+    if (dati.nome) corpo.append('FIRSTNAME', dati.nome);
+    corpo.append('LINGUA', dati.lingua);
+    corpo.append('INTERESSI', (dati.interessi || []).join(', '));
+    corpo.append('email_address_check', '');          // campo anti-spam del modulo Brevo: deve restare vuoto
+    corpo.append('locale', dati.lingua === 'it' ? 'it' : 'en');
     try { await fetch(conf.newsletter, { method: 'POST', body: corpo, mode: 'no-cors' }); } catch {}
   }
 
