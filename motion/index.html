@@ -439,7 +439,7 @@
 <script src="js/scena.js"></script>
 <script>
   // dal sito pubblicato Motion sta in motion/ e il sito è la cartella sopra; in anteprima locale il sito è /dist/
-  if (location.pathname.startsWith('/motion/')) document.querySelectorAll('#linkSito, #btnSito').forEach(a => { a.href = '/dist/'; });
+  if (/^(127\.0\.0\.1|localhost)$/.test(location.hostname) && location.pathname.startsWith('/motion/')) document.querySelectorAll('#linkSito, #btnSito').forEach(a => { a.href = '/dist/'; });
 </script>
 <script src="js/app.js"></script>
 <script src="js/analisi.js"></script>
