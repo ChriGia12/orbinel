@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200"><defs>
+  <linearGradient id="ar" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA24A"/><stop offset=".5" stop-color="#FF7A1A"/><stop offset="1" stop-color="#E2550F"/></linearGradient>
+  <linearGradient id="arb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF9A3C"/><stop offset="1" stop-color="#FF6B2C"/></linearGradient>
+  <linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5A616C"/><stop offset=".5" stop-color="#33383F"/><stop offset="1" stop-color="#1B1E23"/></linearGradient>
+  <linearGradient id="gr2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A515B"/><stop offset="1" stop-color="#1E2228"/></linearGradient>
+</defs><g transform="translate(0 0) scale(1)">
+  <path d="M134 50 L164 132" stroke="#F2F1EC" stroke-width="24" stroke-linecap="round"/>
+  <path d="M80 126 L134 50" stroke="#F2F1EC" stroke-width="30" stroke-linecap="round"/>
+  <path d="M50 152 L50 132 Q50 110 74 110 L108 110 L132 152 Z" fill="#F2F1EC" stroke="#000" stroke-opacity="0"/>
+  <path d="M30 170 L170 170 L156 152 L44 152 Z" fill="#F2F1EC"/>
+</g></svg>
