@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" data-lingua="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbinel Parts · Tool generator</title>
+<meta name="titolo-en" content="Orbinel Parts · Tool generator">
+<meta name="titolo-it" content="Orbinel Parts · Generatore di utensili">
+<meta name="description" content="Interchangeable tools for Kheiron on a shared interface, and a parametric generator that exports printable STL files in the browser.">
+<meta name="theme-color" content="#0B0D10">
+<link rel="icon" href="brand/simbolo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/stile.css">
+</head>
+<body>
+<header class="barra">
+  <div class="contenitore">
+    <a class="logo" href="index.html" aria-label="Orbinel Robotics"><img src="brand/logo-scuro.svg" alt="Orbinel" width="172" height="22"></a>
+    <nav class="menu" aria-label="Principale">
+      <a href="kheiron.html"><span lang="en">Kheiron</span><span lang="it">Kheiron</span></a>
+      <a href="parts.html" aria-current="page"><span lang="en">Parts</span><span lang="it">Parts</span></a>
+      <a href="make.html"><span lang="en">Make</span><span lang="it">Make</span></a>
+      <a href="index.html#motion"><span lang="en">Motion</span><span lang="it">Motion</span></a>
+      <a href="learn.html"><span lang="en">Learn</span><span lang="it">Learn</span></a>
+      <a href="index.html#roadmap"><span lang="en">Roadmap</span><span lang="it">Roadmap</span></a>
+      <a href="index.html#contatti"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
+      <div class="lingua" role="group" aria-label="Language"><button type="button" data-lingua="en">EN</button><button type="button" data-lingua="it">IT</button></div>
+    </nav>
+    <button class="hamburger" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+  <section class="testata">
+    <div class="griglia-sfondo"></div>
+    <div class="contenitore" style="position:relative">
+      <div class="occhiello">Orbinel Parts</div>
+      <h1><span lang="en">One interface.<br>Endless tools.</span><span lang="it">Un attacco.<br>Infiniti utensili.</span></h1>
+      <p class="grande"><span lang="en">Every Kheiron tool mounts on the same shank: loosen two screws, swap, tighten. Generate your own below — the geometry is computed in your browser and exported as a closed, printable STL.</span><span lang="it">Ogni utensile di Kheiron si monta sullo stesso codolo: allenti due viti, cambi, stringi. Generane uno qui sotto: la geometria viene calcolata nel tuo browser ed esportata come STL chiuso e stampabile.</span></p>
+    </div>
+  </section>
+
+  <section class="sezione" id="generatore">
+    <div class="contenitore">
+      <div class="generatore">
+        <div class="modulo" style="padding:24px">
+          <div class="campo"><label for="sceltaUtensile"><span lang="en">Tool</span><span lang="it">Utensile</span></label><select id="sceltaUtensile"></select></div>
+          <p id="descrizioneUtensile" style="font-size:14px;margin:14px 0 18px"></p>
+          <div id="parametri" style="display:grid;gap:14px"></div>
+          <div class="pulsanti" style="margin-top:22px">
+            <button class="pulsante primario" id="scaricaParts" type="button" disabled><span lang="en">Download STL</span><span lang="it">Scarica STL</span></button>
+            <button class="pulsante" id="azzeraParts" type="button"><span lang="en">Reset</span><span lang="it">Valori iniziali</span></button>
+          </div>
+          <ul id="controlliParts" class="controlli"></ul>
+        </div>
+        <div class="vista" id="vistaParts"><div class="info" id="infoParts">…</div></div>
+      </div>
+      <p style="font-size:13px;margin-top:14px"><span lang="en">Print with the shank facing up and the tool face on the bed where possible, PETG, 4 perimeters. Parts are generated from design values and have not all been print-tested yet: check the shank fit on your printer first (0.15 mm clearance on the radius).</span><span lang="it">Stampa con il codolo verso l'alto e la faccia dell'utensile sul piano dove possibile, PETG, 4 perimetri. I pezzi sono generati dalle quote di progetto e non sono ancora tutti provati in stampa: verifica prima l'accoppiamento del codolo sulla tua stampante (0,15 mm di gioco sul raggio).</span></p>
+    </div>
+  </section>
+
+  <section class="sezione">
+    <div class="contenitore dueColonne" style="align-items:start">
+      <div class="compare">
+        <div class="occhiello"><span lang="en">Standard</span><span lang="it">Standard</span></div>
+        <h2><span lang="en">Kheiron tool interface.</span><span lang="it">Attacco utensile di Kheiron.</span></h2>
+        <p><span lang="en">The wrist flange is a cup. Each tool has a cylindrical shank that enters it by 6 mm; a flat makes it fit one way only; two M3 screws in the cup wall lock it. Open specification — design your own tools on it.</span><span lang="it">La flangia del polso è una tazza. Ogni utensile ha un codolo cilindrico che entra per 6 mm; un piano lo fa entrare in un solo verso; due viti M3 nella parete della tazza lo bloccano. Specifica aperta: progetta i tuoi utensili su questo attacco.</span></p>
+        <p style="font-size:14px"><span lang="en">Each Orbinel robot family has its own modular parts, sized for its loads. The tool interface is the piece designed to be shared across families, through adapters where sizes differ.</span><span lang="it">Ogni famiglia di robot Orbinel ha i suoi componenti modulari, dimensionati sui suoi carichi. L'attacco utensile è il pezzo pensato per essere condiviso tra famiglie, con adattatori dove le taglie cambiano.</span></p>
+      </div>
+      <div class="scorre-x compare">
+        <table class="tabella">
+          <thead><tr><th><span lang="en">Dimension</span><span lang="it">Quota</span></th><th><span lang="en">Value</span><span lang="it">Valore</span></th></tr></thead>
+          <tbody>
+            <tr><td><span lang="en">Shank diameter</span><span lang="it">Diametro del codolo</span></td><td>27.7 mm <span class="nota"><span lang="en">cup 28.0</span><span lang="it">tazza 28,0</span></span></td></tr>
+            <tr><td><span lang="en">Shank length</span><span lang="it">Lunghezza del codolo</span></td><td>5.8 mm <span class="nota"><span lang="en">cup depth 6.0</span><span lang="it">tazza profonda 6,0</span></span></td></tr>
+            <tr><td><span lang="en">Orientation flat</span><span lang="it">Piano di orientamento</span></td><td><span lang="en">10.85 mm from the axis, top side</span><span lang="it">a 10,85 mm dall'asse, lato alto</span></td></tr>
+            <tr><td><span lang="en">Locking screw holes</span><span lang="it">Fori per le viti di blocco</span></td><td><span lang="en">2 × Ø 3.3, radial, ≥ 4.5 deep, 3.5 mm from the cup bottom</span><span lang="it">2 × Ø 3,3, radiali, profondi ≥ 4,5, a 3,5 mm dal fondo della tazza</span></td></tr>
+            <tr><td><span lang="en">Shoulder</span><span lang="it">Spallamento</span></td><td><span lang="en">wider than 28 mm right after the shank</span><span lang="it">più largo di 28 mm subito dopo il codolo</span></td></tr>
+            <tr><td><span lang="en">Side clearance</span><span lang="it">Ingombro laterale</span></td><td><span lang="en">within r 18 for the first 7 mm (screw heads and key)</span><span lang="it">entro r 18 per i primi 7 mm (teste delle viti e chiave)</span></td></tr>
+            <tr><td><span lang="en">Tool axis</span><span lang="it">Asse dell'utensile</span></td><td><span lang="en">= J6 rotation axis</span><span lang="it">= asse di rotazione di J6</span></td></tr>
+            <tr><td><span lang="en">Powered tools</span><span lang="it">Utensili motorizzati</span></td><td><span lang="en">3-pin servo bus extension at the wrist</span><span lang="it">prolunga del bus servo a 3 poli al polso</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="piede-sito">
+  <div class="contenitore">
+    <div>
+      <img src="brand/logo-motto-scuro.svg" alt="Orbinel · Engineering Motion" width="200" height="40" style="height:40px;width:auto;margin-bottom:18px">
+      <p style="max-width:320px;font-size:14px"><span lang="en">Modular robots and the tools to build, simulate and learn them. Designed in Italy, built in public.</span><span lang="it">Robot modulari e gli strumenti per costruirli, simularli e impararli. Progettati in Italia, sviluppati in pubblico.</span></p>
+    </div>
+    <div>
+      <h5><span lang="en">Ecosystem</span><span lang="it">Ecosistema</span></h5>
+      <a href="kheiron.html">Kheiron</a>
+      <a href="parts.html">Parts</a>
+      <a href="make.html">Make</a>
+      <a href="motion/">Motion</a>
+      <a href="learn.html">Learn</a>
+    </div>
+    <div>
+      <h5><span lang="en">Project</span><span lang="it">Progetto</span></h5>
+      <a href="index.html#roadmap">Roadmap</a>
+      <a href="kheiron.html#diario"><span lang="en">Dev log</span><span lang="it">Diario di sviluppo</span></a>
+      <a href="index.html#chi"><span lang="en">About</span><span lang="it">Chi siamo</span></a>
+    </div>
+    <div>
+      <h5><span lang="en">Follow</span><span lang="it">Seguici</span></h5>
+      <a data-instagram href="#" rel="noopener">Instagram</a>
+      <a data-email href="#"></a>
+      <a href="index.html#contatti"><span lang="en">Waitlist</span><span lang="it">Lista d'attesa</span></a>
+    </div>
+    <div class="fondo">
+      <span>© <span data-anno>2026</span> Orbinel Robotics · <span lang="en">early-stage project, specifications subject to change</span><span lang="it">progetto in fase iniziale, specifiche soggette a modifiche</span></span>
+      <span>Engineering Motion.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/sito.js"></script>
+<script src="motion/lib/three.min.js"></script>
+<script src="motion/lib/OrbitControls.js"></script>
+<script type="module" src="js/parts.js"></script>
+</body>
+</html>

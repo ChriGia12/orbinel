@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbinel Motion</title>
+<link rel="icon" href="../brand/simbolo.svg">
+<style>
+  :root {
+    --bg: #101215; --panel: #181b20; --panel2: #1f232a; --line: #2b3038; --text: #e8eaed; --muted: #8d949e;
+    --accent: #ff8a3d; --ok: #2fbf71; --stop: #ff4d4d; --warn: #f2b63c; --info: #4cc3ff;
+    --r: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; flex-direction: column; }
+  button, input, select { font: inherit; color: inherit; }
+  button { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: #3d444f; background: #252a32; }
+  button:disabled { opacity: .4; cursor: default; }
+  button.primario { background: var(--accent); border-color: var(--accent); color: #1a0e05; font-weight: 600; }
+  button.pericolo { background: var(--stop); border-color: var(--stop); color: #fff; font-weight: 700; }
+  button.piccolo { padding: 3px 8px; font-size: 12px; }
+  input[type=number], input[type=text], select {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; width: 100%; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
+  h3 { font-size: 15px; margin: 18px 0 6px; }
+  .muted { color: var(--muted); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  header { display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); flex-wrap: wrap; }
+  .marchio { font-weight: 600; font-size: 15px; letter-spacing: .18em; margin-right: 6px; display: inline-flex; align-items: center; gap: 10px; }
+  .marchio b { color: var(--accent); font-weight: 600; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel2); white-space: nowrap; }
+  .pallino { width: 9px; height: 9px; border-radius: 50%; background: #555c66; }
+  .pallino.on { background: var(--ok); }
+  #chipArresto { font-weight: 700; letter-spacing: .03em; }
+  #chipArresto.ok { background: rgba(47,191,113,.15); border-color: var(--ok); color: #7ee2a8; }
+  #chipArresto.stop { background: var(--stop); border-color: var(--stop); color: #fff; animation: lampo 1s infinite; }
+  #chipArresto.nd { color: var(--muted); }
+  @keyframes lampo { 50% { opacity: .65; } }
+  .spazio { flex: 1; }
+
+  nav { display: flex; gap: 4px; padding: 0 12px; border-bottom: 1px solid var(--line); background: var(--panel); overflow-x: auto; }
+  nav button { background: none; border: none; border-bottom: 2px solid transparent; border-radius: 0; padding: 10px 14px; color: var(--muted); }
+  nav button.attivo { color: var(--text); border-bottom-color: var(--accent); }
+
+  main { flex: 1; min-height: 0; }
+  section { display: none; height: 100%; }
+  section.attivo { display: block; }
+  .scorre { height: 100%; overflow-y: auto; padding: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; margin-bottom: 12px; }
+  .riga { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .griglia2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 12px; }
+
+  /* Muovi */
+  #muovi.attivo { display: grid; grid-template-columns: 1fr 400px; height: 100%; }
+  .vista { position: relative; min-height: 300px; }
+  #vista3d { position: absolute; inset: 0; }
+  .vista .sopra { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .vista .sotto { position: absolute; bottom: 10px; left: 10px; right: 10px; display: flex; gap: 10px; flex-wrap: wrap; align-items: end; pointer-events: none; }
+  .vista .sotto > * { pointer-events: auto; }
+  .etichetta { background: rgba(16,18,21,.82); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 12px; }
+  #avvisi:empty { display: none; }
+  #avvisi { border-color: var(--stop); color: #ffb3b3; }
+  #caricamento { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); }
+  .comandi { border-left: 1px solid var(--line); overflow-y: auto; padding: 12px; background: var(--bg); }
+  .giunto { display: grid; grid-template-columns: 92px 1fr 74px; gap: 8px; align-items: center; margin: 6px 0; }
+  .giunto label { font-size: 12px; color: var(--muted); }
+  .giunto .reale { grid-column: 2 / 4; font-size: 11px; color: var(--info); margin-top: -6px; min-height: 0; }
+  .giunto .reale:empty { display: none; }
+  .ik { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .ik label { font-size: 11px; color: var(--muted); display: block; }
+  .jog { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 8px; }
+  .interruttore { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .interruttore input { width: 38px; height: 20px; accent-color: var(--accent); }
+
+  /* tabelle */
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
+  td input[type=number] { width: 76px; }
+  .elenco-vuoto { color: var(--muted); padding: 12px 0; }
+
+  /* guida */
+  .guida { max-width: 860px; }
+  .guida p, .guida li { color: #cfd3d9; }
+  .guida code, .guida pre { background: var(--panel2); border-radius: 6px; padding: 1px 5px; }
+  .guida pre { padding: 12px; overflow-x: auto; line-height: 1.5; }
+  .nota { border-left: 3px solid var(--warn); padding: 6px 12px; background: rgba(242,182,60,.07); border-radius: 0 6px 6px 0; }
+
+  #avviso { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--panel2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 10px 16px; max-width: 90vw; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 10; }
+  #avviso.visibile { opacity: 1; }
+  #conto { position: fixed; inset: 0; display: none; place-items: center; background: rgba(0,0,0,.55); z-index: 20; }
+  #conto div { font-size: 120px; font-weight: 800; color: var(--accent); }
+  #conto button { margin-top: 20px; }
+
+  /* analisi */
+  .barra-giunto { display: grid; grid-template-columns: 28px 1fr 42px 52px; gap: 8px; align-items: center; font-size: 12px; margin: 5px 0; }
+  .barra-giunto.intestazione { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+  .barra { position: relative; height: 8px; background: var(--panel2); border-radius: 4px; overflow: hidden; }
+  .barra div { height: 100%; border-radius: 4px; transition: width .12s; }
+  .barra i { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--muted); }
+  .analisi-dati { margin-top: 8px; } .analisi-dati td { padding: 4px 0; font-size: 12px; border: none; } .analisi-dati td.num { text-align: right; }
+
+  /* lezioni */
+  .lezioni { display: grid; grid-template-columns: 320px 1fr; gap: 12px; max-width: 1200px; }
+  .voce-lezione { position: relative; display: flex; justify-content: space-between; gap: 8px; width: 100%; text-align: left; margin: 4px 0; overflow: hidden; }
+  .voce-lezione.scelta { border-color: var(--accent); }
+  .voce-lezione i { position: absolute; left: 0; bottom: 0; height: 2px; background: var(--ok); }
+  ol.esercizi { padding-left: 20px; margin: 4px 0 10px; }
+  ol.esercizi li { margin: 4px 0; }
+  ol.esercizi li.fatto { color: var(--ok); }
+  ol.esercizi li.fatto::marker { content: '✓  '; }
+  .scelte label { display: block; margin: 6px 0; cursor: pointer; }
+  #esitoDomanda.ok { color: var(--ok); } #esitoDomanda.no { color: var(--stop); }
+  #lezioneAttiva { position: absolute; top: 48px; right: 10px; width: min(360px, calc(100% - 20px)); border-color: var(--accent); }
+  #lezioneAttiva[hidden] { display: none; }
+
+  @media (max-width: 900px) {
+    .lezioni { grid-template-columns: 1fr; }
+    #muovi.attivo { grid-template-columns: 1fr; grid-template-rows: 55vh auto; overflow-y: auto; }
+    .comandi { border-left: none; overflow: visible; }
+    .griglia2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <span class="marchio"><img src="../brand/simbolo.svg" alt="" width="22" height="22">ORBINEL <b>MOTION</b></span><span class="chip" title="Robot selezionato">Kheiron · 6 assi</span>
+  <span class="chip"><span class="pallino" id="pallino"></span><span id="testoCollegamento">Non collegato</span></span>
+  <span class="chip nd" id="chipArresto">FUNGO: —</span>
+  <span class="spazio"></span>
+  <button id="btnCollega" class="primario">Collega</button>
+  <button id="btnScollega" hidden>Scollega</button>
+  <button id="btnFerma" class="pericolo" title="Ferma subito tutti i servo dove sono (tasto Esc)">FERMA</button>
+</header>
+
+<nav>
+  <button data-sezione="muovi" class="attivo">Muovi</button>
+  <button data-sezione="pose">Pose e sequenze</button>
+  <button data-sezione="servo">Servo</button>
+  <button data-sezione="lezioni">Lezioni</button>
+  <button data-sezione="impostazioni">Impostazioni</button>
+  <button data-sezione="guida">Guida</button>
+</nav>
+
+<main>
+  <!-- MUOVI -->
+  <section id="muovi" class="attivo">
+    <div class="vista">
+      <div id="vista3d"></div>
+      <div id="caricamento">Carico il modello…</div>
+      <div class="sopra">
+        <button class="piccolo" data-vista="prospettiva">Prospettiva</button>
+        <button class="piccolo" data-vista="fronte">Fronte</button>
+        <button class="piccolo" data-vista="lato">Lato</button>
+        <button class="piccolo" data-vista="alto">Alto</button>
+        <button class="piccolo" id="btnScia">Scia: spenta</button>
+        <button class="piccolo" id="btnPulisciScia">Pulisci scia</button>
+        <button class="piccolo" id="btnSpazio">Spazio di lavoro: spento</button>
+      </div>
+      <div class="etichetta" id="lezioneAttiva" hidden></div>
+      <div class="sotto">
+        <div class="etichetta num" id="posizionePinza">Pinza: —</div>
+        <div class="etichetta" id="avvisi"></div>
+      </div>
+    </div>
+
+    <div class="comandi">
+      <div class="card">
+        <h2>Robot vero</h2>
+        <label class="interruttore"><input type="checkbox" id="segui" disabled> Il robot segue la simulazione</label>
+        <p class="muted" id="notaSegui" style="margin:8px 0 10px;font-size:12px">Collega la schedina per muovere il robot vero. Senza, muovi solo la simulazione.</p>
+        <div class="riga">
+          <button id="btnCopiaReale" disabled title="Porta la simulazione dove si trova il robot">Copia la posa dal robot</button>
+          <button id="btnCoppia" disabled>Coppia: —</button>
+        </div>
+        <div style="margin-top:10px">
+          <label class="muted" style="font-size:12px">Velocità massima: <span id="valVelocita" class="num"></span> °/s</label>
+          <input type="range" id="velocita" min="5" max="120" step="5">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Giunti</h2>
+        <div id="giunti"></div>
+        <div class="giunto">
+          <label for="pinza">Pinza (mm)</label>
+          <input type="range" id="pinza" min="0" max="20" step="0.5">
+          <input type="number" id="pinzaNum" min="0" max="20" step="0.5">
+          <span class="reale num" id="pinzaReale"></span>
+        </div>
+        <div class="riga" style="margin-top:8px">
+          <button id="btnRiposo">Riposo</button>
+          <button id="btnZero">Tutti a zero</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Analisi <span class="muted" style="text-transform:none;letter-spacing:0">· stima</span></h2>
+        <div style="margin-bottom:8px">
+          <label class="muted" style="font-size:12px">Carico in presa: <span id="valCarico" class="num">0</span> g</label>
+          <input type="range" id="carico" min="0" max="500" step="10" value="0">
+        </div>
+        <div class="barra-giunto intestazione"><span></span><span>coppia rispetto al picco · tacca = continua</span><span>kg·cm</span><span>margine</span></div>
+        <div id="analisiGiunti"></div>
+        <table class="analisi-dati"><tbody>
+          <tr><td class="muted">Massa in movimento</td><td class="num" id="analisiMassa">—</td></tr>
+          <tr><td class="muted">Carico massimo in questa posa</td><td class="num" id="analisiMax">—</td></tr>
+        </tbody></table>
+        <div id="analisiSing" style="font-size:12px;margin-top:8px;color:var(--warn)"></div>
+        <p class="muted" style="font-size:11px;margin:8px 0 0">Masse dal volume degli STL (PETG al 55 %), servo da 55 g, coppia continua 10 kg·cm per servo. Senza attriti né accelerazioni.</p>
+      </div>
+
+      <div class="card">
+        <h2>Posizione della pinza</h2>
+        <div class="ik">
+          <div><label>X (mm)</label><input type="number" id="ikX" step="5"></div>
+          <div><label>Y (mm)</label><input type="number" id="ikY" step="5"></div>
+          <div><label>Z (mm)</label><input type="number" id="ikZ" step="5"></div>
+          <div><label>Inclinazione (°)</label><input type="number" id="ikInc" step="5" title="0 = orizzontale, -90 = verso il basso"></div>
+          <div><label>Rotazione (°)</label><input type="number" id="ikRot" step="5" value="0"></div>
+          <div><label>&nbsp;</label><button id="btnIk" class="primario" style="width:100%">Vai</button></div>
+        </div>
+        <div class="jog" id="jog"></div>
+        <div class="riga" style="margin-top:6px">
+          <label class="muted" style="font-size:12px">Passo</label>
+          <select id="passoJog" style="width:auto"><option>1</option><option selected>5</option><option>10</option><option>25</option></select>
+          <span class="muted" style="font-size:12px">mm · Maiusc + clic sul piano per scegliere il punto</span>
+        </div>
+        <p class="muted" id="esitoIk" style="font-size:12px;margin:8px 0 0"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- POSE E SEQUENZE -->
+  <section id="pose"><div class="scorre"><div class="griglia2">
+    <div class="card">
+      <h2>Pose salvate</h2>
+      <div class="riga">
+        <input type="text" id="nomePosa" placeholder="Nome della posa" style="flex:1;min-width:160px">
+        <button id="btnSalvaPosa" class="primario">Salva la posa attuale</button>
+        <button id="btnSalvaPosaReale" disabled>Salva dal robot</button>
+      </div>
+      <table style="margin-top:10px"><thead><tr><th>Nome</th><th>Giunti (°)</th><th>Pinza</th><th></th></tr></thead>
+        <tbody id="tabPose"></tbody></table>
+    </div>
+    <div class="card">
+      <h2>Sequenza</h2>
+      <p class="muted" style="margin-top:0">Le pose in fila. Ogni passo dura il tempo indicato: tutti i giunti partono e arrivano insieme.</p>
+      <table><thead><tr><th>#</th><th>Posa</th><th>Durata (s)</th><th>Pausa (s)</th><th></th></tr></thead>
+        <tbody id="tabSequenza"></tbody></table>
+      <div class="riga" style="margin-top:10px">
+        <button id="btnAggiungiPasso">Aggiungi passo</button>
+        <span class="spazio"></span>
+        <label class="interruttore"><input type="checkbox" id="ripeti"> Ripeti</label>
+        <button id="btnEsegui" class="primario">Esegui</button>
+        <button id="btnStopSeq" disabled>Stop</button>
+      </div>
+      <p class="muted" id="statoSeq" style="font-size:12px;margin-bottom:0"></p>
+    </div>
+    <div class="card">
+      <h2>File</h2>
+      <p class="muted" style="margin-top:0">Pose, sequenza e impostazioni restano salvate in questo browser. Per portarle su un altro computer, esportale in un file.</p>
+      <div class="riga">
+        <button id="btnEsporta">Esporta tutto</button>
+        <button id="btnImporta">Importa…</button>
+        <input type="file" id="fileImporta" accept=".json" hidden>
+      </div>
+    </div>
+  </div></div></section>
+
+  <!-- SERVO -->
+  <section id="servo"><div class="scorre"><div class="griglia2">
+    <div class="card" style="grid-column:1/-1">
+      <h2>Servo sul cavo</h2>
+      <div class="riga">
+        <button id="btnCerca" class="primario" disabled>Cerca i servo</button>
+        <span class="muted" id="esitoCerca"></span>
+      </div>
+      <table style="margin-top:10px"><thead><tr>
+        <th>ID</th><th>Giunto</th><th>Posizione</th><th>Angolo</th><th>Tensione</th><th>Temp.</th><th>Carico</th><th>Corrente</th><th></th>
+      </tr></thead><tbody id="tabServo"></tbody></table>
+    </div>
+    <div class="card">
+      <h2>Calibrazione dello zero</h2>
+      <ol style="padding-left:18px;margin-top:0">
+        <li>Spegni la coppia: i servo diventano liberi. <b>Sostieni il braccio</b>, che altrimenti cade.</li>
+        <li>Porta a mano il braccio in posa di riposo: braccio verticale, avambraccio orizzontale in avanti, polso dritto, pinza orizzontale.</li>
+        <li>Premi «Salva lo zero»: la posizione di ogni servo diventa il suo zero.</li>
+      </ol>
+      <div class="riga">
+        <button id="btnCoppiaOff" disabled>Spegni la coppia</button>
+        <button id="btnSalvaZero" class="primario" disabled>Salva lo zero</button>
+        <button id="btnCoppiaOn" disabled>Riaccendi la coppia</button>
+      </div>
+      <h3>Pinza</h3>
+      <p class="muted" style="margin-top:0">Con la coppia spenta, chiudi le dita a mano e premi «Chiusa»; poi aprile del tutto e premi «Aperta».</p>
+      <div class="riga">
+        <button id="btnPinzaChiusa" disabled>Chiusa</button>
+        <button id="btnPinzaAperta" disabled>Aperta</button>
+        <span class="muted num" id="valPinzaCal"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Cambia ID</h2>
+      <p class="muted" style="margin-top:0">I servo nuovi hanno tutti l'ID 1. <b>Collegane uno alla volta</b>: con due servo con lo stesso ID il cambio li cambierebbe entrambi.</p>
+      <div class="riga">
+        <label>Da</label><input type="number" id="idDa" min="0" max="252" value="1" style="width:70px">
+        <label>a</label><input type="number" id="idA" min="0" max="252" value="2" style="width:70px">
+        <button id="btnCambiaId" disabled>Cambia</button>
+      </div>
+      <p class="muted" id="esitoId" style="font-size:12px"></p>
+      <h3>ID previsti</h3>
+      <table><tbody id="tabAssegnazione"></tbody></table>
+    </div>
+  </div></div></section>
+
+  <!-- LEZIONI -->
+  <section id="lezioni"><div class="scorre"><div class="lezioni">
+    <div>
+      <div class="card">
+        <h2>Orbinel Learn · Kheiron</h2>
+        <p class="muted" style="margin-top:0;font-size:12px">Sei lezioni da fare nel simulatore. Gli esercizi si verificano da soli mentre muovi il robot; il robot vero non serve.</p>
+        <div id="elencoLezioni"></div>
+      </div>
+    </div>
+    <div id="contenutoLezione" class="guida"></div>
+  </div></div></section>
+
+  <!-- IMPOSTAZIONI -->
+  <section id="impostazioni"><div class="scorre">
+    <div class="card">
+      <h2>Giunti</h2>
+      <p class="muted" style="margin-top:0">Limiti in gradi. Per ogni servo: ID, verso (+1 o −1, se il giunto gira al contrario) e centro, cioè la posizione del servo (0–4095) con il giunto a zero. Il centro si imposta da solo con la calibrazione.</p>
+      <table><thead><tr><th>Giunto</th><th>Min</th><th>Max</th><th>ID</th><th>Verso</th><th>Centro</th><th>2° servo: ID</th><th>Verso</th><th>Centro</th></tr></thead>
+        <tbody id="tabGiunti"></tbody></table>
+    </div>
+    <div class="griglia2">
+      <div class="card">
+        <h2>Pinza</h2>
+        <table><tbody>
+          <tr><td>ID del servo</td><td><input type="number" data-imp="pinza.id"></td></tr>
+          <tr><td>Posizione con dita chiuse</td><td><input type="number" data-imp="pinza.chiusa"></td></tr>
+          <tr><td>Posizione con dita aperte (20 mm)</td><td><input type="number" data-imp="pinza.aperta"></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <h2>Movimento</h2>
+        <table><tbody>
+          <tr><td>Velocità massima (°/s)</td><td><input type="number" data-imp="velocita"></td></tr>
+          <tr><td>Accelerazione dei servo (0–254)</td><td><input type="number" data-imp="accelerazione"></td></tr>
+          <tr><td>Conto alla rovescia prima delle sequenze (s)</td><td><input type="number" data-imp="conteggio"></td></tr>
+          <tr><td>Posa di riposo (J1…J6, °)</td><td><input type="text" id="impRiposo"></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="riga">
+        <button id="btnRipristina">Ripristina i valori iniziali</button>
+        <span class="muted">Le modifiche si salvano da sole.</span>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- GUIDA -->
+  <section id="guida"><div class="scorre"><div class="guida">
+    <div class="card">
+      <h2>Collegamenti</h2>
+<pre>Mac ──USB──► ESP32 ──3 Dupont: GND, TX, RX──► Adattatore ──cavo servo──► J1 ► J2 ► … ► pinza
+               ▲                                     ▲
+     fungo, contatto NC (2 fili)          alimentatore 12 V (presa tonda)</pre>
+      <table><thead><tr><th>Da</th><th>A</th></tr></thead><tbody>
+        <tr><td>ESP32 piedino <b>21</b> (TX)</td><td>Adattatore <b>RX</b></td></tr>
+        <tr><td>ESP32 piedino <b>20</b> (RX)</td><td>Adattatore <b>TX</b></td></tr>
+        <tr><td>ESP32 <b>G</b></td><td>Adattatore <b>GND</b></td></tr>
+        <tr><td>ESP32 piedino <b>4</b></td><td>Fungo, morsetto 1 (blocchetto NC, levetta rossa)</td></tr>
+        <tr><td>ESP32 <b>G</b></td><td>Fungo, morsetto 2</td></tr>
+      </tbody></table>
+      <p class="nota">Mai collegare 5V, 3V3 o i 12 V tra ESP32 e adattatore: solo GND, TX e RX. Il morsetto verde dell'adattatore resta libero. Ponticelli gialli su <b>A</b>. Se il pannello non trova i servo, scambia i due fili TX e RX: non si rompe niente.</p>
+    </div>
+    <div class="card">
+      <h2>Accensione e spegnimento</h2>
+      <ol>
+        <li>Cavo USB dell'ESP32 nel Mac.</li>
+        <li>Alimentatore 12 V nell'adattatore. Con il primo alimentatore regolabile: rotella fissata a 12 V con il nastro.</li>
+        <li>Nel pannello: «Collega» e scegli la schedina.</li>
+        <li>Fungo rilasciato: in alto deve comparire <b>FUNGO: OK</b>.</li>
+      </ol>
+      <p>Per spegnere, al contrario: prima i 12 V, poi la USB.</p>
+    </div>
+    <div class="card">
+      <h2>Primo test di un servo nuovo</h2>
+      <ol>
+        <li>Un solo servo collegato, nessun pezzo montato sulla squadretta.</li>
+        <li>Sezione <b>Servo</b> → «Cerca i servo»: deve comparire con ID 1, tensione intorno a 12 V.</li>
+        <li>Dagli l'ID previsto (tabella «ID previsti») con «Cambia ID». Scrivilo su un pezzetto di nastro sul servo.</li>
+        <li>«+5°» e «−5°» nella riga del servo: deve girare piano di poco.</li>
+        <li>Premi il fungo mentre si muove: si deve fermare e in alto compare <b>FUNGO PREMUTO</b>.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Se qualcosa non va</h2>
+      <table><tbody>
+        <tr><td>Il Mac non vede la schedina</td><td>Altro cavo (deve passare i dati), altra porta. Poi BOOT tenuto premuto mentre colleghi.</td></tr>
+        <tr><td>«Nessun segnale dal ponte»</td><td>Premi una volta RST sulla schedina. Se resta, il firmware ponte non è caricato sulla schedina: va caricato prima di collegare i servo.</td></tr>
+        <tr><td>Collegato ma nessun servo trovato</td><td>12 V collegati? Ponticelli su A? Scambia TX e RX. Un servo appena comprato ha ID 1.</td></tr>
+        <tr><td>FUNGO PREMUTO anche se rilasciato</td><td>Filo staccato o sul blocchetto sbagliato: deve essere il NC (1-2, levetta rossa). Il fungo si sblocca girandolo.</td></tr>
+        <tr><td>Il giunto gira al contrario</td><td>Impostazioni → verso del servo da +1 a −1.</td></tr>
+        <tr><td>Servo caldo (oltre 60 °C)</td><td>Fermati, lascialo raffreddare, controlla che il pezzo non sia forzato o troppo pesante.</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <h2>File del progetto</h2>
+      <p>Orbinel Motion: cartella <code>Orbinel/motion/</code>, si apre con <code>Orbinel Motion.command</code>. Modelli: <code>motion/robot/kheiron/stl/</code>, copiati da <code>Robot Arm/cad</code>. Firmware della schedina e progetto originale: cartella <code>Robot Arm</code> (<code>firmware/ponte_esp32/</code>, <code>cad/</code>, <code>docs/</code>).</p>
+    </div>
+  </div></div></section>
+</main>
+
+<div id="avviso"></div>
+<div id="conto"><div style="text-align:center"><div id="contoNumero">3</div><button id="btnAnnullaConto">Annulla</button></div></div>
+
+<script src="lib/three.min.js"></script>
+<script src="lib/OrbitControls.js"></script>
+<script src="js/robot.js"></script>
+<script src="js/cinematica.js"></script>
+<script src="js/sts.js"></script>
+<script src="js/scena.js"></script>
+<script src="js/app.js"></script>
+<script src="js/analisi.js"></script>
+<script src="js/lezioni-dati.js"></script>
+<script src="js/lezioni.js"></script>
+</body>
+</html>

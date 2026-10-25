@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en" data-lingua="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbinel Robotics · Engineering Motion</title>
+<meta name="titolo-en" content="Orbinel Robotics · Engineering Motion">
+<meta name="titolo-it" content="Orbinel Robotics · Engineering Motion">
+<meta name="description" content="Orbinel Robotics designs modular robots and the tools to build, simulate and learn them. First robot: Kheiron, a 6-axis 3D-printed arm.">
+<meta property="og:title" content="Orbinel Robotics · Engineering Motion">
+<meta property="og:description" content="Modular robots and the tools to build, simulate and learn them.">
+<meta property="og:image" content="img/anteprima.png">
+<meta name="theme-color" content="#0B0D10">
+<link rel="icon" href="brand/simbolo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/stile.css">
+</head>
+<body>
+<header class="barra">
+  <div class="contenitore">
+    <a class="logo" href="index.html" aria-label="Orbinel Robotics"><img src="brand/logo-scuro.svg" alt="Orbinel" width="172" height="22"></a>
+    <nav class="menu" aria-label="Principale">
+      <a href="kheiron.html"><span lang="en">Kheiron</span><span lang="it">Kheiron</span></a>
+      <a href="parts.html"><span lang="en">Parts</span><span lang="it">Parts</span></a>
+      <a href="make.html"><span lang="en">Make</span><span lang="it">Make</span></a>
+      <a href="index.html#motion"><span lang="en">Motion</span><span lang="it">Motion</span></a>
+      <a href="learn.html"><span lang="en">Learn</span><span lang="it">Learn</span></a>
+      <a href="index.html#roadmap"><span lang="en">Roadmap</span><span lang="it">Roadmap</span></a>
+      <a href="index.html#contatti"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
+      <div class="lingua" role="group" aria-label="Language"><button type="button" data-lingua="en">EN</button><button type="button" data-lingua="it">IT</button></div>
+    </nav>
+    <button class="hamburger" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+
+<main>
+  <!-- APERTURA -->
+  <section class="apertura">
+    <div class="griglia-sfondo"></div>
+    <div class="contenitore">
+      <div>
+        <div class="stato"><i></i><span lang="en">Kheiron · prototype in development</span><span lang="it">Kheiron · prototipo in sviluppo</span></div>
+        <h1>Engineering<br><span class="accento">Motion.</span></h1>
+        <p class="grande">
+          <span lang="en">We design modular robots and the tools to build, simulate and learn them — from the first CAD sketch to a robot on your desk.</span>
+          <span lang="it">Progettiamo robot modulari e gli strumenti per costruirli, simularli e impararli: dal primo schizzo CAD al robot sulla tua scrivania.</span>
+        </p>
+        <div class="pulsanti">
+          <a class="pulsante primario" href="#contatti"><span lang="en">Join the waitlist</span><span lang="it">Entra in lista d'attesa</span> <span class="freccia">→</span></a>
+          <a class="pulsante" href="kheiron.html"><span lang="en">Meet Kheiron</span><span lang="it">Scopri Kheiron</span></a>
+        </div>
+        <div class="dati-rapidi">
+          <div><b>6</b><span lang="en">axes</span><span lang="it">assi</span></div>
+          <div><b>~400 mm</b><span lang="en">reach with gripper</span><span lang="it">sbraccio con pinza</span></div>
+          <div><b>100%</b><span lang="en">printable structure</span><span lang="it">struttura stampabile</span></div>
+        </div>
+      </div>
+      <div class="scena3d" data-kheiron>
+        <div class="orbita lenta"></div>
+        <div class="caricando">0%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section class="sezione">
+    <div class="contenitore compare">
+      <div class="occhiello"><span lang="en">Why Orbinel</span><span lang="it">Perché Orbinel</span></div>
+      <p class="manifesto">
+        <span lang="en">Robots should be understood, not just bought. <em>Every Orbinel robot is modular, documented down to the last screw, and simulated before it moves — so you can build it, change it and learn from it.</em></span>
+        <span lang="it">I robot vanno capiti, non solo comprati. <em>Ogni robot Orbinel è modulare, documentato fino all'ultima vite e simulato prima di muoversi: così puoi costruirlo, modificarlo e impararci.</em></span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ECOSISTEMA -->
+  <section class="sezione" id="ecosistema">
+    <div class="contenitore">
+      <div class="intestazione compare">
+        <div>
+          <div class="occhiello"><span lang="en">Ecosystem</span><span lang="it">Ecosistema</span></div>
+          <h2><span lang="en">Five areas,<br>one system.</span><span lang="it">Cinque aree,<br>un solo sistema.</span></h2>
+        </div>
+        <p class="grande"><span lang="en">Hardware, parts, manufacturing, software and education share the same models and the same kinematics. What you learn in the simulator is what the real robot does.</span><span lang="it">Hardware, componenti, produzione, software e formazione condividono gli stessi modelli e la stessa cinematica. Quello che impari nel simulatore è quello che fa il robot vero.</span></p>
+      </div>
+      <div class="schede">
+        <a class="scheda compare" href="kheiron.html">
+          <div class="icona-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="18" r="2.5"/><circle cx="11" cy="9" r="2"/><circle cx="18.5" cy="6.5" r="1.5"/><path d="M7.2 15.8 10 10.8M12.8 8.4l4.3-1.4M3 21h6"/></svg></div>
+          <h3>Orbinel Build</h3>
+          <p><span lang="en">Robots you build yourself, in three tiers: digital Build Pack, kit, or assembled and tested.</span><span lang="it">Robot da costruire da sé, in tre livelli: Build Pack digitale, kit, oppure montato e testato.</span></p>
+          <div class="piede"><span class="etichetta sviluppo"><span lang="en">In development</span><span lang="it">In sviluppo</span></span><span>→</span></div>
+        </a>
+        <a class="scheda compare" href="parts.html">
+          <div class="icona-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <h3>Orbinel Parts</h3>
+          <p><span lang="en">Interchangeable grippers, tools and accessories on a shared interface — plus a parametric generator.</span><span lang="it">Pinze, utensili e accessori intercambiabili su un attacco comune, più un generatore parametrico.</span></p>
+          <div class="piede"><span class="etichetta attivo"><span lang="en">Generator online</span><span lang="it">Generatore online</span></span><span>→</span></div>
+        </a>
+        <a class="scheda compare" href="make.html">
+          <div class="icona-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16M7 5v4h10V5M10 9v3l2 2 2-2V9"/><path d="M5 20h14M8 17h8"/></svg></div>
+          <h3>Orbinel Make</h3>
+          <p><span lang="en">On-demand 3D printing of small batches: robot parts, prototypes, technical spares.</span><span lang="it">Stampa 3D su richiesta di piccoli lotti: parti dei robot, prototipi, ricambi tecnici.</span></p>
+          <div class="piede"><span class="etichetta sviluppo"><span lang="en">Requests open soon</span><span lang="it">Richieste a breve</span></span><span>→</span></div>
+        </a>
+        <a class="scheda compare" href="#motion">
+          <div class="icona-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 16c3 0 3-8 6-8s3 8 6 8 3-8 6-8"/><circle cx="9" cy="8" r="1.2" fill="currentColor"/></svg></div>
+          <h3>Orbinel Motion</h3>
+          <p><span lang="en">Configure, simulate and control the robots: guided servo setup, 3D view, sequences, analysis.</span><span lang="it">Configura, simula e comanda i robot: configurazione guidata dei servo, vista 3D, sequenze, analisi.</span></p>
+          <div class="piede"><span class="etichetta attivo"><span lang="en">Preview available</span><span lang="it">Anteprima disponibile</span></span><span>→</span></div>
+        </a>
+        <a class="scheda compare" href="learn.html">
+          <div class="icona-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5M22 9v6"/></svg></div>
+          <h3>Orbinel Learn</h3>
+          <p><span lang="en">A robotics lab for schools: simulator and lessons first, then the real robot.</span><span lang="it">Un laboratorio di robotica per le scuole: prima simulatore e lezioni, poi il robot vero.</span></p>
+          <div class="piede"><span class="etichetta sviluppo"><span lang="en">Pilot programme</span><span lang="it">Progetto pilota</span></span><span>→</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- KHEIRON -->
+  <section class="sezione">
+    <div class="contenitore dueColonne">
+      <div class="compare">
+        <div class="occhiello"><span lang="en">First robot</span><span lang="it">Primo robot</span></div>
+        <h2>Kheiron.</h2>
+        <p class="grande"><span lang="en">A 6-axis desktop arm with a spherical wrist, smart serial servos and a parallel gripper. Every structural part is 3D printed; the electronics fit inside the base.</span><span lang="it">Un braccio da scrivania a 6 assi con polso sferico, servo seriali intelligenti e pinza parallela. Ogni parte strutturale è stampata in 3D; l'elettronica sta dentro la base.</span></p>
+        <ul class="elenco">
+          <li><b><span lang="en">Closed-form kinematics</span><span lang="it">Cinematica in forma chiusa</span></b> — <span lang="en">same architecture as industrial arms.</span><span lang="it">la stessa architettura dei bracci industriali.</span></li>
+          <li><b><span lang="en">Hardware emergency stop</span><span lang="it">Arresto d'emergenza fisico</span></b> — <span lang="en">servos freeze and hold position.</span><span lang="it">i servo si fermano e tengono la posizione.</span></li>
+          <li><b><span lang="en">Tool interface</span><span lang="it">Attacco utensile</span></b> — <span lang="en">swap gripper and tools in seconds.</span><span lang="it">cambi pinza e utensili in pochi secondi.</span></li>
+        </ul>
+        <a class="pulsante" href="kheiron.html"><span lang="en">Specifications and dev log</span><span lang="it">Specifiche e diario di sviluppo</span> <span class="freccia">→</span></a>
+      </div>
+      <div class="cornice compare"><img src="img/kheiron-pinza.png" alt="Kheiron gripper, CAD render" loading="lazy" width="1200" height="900"></div>
+    </div>
+  </section>
+
+  <!-- MOTION -->
+  <section class="sezione" id="motion">
+    <div class="contenitore">
+      <div class="intestazione compare">
+        <div>
+          <div class="occhiello">Orbinel Motion</div>
+          <h2><span lang="en">Simulate first.<br>Then move.</span><span lang="it">Prima simula.<br>Poi muovi.</span></h2>
+        </div>
+        <p class="grande"><span lang="en">Runs in the browser. Without a robot it is a full simulator; plug in Kheiron over USB and the real arm follows.</span><span lang="it">Funziona nel browser. Senza robot è un simulatore completo; colleghi Kheiron via USB e il braccio vero segue.</span></p>
+      </div>
+      <div class="cornice compare"><img src="img/motion.png" alt="Orbinel Motion interface" loading="lazy" width="1440" height="900"></div>
+      <div class="schede" style="margin-top:16px">
+        <div class="scheda compare"><h3 style="margin-top:0"><span lang="en">Guided setup</span><span lang="it">Configurazione guidata</span></h3><p><span lang="en">Find servos, assign IDs, calibrate zero and gripper step by step.</span><span lang="it">Trova i servo, assegna gli ID, calibra zero e pinza passo per passo.</span></p></div>
+        <div class="scheda compare"><h3 style="margin-top:0"><span lang="en">Joint & Cartesian control</span><span lang="it">Comando giunti e cartesiano</span></h3><p><span lang="en">Sliders or X, Y, Z targets with inverse kinematics and collision checks.</span><span lang="it">Cursori o punti X, Y, Z con cinematica inversa e controllo delle collisioni.</span></p></div>
+        <div class="scheda compare"><h3 style="margin-top:0"><span lang="en">Load analysis</span><span lang="it">Analisi dei carichi</span></h3><p><span lang="en">Torque on every joint, safety margins, singularities and workspace — estimated from the real CAD.</span><span lang="it">Coppia su ogni giunto, margini, singolarità e spazio di lavoro, stimati dal CAD reale.</span></p></div>
+        <div class="scheda compare"><h3 style="margin-top:0"><span lang="en">Poses & sequences</span><span lang="it">Pose e sequenze</span></h3><p><span lang="en">Teach points, chain them, run with a countdown. Export and share as a file.</span><span lang="it">Salva i punti, mettili in fila, esegui con il conto alla rovescia. Esporta e condividi in un file.</span></p></div>
+      </div>
+      <div class="pulsanti compare" style="margin-top:28px"><a class="pulsante primario" href="motion/"><span lang="en">Open the simulator</span><span lang="it">Apri il simulatore</span> <span class="freccia">→</span></a></div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="sezione" id="roadmap">
+    <div class="contenitore">
+      <div class="intestazione compare">
+        <div>
+          <div class="occhiello">Roadmap</div>
+          <h2><span lang="en">Built in public,<br>step by step.</span><span lang="it">Sviluppato in pubblico,<br>un passo alla volta.</span></h2>
+        </div>
+        <p class="grande"><span lang="en">No dates we can't keep. This is the order we work in, and where we are now.</span><span lang="it">Nessuna data che non possiamo mantenere. Questo è l'ordine in cui lavoriamo, e dove siamo adesso.</span></p>
+      </div>
+      <div class="roadmap compare">
+        <div class="tappa fatta"><span class="punto"></span><span class="quando"><span lang="en">Done</span><span lang="it">Fatto</span></span><div><h4><span lang="en">Kheiron CAD and kinematics</span><span lang="it">CAD e cinematica di Kheiron</span></h4><p><span lang="en">Full assembly, joint ranges, torque checks, gripper, electronics bay.</span><span lang="it">Assieme completo, corse dei giunti, verifiche di coppia, pinza, vano elettronica.</span></p></div><span class="etichetta attivo"><span lang="en">Done</span><span lang="it">Fatto</span></span></div>
+        <div class="tappa ora"><span class="punto"></span><span class="quando"><span lang="en">Now</span><span lang="it">Ora</span></span><div><h4><span lang="en">Physical prototype + Motion</span><span lang="it">Prototipo fisico + Motion</span></h4><p><span lang="en">Printing, assembly, first moves with real servos; simulator and control software.</span><span lang="it">Stampa, montaggio, primi movimenti con i servo veri; simulatore e software di controllo.</span></p></div><span class="etichetta sviluppo"><span lang="en">In progress</span><span lang="it">In corso</span></span></div>
+        <div class="tappa"><span class="punto"></span><span class="quando"><span lang="en">Next</span><span lang="it">Poi</span></span><div><h4><span lang="en">Kheiron Build Pack + first Parts</span><span lang="it">Build Pack di Kheiron + prime Parts</span></h4><p><span lang="en">Verified files, illustrated assembly guide, bill of materials, Motion profile.</span><span lang="it">File verificati, guida di montaggio illustrata, distinta componenti, profilo per Motion.</span></p></div><span class="etichetta futuro"><span lang="en">Planned</span><span lang="it">Previsto</span></span></div>
+        <div class="tappa"><span class="punto"></span><span class="quando"><span lang="en">Next</span><span lang="it">Poi</span></span><div><h4><span lang="en">Learn pilot in schools</span><span lang="it">Pilota Learn nelle scuole</span></h4><p><span lang="en">Lessons tested in real classrooms with teachers.</span><span lang="it">Lezioni provate in classi vere con i docenti.</span></p></div><span class="etichetta futuro"><span lang="en">Planned</span><span lang="it">Previsto</span></span></div>
+        <div class="tappa"><span class="punto"></span><span class="quando"><span lang="en">Later</span><span lang="it">Dopo</span></span><div><h4><span lang="en">Kits and on-demand printing</span><span lang="it">Kit e stampa su richiesta</span></h4><p><span lang="en">Printed parts and kits, once the design is validated.</span><span lang="it">Parti stampate e kit, quando il progetto è validato.</span></p></div><span class="etichetta futuro"><span lang="en">Planned</span><span lang="it">Previsto</span></span></div>
+        <div class="tappa"><span class="punto"></span><span class="quando"><span lang="en">Later</span><span lang="it">Dopo</span></span><div><h4><span lang="en">Assembled robots and new families</span><span lang="it">Robot montati e nuove famiglie</span></h4><p><span lang="en">Tested robots, then new modular robots — starting with a mobile base.</span><span lang="it">Robot testati, poi nuovi robot modulari, a partire da una base mobile.</span></p></div><span class="etichetta futuro"><span lang="en">Vision</span><span lang="it">Visione</span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHI SIAMO -->
+  <section class="sezione" id="chi">
+    <div class="contenitore dueColonne">
+      <div class="compare">
+        <div class="occhiello"><span lang="en">About</span><span lang="it">Chi siamo</span></div>
+        <h2><span lang="en">From an orbit,<br>a system.</span><span lang="it">Da un'orbita,<br>un sistema.</span></h2>
+      </div>
+      <div class="compare">
+        <p class="grande"><span lang="en">Orbinel comes from the Latin <i>orbis</i> — circle, disc, world. Rotation is what every joint does, and a system is what joints become together.</span><span lang="it">Orbinel viene dal latino <i>orbis</i>: cerchio, disco, mondo. La rotazione è ciò che fa ogni giunto, e un sistema è ciò che i giunti diventano insieme.</span></p>
+        <p><span lang="en">Orbinel Robotics is an early-stage project born in Italy from mechanical design, 3D printing and software. We start with one robot done properly, and we grow from there — new robots, new parts, new fields. Everything we learn, we document.</span><span lang="it">Orbinel Robotics è un progetto nato in Italia da progettazione meccanica, stampa 3D e software. Partiamo da un robot fatto bene e cresciamo da lì: nuovi robot, nuove parti, nuovi settori. Tutto quello che impariamo, lo documentiamo.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATTI -->
+  <section class="sezione" id="contatti">
+    <div class="contenitore">
+      <form class="modulo compare" data-modulo="lista" novalidate>
+        <div class="intestazione" style="margin-bottom:32px">
+          <div>
+            <div class="occhiello"><span lang="en">Waitlist</span><span lang="it">Lista d'attesa</span></div>
+            <h2 style="margin:0"><span lang="en">Follow the build.</span><span lang="it">Segui lo sviluppo.</span></h2>
+          </div>
+          <p><span lang="en">Tell us what interests you. We write only when there is something real to show.</span><span lang="it">Dicci cosa ti interessa. Scriviamo solo quando c'è qualcosa di concreto da mostrare.</span></p>
+        </div>
+        <div class="campi">
+          <div class="campo"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" data-ph-en="you@example.com" data-ph-it="tu@esempio.it"></div>
+          <div class="campo"><label for="nome"><span lang="en">Name (optional)</span><span lang="it">Nome (facoltativo)</span></label><input id="nome" name="nome" type="text" autocomplete="name"></div>
+          <fieldset class="campo largo">
+            <legend><span lang="en">I'm interested in</span><span lang="it">Mi interessa</span></legend>
+            <div class="spunte">
+              <label><input type="checkbox" name="interessi" value="build-pack"> Kheiron Build Pack</label>
+              <label><input type="checkbox" name="interessi" value="kit"> <span lang="en">Kit</span><span lang="it">Kit</span></label>
+              <label><input type="checkbox" name="interessi" value="montato"> <span lang="en">Assembled robot</span><span lang="it">Robot montato</span></label>
+              <label><input type="checkbox" name="interessi" value="parts"> Parts</label>
+              <label><input type="checkbox" name="interessi" value="make"> <span lang="en">3D printing</span><span lang="it">Stampa 3D</span></label>
+              <label><input type="checkbox" name="interessi" value="motion"> Motion</label>
+              <label><input type="checkbox" name="interessi" value="learn"> <span lang="en">Schools (Learn)</span><span lang="it">Scuole (Learn)</span></label>
+            </div>
+          </fieldset>
+          <div class="campo largo"><label for="messaggio"><span lang="en">Message (optional)</span><span lang="it">Messaggio (facoltativo)</span></label><textarea id="messaggio" name="messaggio"></textarea></div>
+        </div>
+        <div class="pulsanti" style="margin-top:20px"><button class="pulsante primario" type="submit"><span lang="en">Join</span><span lang="it">Iscriviti</span> <span class="freccia">→</span></button></div>
+        <p class="esito" role="status"></p>
+        <p class="privacy"><span lang="en">We use your email only to send Orbinel updates. You can ask to be removed at any time.</span><span lang="it">Usiamo la tua email solo per gli aggiornamenti su Orbinel. Puoi chiedere di essere rimosso in qualsiasi momento.</span></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="piede-sito">
+  <div class="contenitore">
+    <div>
+      <img src="brand/logo-motto-scuro.svg" alt="Orbinel · Engineering Motion" width="200" height="40" style="height:40px;width:auto;margin-bottom:18px">
+      <p style="max-width:320px;font-size:14px"><span lang="en">Modular robots and the tools to build, simulate and learn them. Designed in Italy, built in public.</span><span lang="it">Robot modulari e gli strumenti per costruirli, simularli e impararli. Progettati in Italia, sviluppati in pubblico.</span></p>
+    </div>
+    <div>
+      <h5><span lang="en">Ecosystem</span><span lang="it">Ecosistema</span></h5>
+      <a href="kheiron.html">Kheiron</a>
+      <a href="parts.html">Parts</a>
+      <a href="make.html">Make</a>
+      <a href="motion/">Motion</a>
+      <a href="learn.html">Learn</a>
+    </div>
+    <div>
+      <h5><span lang="en">Project</span><span lang="it">Progetto</span></h5>
+      <a href="index.html#roadmap">Roadmap</a>
+      <a href="kheiron.html#diario"><span lang="en">Dev log</span><span lang="it">Diario di sviluppo</span></a>
+      <a href="index.html#chi"><span lang="en">About</span><span lang="it">Chi siamo</span></a>
+    </div>
+    <div>
+      <h5><span lang="en">Follow</span><span lang="it">Seguici</span></h5>
+      <a data-instagram href="#" rel="noopener">Instagram</a>
+      <a data-email href="#"></a>
+      <a href="index.html#contatti"><span lang="en">Waitlist</span><span lang="it">Lista d'attesa</span></a>
+    </div>
+    <div class="fondo">
+      <span>© <span data-anno>2026</span> Orbinel Robotics · <span lang="en">early-stage project, specifications subject to change</span><span lang="it">progetto in fase iniziale, specifiche soggette a modifiche</span></span>
+      <span>Engineering Motion.</span>
+    </div>
+  </div>
+</footer>
+
+
+<script src="js/config.js"></script>
+<script src="js/sito.js"></script>
+<script src="motion/lib/three.min.js"></script>
+<script src="motion/lib/OrbitControls.js"></script>
+<script src="motion/js/robot.js"></script>
+<script src="motion/js/cinematica.js"></script>
+<script src="motion/js/scena.js"></script>
+<script src="motion/js/vetrina.js"></script>
+<script src="js/kheiron3d.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en" data-lingua="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kheiron · Orbinel Robotics</title>
+<meta name="titolo-en" content="Kheiron · Orbinel Robotics">
+<meta name="titolo-it" content="Kheiron · Orbinel Robotics">
+<meta name="description" content="Kheiron is a 6-axis desktop robot arm with a spherical wrist, STS3215 serial servos and a parallel gripper. 3D printed, documented, simulated in Orbinel Motion.">
+<meta property="og:image" content="img/anteprima.png">
+<meta name="theme-color" content="#0B0D10">
+<link rel="icon" href="brand/simbolo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/stile.css">
+</head>
+<body>
+<header class="barra">
+  <div class="contenitore">
+    <a class="logo" href="index.html" aria-label="Orbinel Robotics"><img src="brand/logo-scuro.svg" alt="Orbinel" width="172" height="22"></a>
+    <nav class="menu" aria-label="Principale">
+      <a href="kheiron.html" aria-current="page"><span lang="en">Kheiron</span><span lang="it">Kheiron</span></a>
+      <a href="parts.html"><span lang="en">Parts</span><span lang="it">Parts</span></a>
+      <a href="make.html"><span lang="en">Make</span><span lang="it">Make</span></a>
+      <a href="index.html#motion"><span lang="en">Motion</span><span lang="it">Motion</span></a>
+      <a href="learn.html"><span lang="en">Learn</span><span lang="it">Learn</span></a>
+      <a href="index.html#roadmap"><span lang="en">Roadmap</span><span lang="it">Roadmap</span></a>
+      <a href="index.html#contatti"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
+      <div class="lingua" role="group" aria-label="Language"><button type="button" data-lingua="en">EN</button><button type="button" data-lingua="it">IT</button></div>
+    </nav>
+    <button class="hamburger" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+  <section class="apertura" style="min-height:auto;padding:56px 0 72px">
+    <div class="griglia-sfondo"></div>
+    <div class="contenitore">
+      <div>
+        <div class="stato"><i></i><span lang="en">Prototype in development</span><span lang="it">Prototipo in sviluppo</span></div>
+        <div class="occhiello"><span lang="en">Orbinel · first robot</span><span lang="it">Orbinel · primo robot</span></div>
+        <h1>Kheiron.</h1>
+        <p class="grande"><span lang="en">A six-axis arm you can build, understand and extend. Named after the centaur who taught the heroes — because it is made to teach as much as to move.</span><span lang="it">Un braccio a sei assi da costruire, capire e ampliare. Prende il nome dal centauro maestro degli eroi: è fatto per insegnare tanto quanto per muoversi.</span></p>
+        <div class="pulsanti">
+          <a class="pulsante primario" href="#livelli"><span lang="en">Ways to get it</span><span lang="it">Come averlo</span> <span class="freccia">→</span></a>
+          <a class="pulsante" href="motion/"><span lang="en">Try it in the simulator</span><span lang="it">Provalo nel simulatore</span></a>
+        </div>
+        <p style="font-size:13px;margin-top:22px"><span lang="en">Drag to rotate, scroll to zoom.</span><span lang="it">Trascina per ruotare, scorri per lo zoom.</span></p>
+      </div>
+      <div class="scena3d" data-kheiron="interattivo"><div class="orbita"></div><div class="caricando">0%</div></div>
+    </div>
+  </section>
+
+  <section class="sezione">
+    <div class="contenitore">
+      <div class="intestazione compare">
+        <div>
+          <div class="occhiello"><span lang="en">Specifications</span><span lang="it">Specifiche</span></div>
+          <h2><span lang="en">Design values.</span><span lang="it">Valori di progetto.</span></h2>
+        </div>
+        <p class="grande"><span lang="en">From the CAD model and its checks. They will be confirmed — or corrected — on the printed prototype, and we will publish both.</span><span lang="it">Dal modello CAD e dalle sue verifiche. Saranno confermati, o corretti, sul prototipo stampato, e pubblicheremo entrambi.</span></p>
+      </div>
+      <div class="scorre-x compare">
+        <table class="tabella">
+          <tbody>
+            <tr><td><span lang="en">Architecture</span><span lang="it">Architettura</span></td><td><span lang="en">6 rotary axes, anthropomorphic, spherical wrist</span><span lang="it">6 assi rotoidali, antropomorfo, polso sferico</span><span class="nota"><span lang="en">closed-form inverse kinematics</span><span lang="it">cinematica inversa in forma chiusa</span></span></td></tr>
+            <tr><td><span lang="en">Link lengths</span><span lang="it">Lunghezze dei link</span></td><td><span lang="en">shoulder height 125 mm · upper arm 130 mm · forearm 130 mm</span><span lang="it">altezza spalla 125 mm · braccio 130 mm · avambraccio 130 mm</span></td></tr>
+            <tr><td><span lang="en">Reach</span><span lang="it">Sbraccio</span></td><td><span lang="en">about 400 mm from the shoulder, with gripper</span><span lang="it">circa 400 mm dalla spalla, con la pinza</span></td></tr>
+            <tr><td><span lang="en">Joint ranges (software limits)</span><span lang="it">Corse dei giunti (limiti software)</span></td><td>J1 ±150° · J2 ±100° · J3 −120…+45° · J4 ±170° · J5 ±95° · J6 ±170°</td></tr>
+            <tr><td><span lang="en">Actuators</span><span lang="it">Attuatori</span></td><td><span lang="en">8 × Feetech STS3215 12 V serial bus servos, two on the shoulder</span><span lang="it">8 × servo seriali Feetech STS3215 a 12 V, due sulla spalla</span><span class="nota"><span lang="en">12-bit magnetic encoder (0.088°), 10 kg·cm continuous, 30 kg·cm peak</span><span lang="it">encoder magnetico a 12 bit (0,088°), 10 kg·cm continui, 30 kg·cm di picco</span></span></td></tr>
+            <tr><td><span lang="en">Payload</span><span lang="it">Carico utile</span></td><td><span lang="en">100 g design target at full extension</span><span lang="it">obiettivo di progetto 100 g a braccio disteso</span><span class="nota"><span lang="en">estimated elbow margin 1.17 in the worst case; more in compact poses</span><span lang="it">margine stimato al gomito 1,17 nel caso peggiore; di più nelle pose raccolte</span></span></td></tr>
+            <tr><td><span lang="en">Gripper</span><span lang="it">Pinza</span></td><td><span lang="en">parallel, rack and pinion, closed housing, 0–40 mm opening</span><span lang="it">parallela, pignone e cremagliere, scatola chiusa, apertura 0–40 mm</span></td></tr>
+            <tr><td><span lang="en">Tool change</span><span lang="it">Cambio utensile</span></td><td><span lang="en">keyed shank, two M3 locking screws</span><span lang="it">codolo con piano di orientamento, due viti M3 di blocco</span></td></tr>
+            <tr><td><span lang="en">Electronics</span><span lang="it">Elettronica</span></td><td><span lang="en">serial bus servo adapter + ESP32-C3 bridge inside the base, 12 V 5 A supply</span><span lang="it">adattatore per servo a bus seriale + ponte ESP32-C3 nella base, alimentatore 12 V 5 A</span></td></tr>
+            <tr><td><span lang="en">Safety</span><span lang="it">Sicurezza</span></td><td><span lang="en">hardware emergency stop (NC contact): servos stop and hold position; countdown before every sequence</span><span lang="it">arresto d'emergenza fisico (contatto NC): i servo si fermano e tengono la posizione; conto alla rovescia prima di ogni sequenza</span></td></tr>
+            <tr><td><span lang="en">Moving mass</span><span lang="it">Massa in movimento</span></td><td><span lang="en">about 720 g, estimated from CAD (PETG at 55 %, servos 55 g)</span><span lang="it">circa 720 g, stimata dal CAD (PETG al 55 %, servo da 55 g)</span></td></tr>
+            <tr><td><span lang="en">Structure</span><span lang="it">Struttura</span></td><td><span lang="en">fully 3D printed in PETG, about 585 g of filament</span><span lang="it">tutta stampata in PETG, circa 585 g di filamento</span></td></tr>
+            <tr><td><span lang="en">Expected precision</span><span lang="it">Precisione attesa</span></td><td><span lang="en">encoder resolution ≈ 0.5 mm at the tip; real repeatability depends on servo backlash, to be measured</span><span lang="it">risoluzione dell'encoder ≈ 0,5 mm in punta; la ripetibilità reale dipende dal gioco dei servo, da misurare</span></td></tr>
+            <tr><td><span lang="en">Software</span><span lang="it">Software</span></td><td><span lang="en">Orbinel Motion (browser, USB via Web Serial)</span><span lang="it">Orbinel Motion (browser, USB tramite Web Serial)</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="sezione">
+    <div class="contenitore dueColonne">
+      <div class="cornice compare"><img src="img/kheiron.png" alt="Kheiron, render" loading="lazy" width="1200" height="900"></div>
+      <div class="compare">
+        <div class="occhiello"><span lang="en">Honest status</span><span lang="it">Stato reale</span></div>
+        <h2><span lang="en">What is verified,<br>what is not yet.</span><span lang="it">Cosa è verificato,<br>cosa non ancora.</span></h2>
+        <ul class="elenco">
+          <li><b><span lang="en">Verified in CAD</span><span lang="it">Verificato nel CAD</span></b> — <span lang="en">no interference at rest, single-joint ranges, gripper rack travel, torque estimates.</span><span lang="it">nessuna interferenza a riposo, corse dei singoli giunti, corsa della pinza, stime di coppia.</span></li>
+          <li><b><span lang="en">Verified on hardware</span><span lang="it">Verificato sull'hardware</span></b> — <span lang="en">ESP32 bridge firmware and the emergency stop input.</span><span lang="it">firmware del ponte ESP32 e ingresso dell'arresto d'emergenza.</span></li>
+          <li><b><span lang="en">Not yet</span><span lang="it">Non ancora</span></b> — <span lang="en">printed parts, screw fits on the real servo, combined-pose collisions, real backlash and payload.</span><span lang="it">pezzi stampati, viti sul servo reale, collisioni nelle pose combinate, gioco reale e carico utile.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sezione" id="livelli">
+    <div class="contenitore">
+      <div class="intestazione compare">
+        <div>
+          <div class="occhiello"><span lang="en">Ways to get it</span><span lang="it">Come averlo</span></div>
+          <h2><span lang="en">Build it, kit it,<br>or plug it in.</span><span lang="it">Costruiscilo, montalo,<br>oppure accendilo.</span></h2>
+        </div>
+        <p class="grande"><span lang="en">Three tiers, released in this order. Prices will be set after the prototype is validated — join the waitlist to be first.</span><span lang="it">Tre livelli, in arrivo in quest'ordine. I prezzi verranno fissati dopo la validazione del prototipo: entra in lista d'attesa per essere tra i primi.</span></p>
+      </div>
+      <div class="livelli">
+        <div class="livello evidenza compare">
+          <span class="etichetta sviluppo"><span lang="en">First</span><span lang="it">Primo</span></span>
+          <h3 style="margin-top:16px">Build Pack</h3>
+          <div class="prezzo"><span lang="en">Digital</span><span lang="it">Digitale</span></div>
+          <ul>
+            <li><span lang="en">STL and STEP files of every part</span><span lang="it">File STL e STEP di ogni pezzo</span></li>
+            <li><span lang="en">Illustrated assembly guide</span><span lang="it">Guida di montaggio illustrata</span></li>
+            <li><span lang="en">Bill of materials with where to buy</span><span lang="it">Distinta dei componenti con dove comprarli</span></li>
+            <li><span lang="en">Print profiles and orientations</span><span lang="it">Profili e orientamenti di stampa</span></li>
+            <li><span lang="en">Orbinel Motion profile</span><span lang="it">Profilo per Orbinel Motion</span></li>
+          </ul>
+          <a class="pulsante primario" href="index.html#contatti"><span lang="en">Join the waitlist</span><span lang="it">Lista d'attesa</span></a>
+        </div>
+        <div class="livello compare">
+          <span class="etichetta futuro"><span lang="en">Then</span><span lang="it">Poi</span></span>
+          <h3 style="margin-top:16px">Kit</h3>
+          <div class="prezzo"><span lang="en">Printed parts</span><span lang="it">Parti stampate</span></div>
+          <ul>
+            <li><span lang="en">All printed parts, ready to assemble</span><span lang="it">Tutte le parti stampate, pronte da montare</span></li>
+            <li><span lang="en">Everything in the Build Pack</span><span lang="it">Tutto il Build Pack</span></li>
+            <li><span lang="en">Later: servos and electronics included</span><span lang="it">In seguito: servo ed elettronica inclusi</span></li>
+          </ul>
+          <a class="pulsante" href="index.html#contatti"><span lang="en">Notify me</span><span lang="it">Avvisami</span></a>
+        </div>
+        <div class="livello compare">
+          <span class="etichetta futuro"><span lang="en">Later</span><span lang="it">Dopo</span></span>
+          <h3 style="margin-top:16px"><span lang="en">Assembled</span><span lang="it">Montato</span></h3>
+          <div class="prezzo"><span lang="en">Tested</span><span lang="it">Testato</span></div>
+          <ul>
+            <li><span lang="en">Assembled, calibrated and tested</span><span lang="it">Montato, calibrato e testato</span></li>
+            <li><span lang="en">For labs, schools and teams</span><span lang="it">Per laboratori, scuole e team</span></li>
+            <li><span lang="en">After safety and conformity assessment</span><span lang="it">Dopo la valutazione di sicurezza e conformità</span></li>
+          </ul>
+          <a class="pulsante" href="index.html#contatti"><span lang="en">Notify me</span><span lang="it">Avvisami</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sezione" id="diario">
+    <div class="contenitore">
+      <div class="intestazione compare">
+        <div>
+          <div class="occhiello"><span lang="en">Dev log</span><span lang="it">Diario di sviluppo</span></div>
+          <h2>Building Kheiron.</h2>
+        </div>
+        <p class="grande"><span lang="en">Every step, including the ones that went wrong.</span><span lang="it">Ogni passo, compresi quelli andati storti.</span></p>
+      </div>
+      <div class="diario">
+        <article class="voce compare"><time datetime="2026-10-25">25.10.2026</time><div><h4><span lang="en">Orbinel Motion is born</span><span lang="it">Nasce Orbinel Motion</span></h4><p><span lang="en">The control panel becomes Orbinel Motion: load analysis from the CAD masses, workspace, singularities and six school lessons checked by the simulator. Bridge firmware flashed, emergency stop tested on the board.</span><span lang="it">Il pannello di controllo diventa Orbinel Motion: analisi dei carichi dalle masse del CAD, spazio di lavoro, singolarità e sei lezioni per le scuole verificate dal simulatore. Firmware del ponte caricato, arresto d'emergenza provato sulla scheda.</span></p></div></article>
+        <article class="voce compare"><time datetime="2026-10-24">24.10.2026</time><div><h4><span lang="en">Boards on the bench, base raised</span><span lang="it">Schede sul banco, base alzata</span></h4><p><span lang="en">The ESP32-C3 works. Straight jumper wires on the UART header need 29 mm and the bay had 18.5: the shoulder goes from 110 to 125 mm above the table. The whole model turns black — one spool, one colour.</span><span lang="it">L'ESP32-C3 funziona. I cavetti dritti sul connettore UART richiedono 29 mm e il vano ne aveva 18,5: la spalla passa da 110 a 125 mm dal tavolo. Tutto il modello diventa nero: una bobina, un colore.</span></p></div></article>
+        <article class="voce compare"><time datetime="2026-10-09">09.10.2026</time><div><h4><span lang="en">Electronics and a real emergency stop</span><span lang="it">Elettronica e un vero arresto d'emergenza</span></h4><p><span lang="en">An ESP32-C3 sits between computer and servos and reads a mushroom button on a normally-closed contact: pressed, every servo stops and holds. First test kit ordered.</span><span lang="it">Un ESP32-C3 sta tra computer e servo e legge un pulsante a fungo su un contatto normalmente chiuso: premuto, ogni servo si ferma e tiene la posizione. Ordinato il primo kit di prova.</span></p></div></article>
+        <article class="voce compare"><time datetime="2026-10-08">08.10.2026</time><div><h4><span lang="en">From boxes to a real robot</span><span lang="it">Dalle scatole a un robot vero</span></h4><p><span lang="en">The first square version is scrapped. New joint discs, round covers and a closed parallel gripper with rack and pinion, inspired by industrial grippers. 35 of 40 random poses free of collisions; the other 5 go below the table.</span><span lang="it">La prima versione squadrata viene scartata. Nuovi dischi di giunto, carter tondi e una pinza parallela chiusa a pignone e cremagliere, ispirata alle pinze industriali. 35 pose casuali su 40 senza collisioni; le altre 5 scendono sotto il tavolo.</span></p></div></article>
+        <article class="voce compare"><time datetime="2026-10-07">07.10.2026</time><div><h4><span lang="en">The specification</span><span lang="it">La specifica</span></h4><p><span lang="en">Six axes, spherical wrist, smart serial servos everywhere and two on the shoulder, because one alone cannot hold the arm. The model is generated by a Python script in Fusion, so every dimension stays parametric.</span><span lang="it">Sei assi, polso sferico, servo seriali intelligenti ovunque e due sulla spalla, perché uno solo non regge il braccio. Il modello è generato da uno script Python in Fusion, così ogni quota resta parametrica.</span></p></div></article>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="piede-sito">
+  <div class="contenitore">
+    <div>
+      <img src="brand/logo-motto-scuro.svg" alt="Orbinel · Engineering Motion" width="200" height="40" style="height:40px;width:auto;margin-bottom:18px">
+      <p style="max-width:320px;font-size:14px"><span lang="en">Modular robots and the tools to build, simulate and learn them. Designed in Italy, built in public.</span><span lang="it">Robot modulari e gli strumenti per costruirli, simularli e impararli. Progettati in Italia, sviluppati in pubblico.</span></p>
+    </div>
+    <div>
+      <h5><span lang="en">Ecosystem</span><span lang="it">Ecosistema</span></h5>
+      <a href="kheiron.html">Kheiron</a>
+      <a href="parts.html">Parts</a>
+      <a href="make.html">Make</a>
+      <a href="motion/">Motion</a>
+      <a href="learn.html">Learn</a>
+    </div>
+    <div>
+      <h5><span lang="en">Project</span><span lang="it">Progetto</span></h5>
+      <a href="index.html#roadmap">Roadmap</a>
+      <a href="kheiron.html#diario"><span lang="en">Dev log</span><span lang="it">Diario di sviluppo</span></a>
+      <a href="index.html#chi"><span lang="en">About</span><span lang="it">Chi siamo</span></a>
+    </div>
+    <div>
+      <h5><span lang="en">Follow</span><span lang="it">Seguici</span></h5>
+      <a data-instagram href="#" rel="noopener">Instagram</a>
+      <a data-email href="#"></a>
+      <a href="index.html#contatti"><span lang="en">Waitlist</span><span lang="it">Lista d'attesa</span></a>
+    </div>
+    <div class="fondo">
+      <span>© <span data-anno>2026</span> Orbinel Robotics · <span lang="en">early-stage project, specifications subject to change</span><span lang="it">progetto in fase iniziale, specifiche soggette a modifiche</span></span>
+      <span>Engineering Motion.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/sito.js"></script>
+<script src="motion/lib/three.min.js"></script>
+<script src="motion/lib/OrbitControls.js"></script>
+<script src="motion/js/robot.js"></script>
+<script src="motion/js/cinematica.js"></script>
+<script src="motion/js/scena.js"></script>
+<script src="motion/js/vetrina.js"></script>
+<script src="js/kheiron3d.js"></script>
+</body>
+</html>

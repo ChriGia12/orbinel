@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en" data-lingua="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbinel Learn · Robotics for schools</title>
+<meta name="titolo-en" content="Orbinel Learn · Robotics for schools">
+<meta name="titolo-it" content="Orbinel Learn · Robotica per le scuole">
+<meta name="description" content="A robotics lab for schools: a browser simulator with lessons that check themselves, then the real Kheiron robot. Kinematics, workspace, singularities, torque and programming.">
+<meta name="theme-color" content="#0B0D10">
+<link rel="icon" href="brand/simbolo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/stile.css">
+</head>
+<body>
+<header class="barra">
+  <div class="contenitore">
+    <a class="logo" href="index.html" aria-label="Orbinel Robotics"><img src="brand/logo-scuro.svg" alt="Orbinel" width="172" height="22"></a>
+    <nav class="menu" aria-label="Principale">
+      <a href="kheiron.html"><span lang="en">Kheiron</span><span lang="it">Kheiron</span></a>
+      <a href="parts.html"><span lang="en">Parts</span><span lang="it">Parts</span></a>
+      <a href="make.html"><span lang="en">Make</span><span lang="it">Make</span></a>
+      <a href="index.html#motion"><span lang="en">Motion</span><span lang="it">Motion</span></a>
+      <a href="learn.html" aria-current="page"><span lang="en">Learn</span><span lang="it">Learn</span></a>
+      <a href="index.html#roadmap"><span lang="en">Roadmap</span><span lang="it">Roadmap</span></a>
+      <a href="index.html#contatti"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
+      <div class="lingua" role="group" aria-label="Language"><button type="button" data-lingua="en">EN</button><button type="button" data-lingua="it">IT</button></div>
+    </nav>
+    <button class="hamburger" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+  <section class="testata">
+    <div class="griglia-sfondo"></div>
+    <div class="contenitore" style="position:relative">
+      <div class="occhiello">Orbinel Learn</div>
+      <h1><span lang="en">Simulate first.<br>Then the real robot.</span><span lang="it">Prima la simulazione.<br>Poi il robot vero.</span></h1>
+      <p class="grande"><span lang="en">A robotics lab for technical schools. Students learn on a simulator that behaves like the real arm — with its limits, its loads, its singularities — and only then run their programs on Kheiron.</span><span lang="it">Un laboratorio di robotica per gli istituti tecnici. Gli studenti imparano su un simulatore che si comporta come il braccio vero, con i suoi limiti, i suoi carichi e le sue singolarità, e solo dopo eseguono i loro programmi su Kheiron.</span></p>
+      <div class="pulsanti"><a class="pulsante primario" href="motion/"><span lang="en">Open the lessons</span><span lang="it">Apri le lezioni</span> <span class="freccia">→</span></a><a class="pulsante" href="#pilota"><span lang="en">School pilot</span><span lang="it">Progetto pilota</span></a></div>
+    </div>
+  </section>
+
+  <section class="sezione">
+    <div class="contenitore">
+      <div class="intestazione compare">
+        <div>
+          <div class="occhiello"><span lang="en">What it teaches</span><span lang="it">Cosa insegna</span></div>
+          <h2><span lang="en">Real constraints,<br>not a video game.</span><span lang="it">Vincoli reali,<br>non un videogioco.</span></h2>
+        </div>
+        <p class="grande"><span lang="en">The simulator uses the same CAD, the same kinematics and the same software as the physical robot. Exercises are checked automatically while students move the arm.</span><span lang="it">Il simulatore usa lo stesso CAD, la stessa cinematica e lo stesso software del robot fisico. Gli esercizi si verificano da soli mentre gli studenti muovono il braccio.</span></p>
+      </div>
+      <div class="schede">
+        <div class="scheda compare"><span class="etichetta">1 · 1h</span><h3><span lang="en">Joints and degrees of freedom</span><span lang="it">Giunti e gradi di libertà</span></h3><p><span lang="en">Six rotary joints, position and orientation, moving joint by joint.</span><span lang="it">Sei giunti rotoidali, posizione e orientamento, movimento giunto per giunto.</span></p></div>
+        <div class="scheda compare"><span class="etichetta">2 · 1h</span><h3><span lang="en">Workspace and limits</span><span lang="it">Spazio di lavoro e limiti</span></h3><p><span lang="en">Which points the arm reaches, joint limits, collisions with table and base.</span><span lang="it">Quali punti raggiunge il braccio, limiti dei giunti, collisioni con tavolo e base.</span></p></div>
+        <div class="scheda compare"><span class="etichetta">3 · 2h</span><h3><span lang="en">Forward and inverse kinematics</span><span lang="it">Cinematica diretta e inversa</span></h3><p><span lang="en">From angles to position and back; the spherical wrist trick used in industry.</span><span lang="it">Dagli angoli alla posizione e ritorno; il polso sferico usato nell'industria.</span></p></div>
+        <div class="scheda compare"><span class="etichetta">4 · 1h</span><h3><span lang="en">Singularities</span><span lang="it">Singolarità</span></h3><p><span lang="en">Wrist, elbow and shoulder singularities, and why robots avoid them.</span><span lang="it">Singolarità di polso, gomito e spalla, e perché i robot le evitano.</span></p></div>
+        <div class="scheda compare"><span class="etichetta">5 · 2h</span><h3><span lang="en">Torque, loads and motor sizing</span><span lang="it">Coppie, carichi e scelta dei motori</span></h3><p><span lang="en">Gravity torque on every joint, safety margins, why the shoulder has two servos.</span><span lang="it">Coppia dovuta alla gravità su ogni giunto, margini, perché la spalla ha due servo.</span></p></div>
+        <div class="scheda compare"><span class="etichetta">6 · 2h</span><h3><span lang="en">Sequences and pick-and-place</span><span lang="it">Sequenze e pick-and-place</span></h3><p><span lang="en">Teaching points, building a cycle, testing it in simulation before the real robot.</span><span lang="it">Programmazione per punti, costruzione di un ciclo, prova in simulazione prima del robot vero.</span></p></div>
+      </div>
+      <p style="font-size:14px;margin-top:20px"><span lang="en">Each lesson comes with teacher notes, a student sheet and a check question. Lessons 1–6 are available now in the simulator, in Italian; English and a final project (a small automated cell) are next.</span><span lang="it">Ogni lezione ha la scheda per il docente, quella per lo studente e una domanda di verifica. Le lezioni 1–6 sono già nel simulatore, in italiano; seguiranno l'inglese e un progetto finale (una piccola cella automatizzata).</span></p>
+    </div>
+  </section>
+
+  <section class="sezione">
+    <div class="contenitore">
+      <div class="intestazione compare">
+        <div>
+          <div class="occhiello"><span lang="en">For schools</span><span lang="it">Per le scuole</span></div>
+          <h2><span lang="en">Three levels.</span><span lang="it">Tre livelli.</span></h2>
+        </div>
+        <p class="grande"><span lang="en">Start with the simulator alone, add robots when the class is ready.</span><span lang="it">Si parte dal solo simulatore e si aggiungono i robot quando la classe è pronta.</span></p>
+      </div>
+      <div class="livelli">
+        <div class="livello compare">
+          <h3>Sim</h3>
+          <div class="prezzo"><span lang="en">Simulator</span><span lang="it">Simulatore</span></div>
+          <ul>
+            <li><span lang="en">Browser simulator, no installation</span><span lang="it">Simulatore nel browser, senza installazioni</span></li>
+            <li><span lang="en">Lesson path with automatic checks</span><span lang="it">Percorso di lezioni con verifiche automatiche</span></li>
+            <li><span lang="en">Teacher area and materials</span><span lang="it">Area docente e materiali</span></li>
+          </ul>
+        </div>
+        <div class="livello evidenza compare">
+          <h3>Sim + Kit</h3>
+          <div class="prezzo"><span lang="en">Build in class</span><span lang="it">Montaggio in classe</span></div>
+          <ul>
+            <li><span lang="en">Everything in Sim</span><span lang="it">Tutto il livello Sim</span></li>
+            <li><span lang="en">1–2 Kheiron kits assembled by the students</span><span lang="it">1–2 kit Kheiron montati dagli studenti</span></li>
+            <li><span lang="en">Low-voltage electronics, speed and torque limited</span><span lang="it">Elettronica a bassa tensione, velocità e coppia limitate</span></li>
+          </ul>
+        </div>
+        <div class="livello compare">
+          <h3>Sim + Lab</h3>
+          <div class="prezzo"><span lang="en">Ready robots</span><span lang="it">Robot pronti</span></div>
+          <ul>
+            <li><span lang="en">Assembled and tested Kheiron units</span><span lang="it">Kheiron montati e testati</span></li>
+            <li><span lang="en">Teacher training</span><span lang="it">Formazione dei docenti</span></li>
+            <li><span lang="en">Quote on request</span><span lang="it">Su preventivo</span></li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:13px;margin-top:16px"><span lang="en">Kits and robots for classrooms will be offered only after a safety and conformity assessment.</span><span lang="it">Kit e robot per le classi saranno proposti solo dopo la valutazione di sicurezza e conformità.</span></p>
+    </div>
+  </section>
+
+  <section class="sezione" id="pilota">
+    <div class="contenitore">
+      <form class="modulo compare" data-modulo="learn-pilota" novalidate>
+        <div class="intestazione" style="margin-bottom:32px">
+          <div>
+            <div class="occhiello"><span lang="en">School pilot</span><span lang="it">Progetto pilota</span></div>
+            <h2 style="margin:0"><span lang="en">Teach with us.</span><span lang="it">Insegna con noi.</span></h2>
+          </div>
+          <p><span lang="en">We are looking for one or two teachers who want to try the lessons in class, free of charge, and tell us honestly what works.</span><span lang="it">Cerchiamo uno o due docenti che vogliano provare le lezioni in classe, gratuitamente, e dirci con sincerità cosa funziona.</span></p>
+        </div>
+        <div class="campi">
+          <div class="campo"><label for="l-email">Email</label><input id="l-email" name="email" type="email" required autocomplete="email"></div>
+          <div class="campo"><label for="l-nome"><span lang="en">Name</span><span lang="it">Nome</span></label><input id="l-nome" name="nome" type="text" autocomplete="name"></div>
+          <div class="campo"><label for="l-scuola"><span lang="en">School</span><span lang="it">Istituto</span></label><input id="l-scuola" name="scuola" type="text"></div>
+          <div class="campo"><label for="l-citta"><span lang="en">City</span><span lang="it">Città</span></label><input id="l-citta" name="citta" type="text"></div>
+          <div class="campo"><label for="l-ruolo"><span lang="en">Role / subject</span><span lang="it">Ruolo / materia</span></label><input id="l-ruolo" name="ruolo" type="text"></div>
+          <div class="campo"><label for="l-classi"><span lang="en">Classes and number of students</span><span lang="it">Classi e numero di studenti</span></label><input id="l-classi" name="classi" type="text"></div>
+          <div class="campo largo"><label for="l-msg"><span lang="en">Anything we should know</span><span lang="it">Qualcosa che dovremmo sapere</span></label><textarea id="l-msg" name="messaggio"></textarea></div>
+        </div>
+        <div class="pulsanti" style="margin-top:20px"><button class="pulsante primario" type="submit"><span lang="en">Apply</span><span lang="it">Candidati</span> <span class="freccia">→</span></button></div>
+        <p class="esito" role="status"></p>
+      </form>
+    </div>
+  </section>
+</main>
+<footer class="piede-sito">
+  <div class="contenitore">
+    <div>
+      <img src="brand/logo-motto-scuro.svg" alt="Orbinel · Engineering Motion" width="200" height="40" style="height:40px;width:auto;margin-bottom:18px">
+      <p style="max-width:320px;font-size:14px"><span lang="en">Modular robots and the tools to build, simulate and learn them. Designed in Italy, built in public.</span><span lang="it">Robot modulari e gli strumenti per costruirli, simularli e impararli. Progettati in Italia, sviluppati in pubblico.</span></p>
+    </div>
+    <div>
+      <h5><span lang="en">Ecosystem</span><span lang="it">Ecosistema</span></h5>
+      <a href="kheiron.html">Kheiron</a>
+      <a href="parts.html">Parts</a>
+      <a href="make.html">Make</a>
+      <a href="motion/">Motion</a>
+      <a href="learn.html">Learn</a>
+    </div>
+    <div>
+      <h5><span lang="en">Project</span><span lang="it">Progetto</span></h5>
+      <a href="index.html#roadmap">Roadmap</a>
+      <a href="kheiron.html#diario"><span lang="en">Dev log</span><span lang="it">Diario di sviluppo</span></a>
+      <a href="index.html#chi"><span lang="en">About</span><span lang="it">Chi siamo</span></a>
+    </div>
+    <div>
+      <h5><span lang="en">Follow</span><span lang="it">Seguici</span></h5>
+      <a data-instagram href="#" rel="noopener">Instagram</a>
+      <a data-email href="#"></a>
+      <a href="index.html#contatti"><span lang="en">Waitlist</span><span lang="it">Lista d'attesa</span></a>
+    </div>
+    <div class="fondo">
+      <span>© <span data-anno>2026</span> Orbinel Robotics · <span lang="en">early-stage project, specifications subject to change</span><span lang="it">progetto in fase iniziale, specifiche soggette a modifiche</span></span>
+      <span>Engineering Motion.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/sito.js"></script>
+</body>
+</html>
