@@ -29,6 +29,7 @@ a { color: inherit; }
 
 /* lingue: ogni testo esiste in inglese e in italiano, si mostra quello scelto */
 html[data-lingua="it"] [lang="en"], html[data-lingua="en"] [lang="it"] { display: none !important; }
+[hidden] { display: none !important; }   /* gli elementi nascosti dallo script restano nascosti anche se uno stile li mette a blocco */
 
 .contenitore { width: min(var(--max), 100% - 32px); margin-inline: auto; }
 .sezione { padding: clamp(72px, 10vw, 128px) 0; position: relative; }
