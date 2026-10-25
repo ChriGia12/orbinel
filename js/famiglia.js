@@ -174,7 +174,7 @@
       const a = k * Math.PI * 2, w = Math.sin(a);
       j1.rotation.z = 0.8 * w; j2.rotation.y = 0.55 * Math.sin(k * Math.PI); j3.rotation.z = 0.5 * Math.cos(a);
       j4.rotation.y = 1.25 * Math.sin(k * Math.PI); j5.rotation.z = -0.6 * w; j6.rotation.y = 0.8 * Math.sin(k * Math.PI); j7.rotation.z = 2 * k;
-    }, camera: [[1120, -1020, 860], [60, 0, 330]] };
+    }, camera: [[1380, -1260, 980], [60, 0, 400]] };
   })();
 
   // Doppio braccio · 2 × 5 assi: busto che ruota, due braccia che si muovono insieme
