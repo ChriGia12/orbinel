@@ -46,6 +46,7 @@
   document.querySelectorAll('[data-instagram]').forEach(a => {
     if (conf.instagram) a.href = conf.instagram; else a.hidden = true;
   });
+  document.querySelectorAll('[data-instagram-presto]').forEach(el => { el.hidden = !!conf.instagram; });
   document.querySelectorAll('[data-email]').forEach(a => {
     if (conf.email) { a.href = 'mailto:' + conf.email; a.textContent = conf.email; } else a.hidden = true;
   });
@@ -63,7 +64,8 @@
     dati.interessi = [...f.querySelectorAll('input[name=interessi]:checked')].map(i => i.value);
     dati.modulo = f.dataset.modulo;
     dati.lingua = html.dataset.lingua;
-    dati._subject = `Orbinel · ${dati.modulo}`;
+    const oggetti = { lista: 'lista d\'attesa', make: 'richiesta di stampa (Make)', 'learn-pilota': 'candidatura scuola (Learn)' };
+    dati._subject = `Orbinel · ${oggetti[dati.modulo] || dati.modulo}`;
     dati._template = 'table';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(dati.email || '')) { esito.className = 'esito no'; esito.textContent = t.email; return; }
     if (!conf.moduli) { esito.className = 'esito no'; esito.textContent = t.manca; return; }

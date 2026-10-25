@@ -51,6 +51,7 @@ p { margin: 0 0 1em; color: var(--tenue); }
 .barra .contenitore { display: flex; align-items: center; gap: 28px; height: 68px; }
 .logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
 .logo img { height: 22px; width: auto; }
+.logo-robotics { font: 500 11px/1 var(--font-titoli); letter-spacing: .32em; text-transform: uppercase; color: var(--tenue); margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--linea2); }
 .menu { display: flex; gap: 26px; margin-left: auto; align-items: center; }
 .menu a { text-decoration: none; color: var(--tenue); font-size: 14px; transition: color .2s; }
 .menu a:hover, .menu a[aria-current="page"] { color: var(--testo); }

@@ -6,5 +6,5 @@
 window.ORBINEL = {
   moduli: 'https://formsubmit.co/ajax/christiangiancola23@gmail.com',
   instagram: '',
-  email: '',
+  email: 'christiangiancola23@gmail.com',
 };
