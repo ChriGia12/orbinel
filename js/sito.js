@@ -69,12 +69,12 @@
 
   // --- lista d'attesa anche nella newsletter (Brevo), se configurata ---
   // conf.newsletter è l'indirizzo «action» del modulo di iscrizione di Brevo (…sibforms.com/serve/…).
-  // Brevo accetta i campi che esistono nel suo modulo: EMAIL e FIRSTNAME sempre, LINGUA e INTERESSI se aggiunti.
+  // Brevo accetta solo i campi del suo modulo «Sito Orbinel»: EMAIL, NOME, LINGUA, INTERESSI.
   async function iscriviNewsletter(dati) {
     if (!conf.newsletter || dati.modulo !== 'lista') return;
     const corpo = new FormData();
     corpo.append('EMAIL', dati.email);
-    if (dati.nome) corpo.append('FIRSTNAME', dati.nome);
+    if (dati.nome) corpo.append('NOME', dati.nome);
     corpo.append('LINGUA', dati.lingua);
     corpo.append('INTERESSI', (dati.interessi || []).join(', '));
     corpo.append('email_address_check', '');          // campo anti-spam del modulo Brevo: deve restare vuoto
