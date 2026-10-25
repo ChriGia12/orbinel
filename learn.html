@@ -9,8 +9,7 @@
 <meta name="description" content="A robotics lab for schools: a browser simulator with lessons that check themselves, then the real Kheiron robot. Kinematics, workspace, singularities, torque and programming.">
 <meta name="theme-color" content="#0B0D10">
 <link rel="icon" href="brand/simbolo.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@400;500&display=swap">
+<link rel="preload" href="fonts/space-grotesk-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/stile.css">
 </head>
 <body>
@@ -108,6 +107,7 @@
   <section class="sezione" id="pilota">
     <div class="contenitore">
       <form class="modulo compare" data-modulo="learn-pilota" novalidate>
+        <input type="text" name="_honey" class="trappola" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="intestazione" style="margin-bottom:32px">
           <div>
             <div class="occhiello"><span lang="en">School pilot</span><span lang="it">Progetto pilota</span></div>
@@ -126,6 +126,7 @@
         </div>
         <div class="pulsanti" style="margin-top:20px"><button class="pulsante primario" type="submit"><span lang="en">Apply</span><span lang="it">Candidati</span> <span class="freccia">→</span></button></div>
         <p class="esito" role="status"></p>
+        <p class="privacy"><span lang="en">We use these details only to answer you. <a href="privacy.html">Privacy</a></span><span lang="it">Usiamo questi dati solo per risponderti. <a href="privacy.html">Privacy</a></span></p>
       </form>
     </div>
   </section>
@@ -149,6 +150,7 @@
       <a href="index.html#roadmap">Roadmap</a>
       <a href="kheiron.html#diario"><span lang="en">Dev log</span><span lang="it">Diario di sviluppo</span></a>
       <a href="index.html#chi"><span lang="en">About</span><span lang="it">Chi siamo</span></a>
+      <a href="privacy.html">Privacy</a>
     </div>
     <div>
       <h5><span lang="en">Follow</span><span lang="it">Seguici</span></h5>

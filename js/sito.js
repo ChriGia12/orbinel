@@ -101,6 +101,8 @@
     if (risposte[dati.modulo]) dati._autoresponse = risposte[dati.modulo][dati.lingua] || risposte[dati.modulo].en;
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(dati.email || '')) { esito.className = 'esito no'; esito.textContent = t.email; return; }
     if (!conf.moduli) { esito.className = 'esito no'; esito.textContent = t.manca; return; }
+    // anti-spam: campo trappola compilato o invio troppo rapido dopo l'apertura della pagina → si finge un invio riuscito
+    if (dati._honey || performance.now() < 3000) { esito.className = 'esito ok'; esito.textContent = t.ok; f.reset(); return; }
     esito.className = 'esito'; esito.textContent = t.invio;
     try {
       const r = await fetch(conf.moduli, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(dati) });
