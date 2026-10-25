@@ -40,7 +40,7 @@
     <div class="griglia-sfondo"></div>
     <div class="contenitore">
       <div>
-        <div class="stato"><i></i><span lang="en">Kheiron · prototype in development</span><span lang="it">Kheiron · prototipo in sviluppo</span></div>
+        <div class="stato"><i></i><span lang="en">Early stage · built in public</span><span lang="it">Fase iniziale · sviluppato in pubblico</span></div>
         <h1>Engineering<br><span class="accento">Motion.</span></h1>
         <p class="grande">
           <span lang="en">We design modular robots and the tools to build, simulate and learn them — from the first CAD sketch to a robot on your desk.</span>
@@ -51,15 +51,12 @@
           <a class="pulsante" href="kheiron.html"><span lang="en">Meet Kheiron</span><span lang="it">Scopri Kheiron</span></a>
         </div>
         <div class="dati-rapidi">
-          <div><b>6</b><span lang="en">axes</span><span lang="it">assi</span></div>
-          <div><b>~400 mm</b><span lang="en">reach with gripper</span><span lang="it">sbraccio con pinza</span></div>
-          <div><b>100%</b><span lang="en">printable structure</span><span lang="it">struttura stampabile</span></div>
+          <div><b>5</b><span lang="en">areas, one system</span><span lang="it">aree, un solo sistema</span></div>
+          <div><b>1</b><span lang="en">robot in development</span><span lang="it">robot in sviluppo</span></div>
+          <div><b>0 €</b><span lang="en">to try the simulator</span><span lang="it">per provare il simulatore</span></div>
         </div>
       </div>
-      <div class="scena3d" data-kheiron="orbita">
-        <div class="orbita lenta"></div>
-        <div class="caricando">0%</div>
-      </div>
+      <div class="scena3d" data-orbite aria-hidden="true"><canvas></canvas></div>
     </div>
   </section>
 
@@ -284,12 +281,6 @@
 
 <script src="js/config.js"></script>
 <script src="js/sito.js"></script>
-<script src="motion/lib/three.min.js"></script>
-<script src="motion/lib/OrbitControls.js"></script>
-<script src="motion/js/robot.js"></script>
-<script src="motion/js/cinematica.js"></script>
-<script src="motion/js/scena.js"></script>
-<script src="motion/js/vetrina.js"></script>
-<script src="js/kheiron3d.js"></script>
+<script src="js/orbite.js"></script>
 </body>
 </html>
