@@ -20,7 +20,7 @@
   --ok: #3CCB7F;
   --attesa: #F2B63C;
   --r: 14px;
-  --max: 1180px;
+  --max: 1440px;
   --font-titoli: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
   --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color-scheme: dark;
@@ -37,7 +37,7 @@ a { color: inherit; }
 html[data-lingua="it"] [lang="en"], html[data-lingua="en"] [lang="it"] { display: none !important; }
 [hidden] { display: none !important; }   /* gli elementi nascosti dallo script restano nascosti anche se uno stile li mette a blocco */
 
-.contenitore { width: min(var(--max), 100% - 32px); margin-inline: auto; }
+.contenitore { width: min(var(--max), 100% - clamp(32px, 7vw, 160px)); margin-inline: auto; }   /* si allarga sugli schermi grandi */
 .sezione { padding: clamp(72px, 10vw, 128px) 0; position: relative; }
 .sezione + .sezione { border-top: 1px solid var(--linea); }
 
@@ -254,3 +254,9 @@ fieldset.campo { border: 0; padding: 0; margin: 0; }
   letter-spacing: .22em; text-transform: uppercase; color: var(--tenue); pointer-events: none; }
 .famiglia .didascalia b { color: var(--arancio); font-weight: 500; }
 @media (max-width: 620px) { .famiglia .didascalia { font-size: 10px; letter-spacing: .16em; } }
+
+/* schermi molto grandi: tutta la pagina si ingrandisce in proporzione, niente strisce vuote ai lati */
+@media (min-width: 1800px) { html { zoom: 1.15; } }
+@media (min-width: 2200px) { html { zoom: 1.4; } }
+@media (min-width: 2800px) { html { zoom: 1.75; } }
+@media (min-width: 3400px) { html { zoom: 2.1; } }

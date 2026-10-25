@@ -141,7 +141,7 @@
       const w = Math.sin(k * Math.PI * 2);
       j1.rotation.z = 0.9 * w; j2.rotation.z = -1.3 * w + 0.4 * Math.sin(k * Math.PI);
       asse3.position.z = -70 * Math.pow(Math.sin(k * Math.PI * 3), 2); utensile.rotation.z = 3 * k;
-    }, camera: [[900, -820, 650], [160, 0, 170]] };
+    }, camera: [[1020, -940, 730], [160, 0, 170]] };
   })();
 
   // Cobot · 7 assi: catena snella, giunti alternati attorno a z e a y
@@ -220,7 +220,7 @@
   Object.values(famiglia).forEach(c => { c.g.visible = false; s.add(c.g); c.g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); });
   Object.values(famiglia).forEach(c => c.parti.forEach((pz, i) => {
     pz.userData.base = pz.position.clone(); pz.userData.rot = pz.quaternion.clone();
-    pz.userData.dir = new THREE.Vector3((Math.random() - 0.5) * 520, (Math.random() - 0.5) * 520, 160 + Math.random() * 320);
+    pz.userData.dir = new THREE.Vector3((Math.random() - 0.5) * 300, (Math.random() - 0.5) * 300, 90 + Math.random() * 160);
     pz.userData.asse = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
     pz.userData.ritardo = i / c.parti.length;
   }));
@@ -234,14 +234,14 @@
   sc.mesh.filter(m => m.visible).forEach(m => {
     m.geometry.computeBoundingSphere();
     const c = m.geometry.boundingSphere.center.clone().applyMatrix4(m.matrix);
-    const dir = new THREE.Vector3(c.x - 80, c.y, Math.max(0, c.z - 120) * 0.6).normalize().multiplyScalar(260 + caso() * 140);
-    dir.z += 120 + caso() * 160;
+    const dir = new THREE.Vector3(c.x - 80, c.y, Math.max(0, c.z - 120) * 0.6).normalize().multiplyScalar(150 + caso() * 90);   // esploso contenuto: i pezzi restano nell'inquadratura
+    dir.z += 70 + caso() * 90;
     const genitore = m.parent, livello = genitore === braccio ? 0 : sc.nodi.indexOf(genitore) + 1;
     pezzi.push({ m, base: m.matrix.clone(), c, dir, asse: new THREE.Vector3(caso() - 0.5, caso() - 0.5, caso() - 0.5).normalize(), giro: (caso() - 0.5) * 3, livello });
   });
   pezzi.sort((a, b) => a.livello - b.livello || a.c.z - b.c.z);
   pezzi.forEach((p, i) => { p.ritardo = i / pezzi.length; });
-  pezziBase.forEach((p, i) => { p.userData.base = p.position.clone(); p.userData.rot = p.rotation.clone(); p.userData.dir = new THREE.Vector3((caso() - 0.5) * 500, (caso() - 0.5) * 500, 200 + caso() * 300); p.userData.ritardo = i / pezziBase.length; });
+  pezziBase.forEach((p, i) => { p.userData.base = p.position.clone(); p.userData.rot = p.rotation.clone(); p.userData.dir = new THREE.Vector3((caso() - 0.5) * 300, (caso() - 0.5) * 300, 120 + caso() * 160); p.userData.ritardo = i / pezziBase.length; });
 
   const liscia = k => (k <= 0 ? 0 : k >= 1 ? 1 : 1 - Math.pow(1 - k, 3));     // arrivo morbido
   const clamp = k => Math.max(0, Math.min(1, k));
@@ -307,7 +307,7 @@
     sc.posa(q, 12);
     scrivi(u > 0.4 && u < 6.2 ? sc0.testo : '');
     // camera che scivola piano, diversa per ogni robot
-    const [pos, mira] = sc0.camera || famiglia[sc0.nome].camera, d = u / PASSO, lontano = 0.8 * Math.max(1, 1.2 / sc.camera.aspect) ** 0.7;
+    const [pos, mira] = sc0.camera || famiglia[sc0.nome].camera, d = u / PASSO, lontano = 0.9 * Math.max(1, 1.2 / sc.camera.aspect) ** 0.7;
     sc.camera.position.set((pos[0] - 100 * d - mira[0]) * lontano + mira[0], (pos[1] + 70 * d - mira[1]) * lontano + mira[1], (pos[2] - mira[2]) * lontano + mira[2]);
     sc.camera.lookAt(...mira);
   };
