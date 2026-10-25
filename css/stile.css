@@ -176,8 +176,8 @@ a.scheda:hover { border-color: var(--linea2); transform: translateY(-2px); }
 .campo input:focus, .campo select:focus, .campo textarea:focus { outline: none; border-color: var(--arancio); }
 fieldset.campo { border: 0; padding: 0; margin: 0; }
 .spunte { display: flex; flex-wrap: wrap; gap: 8px; }
-.spunte label { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--linea2); border-radius: 999px; padding: 8px 14px; cursor: pointer; font-size: 14px; color: var(--tenue); transition: border-color .2s, color .2s; }
-.spunte input { accent-color: var(--arancio); margin: 0; }
+.spunte label { display: inline-flex; white-space: nowrap; align-items: center; gap: 8px; border: 1px solid var(--linea2); border-radius: 999px; padding: 8px 14px; cursor: pointer; font-size: 14px; color: var(--tenue); transition: border-color .2s, color .2s; }
+.spunte input[type=checkbox] { accent-color: var(--arancio); margin: 0; width: 16px; height: 16px; padding: 0; border: 0; flex: none; }   /* non prende lo stile dei campi di testo */
 .spunte label:has(input:checked) { border-color: var(--arancio); color: var(--testo); }
 .esito { font-size: 14px; margin-top: 14px; min-height: 1.4em; }
 .esito.ok { color: var(--ok); } .esito.no { color: var(--arancio2); }
