@@ -84,8 +84,8 @@
 
   // --- moduli: inviano JSON all'indirizzo configurato ---
   const testi = {
-    it: { invio: 'Invio…', ok: 'Grazie! Ti abbiamo mandato una conferma via email.', no: 'Invio non riuscito. Riprova tra poco.', manca: 'I moduli non sono ancora attivi: il sito è in anteprima.', email: 'Serve un indirizzo email valido.' },
-    en: { invio: 'Sending…', ok: 'Thank you! We have sent you a confirmation email.', no: 'Could not send. Please try again shortly.', manca: 'Forms are not active yet: this is a preview.', email: 'Please enter a valid email address.' },
+    it: { invio: 'Invio…', ok: 'Grazie! Controlla la tua email e conferma l\'iscrizione.', no: 'Invio non riuscito. Riprova tra poco.', manca: 'I moduli non sono ancora attivi: il sito è in anteprima.', email: 'Serve un indirizzo email valido.' },
+    en: { invio: 'Sending…', ok: 'Thank you! Check your inbox and confirm your subscription.', no: 'Could not send. Please try again shortly.', manca: 'Forms are not active yet: this is a preview.', email: 'Please enter a valid email address.' },
   };
   document.querySelectorAll('form[data-modulo]').forEach(f => f.addEventListener('submit', async e => {
     e.preventDefault();

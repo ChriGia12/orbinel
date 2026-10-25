@@ -7,7 +7,7 @@
 // instagram: indirizzo del profilo, quando esiste.
 window.ORBINEL = {
   moduli: 'https://formsubmit.co/ajax/christiangiancola23@gmail.com',
-  newsletter: '',
+  newsletter: 'https://f2384edd.sibforms.com/serve/MUIFAN1yoifCN6robS4AwsIspLSVXtj9Ljui6R6cs7Ut5NwVEh4NTGwWYORXENQtXfyAYTS8lMIO3sZgNvk-jorfw-NnFLOFO6mLQivdh3YAJujAod9wMay7o2yBkhKajQEv__GU2D_PGiWKQhckRd9D8HNiaUZGrEkaCbrYQYplGDyKIqcHesMrvD-8GjuYldNdZtfRKUUOiGwvZw==',
   instagram: '',
   email: 'christiangiancola23@gmail.com',
 };
