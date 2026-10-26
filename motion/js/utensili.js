@@ -58,6 +58,35 @@ function geometriaUtensile(mesh) {
   return g;
 }
 
+// Ingombro per i controlli di collisione (cinematica.js, controlla): i punti estremi di ogni pezzo in
+// 26 direzioni, in coordinate del modello in posa di riposo. Bastano a capire se pinza o utensile toccano
+// il tavolo o la base senza controllare migliaia di vertici a ogni posa. Le dita si spostano con l'apertura.
+const DIREZIONI = [];
+for (const x of [-1, 0, 1]) for (const y of [-1, 0, 1]) for (const z of [-1, 0, 1]) if (x || y || z) DIREZIONI.push([x, y, z]);
+function puntiEstremi(geo, matrice) {
+  const v = geo.attributes.position.array, P = new THREE.Vector3(), o = ROBOT.giunti[5].origine;
+  const migliori = DIREZIONI.map(() => ({ d: -Infinity, p: null }));
+  for (let i = 0; i < v.length; i += 3) {
+    P.fromArray(v, i).applyMatrix4(matrice);
+    DIREZIONI.forEach((d, k) => {
+      const s = d[0] * P.x + d[1] * P.y + d[2] * P.z;
+      if (s > migliori[k].d) migliori[k] = { d: s, p: [P.x + o[0], P.y + o[1], P.z + o[2]] };
+    });
+  }
+  return [...new Map(migliori.map(m => [m.p.join(), m.p])).values()];
+}
+
+function aggiornaIngombro() {
+  const fissi = [], dita = [];
+  scena.mesh.filter(m => m.userData.pezzo === 'flangia' || (utensili.pinza && PEZZI_PINZA.has(m.userData.pezzo)))
+    .forEach(m => fissi.push(...puntiEstremi(m.geometry, m.matrix)));
+  if (utensili.pinza) {
+    puntiEstremi(scena.dita.sx.geometry, scena.baseDita.sx).forEach(p => dita.push({ p, segno: 1 }));
+    puntiEstremi(scena.dita.dx.geometry, scena.baseDita.dx).forEach(p => dita.push({ p, segno: -1 }));
+  } else if (utensili.mesh) fissi.push(...puntiEstremi(utensili.mesh.geometry, utensili.mesh.matrix));
+  ROBOT.ingombroUtensile = { nome: utensili.pinza ? 'La pinza' : 'L\'utensile', fissi, dita };
+}
+
 function mostraPinza(visibile) {
   scena.mesh.forEach(m => { if (PEZZI_PINZA.has(m.userData.pezzo)) m.visible = visibile; });
   scena.dita.sx.visible = scena.dita.dx.visible = visibile;
@@ -117,6 +146,7 @@ async function montaUtensile(tipo, parametri) {
     const b = r.scatola, dim = [0, 1, 2].map(k => (b.max[k] - b.min[k]).toFixed(0)).join(' × ');
     info.textContent = `${dim} mm · massa stimata ${parti[1].m.toFixed(0)} g · TCP a ${r.tcp.toFixed(0)} mm dalla punta del codolo`;
   }
+  aggiornaIngombro();
   document.getElementById('btnStlUtensile').hidden = !utensili.ultimo;
   salva('utensile', { tipo: utensili.tipo, parametri: utensili.parametri });
   impostaPosa(stato.q);

@@ -110,7 +110,7 @@ async function ferma() {
 function aggiorna(daIk = false) {
   scena?.posa(stato.q, stato.pinza);
   const fk = diretta(stato.q);
-  const problemi = controlla(stato.q, imp.giunti);
+  const problemi = controlla(stato.q, imp.giunti, stato.pinza);
   scena?.segnala(problemi.length > 0);
   $('avvisi').innerHTML = problemi.map(p => `<div>⚠ ${p}</div>`).join('');
   $('posizionePinza').textContent = `Pinza: X ${fk.tcp[0].toFixed(0)}  Y ${fk.tcp[1].toFixed(0)}  Z ${fk.tcp[2].toFixed(0)} mm`;
@@ -158,7 +158,7 @@ function vaiIk() {
   const r = inversa(p, R, stato.q, imp.giunti);
   document.dispatchEvent(new CustomEvent('motion:ik', { detail: { bersaglio: p, errore: r.errore || null } }));
   if (r.errore) { $('esitoIk').textContent = '✗ ' + r.errore; scena?.mostraBersaglio(p); return false; }
-  const problemi = controlla(r.q, imp.giunti);
+  const problemi = controlla(r.q, imp.giunti, stato.pinza);
   $('esitoIk').textContent = problemi.length ? '⚠ Raggiungibile, ma: ' + problemi.join('; ') : '✓ Raggiungibile';
   scena?.mostraBersaglio(p);
   if (problemi.length && stato.segui) { avviso('Posa non sicura: il robot vero non si muove'); }
@@ -178,21 +178,26 @@ function posaVerso(p) {
   let migliore = null, costo = Infinity;
   for (const inc of [inc0, ...Array.from({ length: 37 }, (_, k) => -90 + 5 * k)]) {
     const r = inversa(p, orientamento(p, inc, rot, stato.q[0]), stato.q, imp.giunti);
-    if (r.errore || controlla(r.q, imp.giunti).length) continue;
+    if (r.errore || controlla(r.q, imp.giunti, stato.pinza).length) continue;
     const k = r.q.reduce((t, v, i) => t + Math.abs(v - stato.q[i]), 0) + Math.abs(inc - inc0) * 0.5;
     if (k < costo) { costo = k; migliore = { q: r.q, inc }; }
   }
   return migliore;
 }
 
-// Dal clic al punto: oggetto, punto della nuvola o tavolo (20 mm sopra il piano, sotto la pinza lo
-// tocca); clic nel vuoto: il primo punto raggiungibile lungo la linea del clic. Mai oltre lo spazio di lavoro.
+// Dal clic al punto: oggetto, punto della nuvola o tavolo (alla quota più bassa a cui pinza o utensile non
+// toccano il piano); clic nel vuoto: il primo punto raggiungibile lungo la linea del clic.
+// Mai oltre lo spazio di lavoro. Senza l'ingombro dell'utensile (modello non caricato) si parte da 20 mm.
 const QUOTA_TAVOLO = 20;
 function puntoDalClic(s) {
-  if (s.punto) {
-    const p = s.tipo === 'piano' ? [s.punto[0], s.punto[1], QUOTA_TAVOLO] : s.punto;
-    return { p, posa: posaVerso(p) };
+  if (s.tipo === 'piano') {
+    for (let z = ROBOT.ingombroUtensile ? 2 : QUOTA_TAVOLO; z <= 100; z += 2) {
+      const p = [s.punto[0], s.punto[1], z], posa = posaVerso(p);
+      if (posa) return { p, posa };
+    }
+    return { p: [s.punto[0], s.punto[1], QUOTA_TAVOLO], posa: null };
   }
+  if (s.punto) return { p: s.punto, posa: posaVerso(s.punto) };
   for (let t = 0; t < 4000; t += 5) {
     const p = V.add(s.origine, V.scale(s.direzione, t));
     if (p[2] < QUOTA_TAVOLO) break;
@@ -396,7 +401,7 @@ async function esegui() {
   if (!sequenza.length) return avviso('La sequenza è vuota');
   if (sequenza.some(s => !pose[s.posa])) return avviso('Un passo usa una posa che non esiste più');
   for (const s of sequenza) {
-    const pr = controlla(pose[s.posa].q, imp.giunti);
+    const pr = controlla(pose[s.posa].q, imp.giunti, pose[s.posa].pinza);
     if (pr.length) return avviso(`«${pose[s.posa].nome}»: ${pr[0]}`, 5000);
   }
   stato.annulla = false; stato.inEsecuzione = true;
@@ -538,7 +543,7 @@ function collegaEventi() {
     if (!e.target.checked) return impostaSegui(false);
     if (bus.modo === 'ponte' && bus.arresto) { e.target.checked = false; return avviso('Il fungo è premuto'); }
     if (stato.coppia === false) { e.target.checked = false; return avviso('Prima riaccendi la coppia'); }
-    const problemi = controlla(stato.q, imp.giunti);
+    const problemi = controlla(stato.q, imp.giunti, stato.pinza);
     if (problemi.length) { e.target.checked = false; return avviso('Posa non sicura: ' + problemi[0]); }
     const pr = posaReale();
     if (pr) {

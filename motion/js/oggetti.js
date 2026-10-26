@@ -151,13 +151,17 @@ function presaSnap(s) {
   const o = oggetti.lista.find(x => x.mesh === s.oggetto);
   if (!o || oggetti.preso === o) return null;
   const c = o.mesh.geometry.boundingBox.getCenter(new THREE.Vector3()).applyMatrix4(o.mesh.matrix);
-  const p = [c.x, c.y, Math.max(c.z, 16)];                // sotto i 15 mm la pinza tocca il tavolo
+  const cima = new THREE.Box3().setFromObject(o.mesh).max.z;
   const x = new THREE.Vector3(), y = new THREE.Vector3(), z = new THREE.Vector3();
   o.mesh.matrix.extractBasis(x, y, z);
   const facce = [x, y, z].filter(n => Math.abs(n.z) < 0.7)              // dita in verticale: una finirebbe nel tavolo
     .map(n => ({ n: [n.x, n.y, n.z], w: larghezza(o, [n.x, n.y, n.z]) }))
     .filter(f => f.w < 2 * ROBOT.pinza.corsa - 1);                         // deve stare tra le dita aperte
-  let migliore = null, costo = Infinity;
+  // la presa più bassa possibile (dal centro dell'oggetto in su, fino alla sua cima) in cui né la pinza
+  // né le punte delle dita toccano il tavolo
+  let migliore = null, costo = Infinity, p = null;
+  for (let z = Math.max(c.z, 2); z <= cima && !migliore; z += 2) {
+  p = [c.x, c.y, z];
   for (let inc = -90; inc <= 0; inc += 5) {
     const R0 = orientamento(p, inc, 0, stato.q[0]);
     const [x0, y0, z0] = [0, 1, 2].map(j => colonna(R0, j));
@@ -165,14 +169,16 @@ function presaSnap(s) {
       if (Math.abs(V.dot(f.n, x0)) > 0.09) continue;                    // la faccia deve guardare le dita
       const th = Math.atan2(V.dot(f.n, z0), V.dot(f.n, y0)) / RAD;
       for (const rot of [th, th > 0 ? th - 180 : th + 180]) {
+        const pinza = Math.min(ROBOT.pinza.corsa, f.w / 2 + 4);
         const r = inversa(p, orientamento(p, inc, rot, stato.q[0]), stato.q, imp.giunti);
-        if (r.errore || controlla(r.q, imp.giunti).length) continue;
+        if (r.errore || controlla(r.q, imp.giunti, pinza).length) continue;
         const k = r.q.reduce((t, v, i) => t + Math.abs(v - stato.q[i]), 0);
         if (k < costo) { costo = k; migliore = { q: r.q, inc, rot, w: f.w }; }
       }
     }
   }
-  if (!migliore) return { p, posa: null };
+  }
+  if (!migliore) return { p: [c.x, c.y, c.z], posa: null };
   return { p, posa: { q: migliore.q, inc: migliore.inc }, rot: migliore.rot, pinza: Math.min(ROBOT.pinza.corsa, migliore.w / 2 + 4) };
 }
 

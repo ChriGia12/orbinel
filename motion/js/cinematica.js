@@ -107,7 +107,8 @@ function inversa(bersaglio, R, attuali, limiti = ROBOT.giunti) {
 }
 
 // Controlli sulla posa: limiti dei giunti e punti del braccio sotto il piano o dentro la base.
-function controlla(q, limiti) {
+// `pinza` è l'apertura di ogni dito in mm: serve per l'ingombro delle dita (ROBOT.ingombroUtensile).
+function controlla(q, limiti, pinza = ROBOT.pinza.disegno) {
   const problemi = [];
   q.forEach((v, i) => {
     if (v < limiti[i].min - 0.01 || v > limiti[i].max + 0.01)
@@ -115,10 +116,21 @@ function controlla(q, limiti) {
   });
   const fk = diretta(q);
   const punti = { 'il polso': fk.polso, 'la flangia': fk.flangia, 'la pinza': fk.tcp, 'il gomito': fk.giunti[2].p };
+  // con l'ingombro vero (sotto) flangia e punto utensile non servono più: la punta di uno stilo può toccare il piano
+  if (ROBOT.ingombroUtensile) { delete punti['la flangia']; delete punti['la pinza']; }
   for (const [nome, p] of Object.entries(punti)) {
     if (p[2] < 15) problemi.push(`${nome[0].toUpperCase() + nome.slice(1)} tocca il tavolo`);
     else if (nome !== 'il gomito' && Math.hypot(p[0], p[1]) < 70 && p[2] < 95)
       problemi.push(`${nome[0].toUpperCase() + nome.slice(1)} urta la base`);
+  }
+  // ingombro vero della pinza o dell'utensile: punti estremi dei pezzi in posa di riposo, mossi con J6 (utensili.js)
+  const ing = ROBOT.ingombroUtensile;
+  if (ing) {
+    const g = fk.giunti[5], d = pinza - ROBOT.pinza.disegno;
+    const mondo = l => V.add(g.p, M.vec(g.R, V.sub(l, ROBOT.giunti[5].origine)));
+    const punti = [...ing.fissi.map(mondo), ...ing.dita.map(x => mondo([x.p[0], x.p[1] + x.segno * d, x.p[2]]))];
+    if (punti.some(p => p[2] < 1)) problemi.push(`${ing.nome} tocca il tavolo`);
+    else if (punti.some(p => Math.hypot(p[0], p[1]) < 70 && p[2] < 95)) problemi.push(`${ing.nome} urta la base`);
   }
   return problemi;
 }
