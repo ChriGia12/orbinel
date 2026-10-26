@@ -58,10 +58,10 @@ p { margin: 0 0 1em; color: var(--tenue); }
 .barra .contenitore { display: flex; align-items: center; gap: 28px; height: 68px; }
 .logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
 .logo img { height: 52px; width: auto; }
-@media (max-width: 980px) { .logo img { height: 44px; } }
+@media (max-width: 1060px) { .logo img { height: 44px; } }
 .logo-robotics { font: 500 11px/1 var(--font-titoli); letter-spacing: .32em; text-transform: uppercase; color: var(--tenue); margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--linea2); }
 .menu { display: flex; gap: 26px; margin-left: auto; align-items: center; }
-.menu a { text-decoration: none; color: var(--tenue); font-size: 14px; transition: color .2s; }
+.menu a { text-decoration: none; color: var(--tenue); font-size: 14px; transition: color .2s; white-space: nowrap; }
 .menu a:hover, .menu a[aria-current="page"] { color: var(--testo); }
 .lingua { display: inline-flex; border: 1px solid var(--linea2); border-radius: 999px; padding: 2px; }
 .lingua button { background: none; border: 0; color: var(--tenue); font: 500 12px var(--font-titoli); letter-spacing: .08em; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
@@ -220,7 +220,7 @@ fieldset.campo { border: 0; padding: 0; margin: 0; }
 .cursore input[type=range] { accent-color: var(--arancio); width: 100%; }
 .cursore output { font-size: 13px; color: var(--testo); text-align: right; font-variant-numeric: tabular-nums; }
 
-@media (max-width: 980px) {
+@media (max-width: 1060px) {
   .menu { display: none; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 0; background: var(--bg); border-bottom: 1px solid var(--linea); padding: 8px 16px 20px; }
   .menu.aperto { display: flex; }
   .menu a { padding: 14px 0; border-bottom: 1px solid var(--linea); font-size: 16px; }
