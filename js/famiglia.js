@@ -10,7 +10,7 @@
   const fisso = new URLSearchParams(location.search).get('t') ?? (fermo ? '4' : null);
   // si carica dopo la pagina, per non rallentare la prima schermata
   await new Promise(ok => (document.readyState === 'complete' ? ok() : addEventListener('load', ok, { once: true })));
-  await new Promise(ok => (window.requestIdleCallback ? requestIdleCallback(ok, { timeout: 1500 }) : setTimeout(ok, 300)));
+  await new Promise(ok => (window.requestIdleCallback ? requestIdleCallback(ok, { timeout: 300 }) : setTimeout(ok, 300)));
   ROBOT.cartella = 'motion/' + ROBOT.cartella;
   const sc = new Scena(box.querySelector('.vista'));
   const s = sc.scena, r = sc.renderer;

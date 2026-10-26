@@ -106,9 +106,10 @@ class Scena {
     const nomi = new Set(['servo']);
     Object.values(ROBOT.link).forEach(l => { l.pezzi.forEach(n => nomi.add(n)); (l.fissi || []).forEach(n => nomi.add(n)); });
     Object.values(ROBOT.dita).forEach(n => nomi.add(n));
-    const geo = {};
-    let fatti = 0;
-    await Promise.all([...nomi].map(async nome => {
+    // online i pezzi arrivano tutti in pacchetto.bin (pubblica.py); gli STL singoli restano per quelli che mancano
+    const geo = await leggiPacchetto(`${ROBOT.cartella}/pacchetto.bin`, nomi, avanzamento);
+    let fatti = Object.keys(geo).length;
+    await Promise.all([...nomi].filter(nome => !geo[nome]).map(async nome => {
       const r = await fetch(`${ROBOT.cartella}/${nome}.stl`);
       if (!r.ok) throw new Error(`manca ${ROBOT.cartella}/${nome}.stl`);
       geo[nome] = leggiStl(await r.arrayBuffer());
@@ -234,6 +235,55 @@ class Scena {
     this.camera.position.set(...p);
     this.controlli.target.set(...t);
   }
+}
+
+// Pacchetto dei pezzi scritto da pubblica.py (impacchetta): vertici condivisi in passi da 0,5 mm, indici e
+// normali dei triangoli su un byte. Restituisce le geometrie dei nomi chiesti, {} se il pacchetto non c'è.
+async function leggiPacchetto(url, nomi, avanzamento) {
+  let buffer;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) return {};
+    const totale = +r.headers.get('content-length') || 0, parti = [];
+    let letti = 0;
+    for (const lettore = r.body.getReader(); ;) {
+      const { done, value } = await lettore.read();
+      if (done) break;
+      parti.push(value);
+      letti += value.length;
+      if (totale) avanzamento?.(Math.min(letti / totale, 1) * 0.95);
+    }
+    buffer = await new Blob(parti).arrayBuffer();
+  } catch (e) { return {}; }
+  const dv = new DataView(buffer), testo = new TextDecoder();
+  if (testo.decode(new Uint8Array(buffer, 0, 4)) !== 'ORB1') return {};
+  const PASSO = 0.5, voci = [];
+  let o = 8;
+  for (let k = dv.getUint32(4, true); k > 0; k--) {
+    const l = dv.getUint8(o);
+    voci.push({ nome: testo.decode(new Uint8Array(buffer, o + 1, l)), nv: dv.getUint32(o + 1 + l, true), nt: dv.getUint32(o + 5 + l, true) });
+    o += 9 + l;
+  }
+  const allinea = x => (x + 3) & ~3, geo = {};
+  o = allinea(o);
+  for (const { nome, nv, nt } of voci) {
+    const v = new Int16Array(buffer, o, nv * 3); o = allinea(o + nv * 6);
+    const idx = nv < 65536 ? new Uint16Array(buffer, o, nt * 3) : new Uint32Array(buffer, o, nt * 3);
+    o = allinea(o + idx.byteLength);
+    const nr = new Int8Array(buffer, o, nt * 3); o = allinea(o + nt * 3);
+    if (!nomi.has(nome)) continue;
+    const pos = new Float32Array(nt * 9), nor = new Float32Array(nt * 9);
+    for (let i = 0; i < nt * 3; i++) {
+      const a = idx[i] * 3, t = Math.floor(i / 3) * 3;
+      pos[i * 3] = v[a] * PASSO; pos[i * 3 + 1] = v[a + 1] * PASSO; pos[i * 3 + 2] = v[a + 2] * PASSO;
+      nor[i * 3] = nr[t] / 127; nor[i * 3 + 1] = nr[t + 1] / 127; nor[i * 3 + 2] = nr[t + 2] / 127;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+    geo[nome] = g;
+  }
+  return geo;
 }
 
 function leggiStl(buffer) {
