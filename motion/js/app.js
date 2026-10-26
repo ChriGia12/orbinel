@@ -76,7 +76,8 @@ function inviaAlRobot(q, pinza, durata) {
       obiettivi.push({ id: s.id, posizione: gradiAPassi(s, v), velocita: Math.max(20, delta[i] / t * PASSI_GRADO) });
     });
   });
-  if (imp.pinza.id) {
+  // con un utensile diverso dalla pinza il suo servo non c'è (utensili.js)
+  if (imp.pinza.id && (typeof utensili === 'undefined' || utensili.pinza)) {
     const dp = Math.abs(mmAPassi(pinza) - mmAPassi(prima.pinza));
     obiettivi.push({ id: imp.pinza.id, posizione: mmAPassi(pinza), velocita: Math.max(50, dp / t) });
   }

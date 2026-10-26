@@ -115,14 +115,14 @@ class Scena {
       return m;
     };
     for (const [link, def] of Object.entries(ROBOT.link)) {
-      def.pezzi.forEach(n => aggiungi(geo[n], this.materiali.pezzo, link));
+      def.pezzi.forEach(n => { aggiungi(geo[n], this.materiali.pezzo, link).userData.pezzo = n; });
       (def.fissi || []).forEach(n => aggiungi(geo[n], this.materiali.fisso, link));
       def.servo.forEach(i => {
         const f = ROBOT.servoPose[i];
         const m = new THREE.Matrix4().makeBasis(
           new THREE.Vector3(f[3], f[4], f[5]), new THREE.Vector3(f[6], f[7], f[8]), new THREE.Vector3(f[9], f[10], f[11]));
         m.setPosition(f[0], f[1], f[2]);
-        aggiungi(geo.servo, this.materiali.servo, link, m);
+        aggiungi(geo.servo, this.materiali.servo, link, m).userData.pezzo = 'servo' + i;
       });
     }
     this.dita = {

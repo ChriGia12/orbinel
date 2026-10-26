@@ -26,7 +26,7 @@ const ROBOT = {
 
   // pezzi stampati e servo di ogni link (file nella cartella del robot)
   link: {
-    base:        { pezzi: ['base', 'base_fondo'], servo: [0], fissi: ['scatola_arresto'] },
+    base:        { pezzi: ['base', 'base_fondo'], servo: [0] },
     torretta:    { pezzi: ['torretta_j2'], servo: [1, 2] },
     braccio:     { pezzi: ['braccio'], servo: [3] },
     avambraccio: { pezzi: ['avambraccio'], servo: [4] },

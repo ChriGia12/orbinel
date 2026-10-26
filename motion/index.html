@@ -212,6 +212,18 @@
       </div>
 
       <div class="card">
+        <h2>Utensile</h2>
+        <select id="sceltaUtensile" style="width:100%"></select>
+        <p class="muted" id="descrizioneUtensile" style="font-size:12px;margin:8px 0"></p>
+        <div id="parametriUtensile"></div>
+        <p class="muted num" id="infoUtensile" style="font-size:12px;margin:6px 0 0"></p>
+        <div class="riga" style="margin-top:8px">
+          <button id="btnStlUtensile" hidden>Scarica l'STL</button>
+        </div>
+        <p class="muted" style="font-size:12px;margin:8px 0 0">Gli utensili di Orbinel Parts, con le stesse misure del generatore del sito: cambiano il modello, il punto utensile e le coppie.</p>
+      </div>
+
+      <div class="card">
         <h2>Analisi <span class="muted" style="text-transform:none;letter-spacing:0">· stima</span></h2>
         <div style="margin-bottom:8px">
           <label class="muted" style="font-size:12px">Carico in presa: <span id="valCarico" class="num">0</span> g</label>
@@ -448,6 +460,7 @@
 </script>
 <script src="js/app.js"></script>
 <script src="js/analisi.js"></script>
+<script src="js/utensili.js"></script>
 <script src="js/lezioni-dati.js"></script>
 <script src="js/lezioni.js"></script>
 </body>
