@@ -167,6 +167,59 @@ function vaiIk() {
   return true;
 }
 
+// Porta la pinza nel punto p con l'orientamento che serve: l'inclinazione dei campi e poi tutte le altre
+// da −90° a +90° (ogni 5°). Tra le pose valide (limiti, tavolo, base) vince la più vicina a quella attuale,
+// con una piccola preferenza per l'inclinazione già scelta. Ritorna { q, inc } o null.
+const PORTATA = ROBOT.a2 + ROBOT.d4;
+function posaVerso(p) {
+  const tcp = V.norm(V.sub(ROBOT.tcp, ROBOT.polso));
+  if (V.norm(V.sub(p, [0, 0, ROBOT.d1])) > PORTATA + tcp + 1) return null;
+  const inc0 = +$('ikInc').value, rot = +$('ikRot').value;
+  let migliore = null, costo = Infinity;
+  for (const inc of [inc0, ...Array.from({ length: 37 }, (_, k) => -90 + 5 * k)]) {
+    const r = inversa(p, orientamento(p, inc, rot, stato.q[0]), stato.q, imp.giunti);
+    if (r.errore || controlla(r.q, imp.giunti).length) continue;
+    const k = r.q.reduce((t, v, i) => t + Math.abs(v - stato.q[i]), 0) + Math.abs(inc - inc0) * 0.5;
+    if (k < costo) { costo = k; migliore = { q: r.q, inc }; }
+  }
+  return migliore;
+}
+
+// Dal clic al punto: oggetto, punto della nuvola o tavolo (20 mm sopra il piano, sotto la pinza lo
+// tocca); clic nel vuoto: il primo punto raggiungibile lungo la linea del clic. Mai oltre lo spazio di lavoro.
+const QUOTA_TAVOLO = 20;
+function puntoDalClic(s) {
+  if (s.punto) {
+    const p = s.tipo === 'piano' ? [s.punto[0], s.punto[1], QUOTA_TAVOLO] : s.punto;
+    return { p, posa: posaVerso(p) };
+  }
+  for (let t = 0; t < 4000; t += 5) {
+    const p = V.add(s.origine, V.scale(s.direzione, t));
+    if (p[2] < QUOTA_TAVOLO) break;
+    const posa = posaVerso(p);
+    if (posa) return { p, posa };
+  }
+  return { p: null, posa: null };
+}
+
+function suPunto(s, anteprima) {
+  if (!s) { scena.mostraBersaglio(null); return; }
+  const { p, posa } = puntoDalClic(s);
+  scena.mostraBersaglio(p, !!posa);
+  if (anteprima) return;
+  if (!posa) {
+    document.dispatchEvent(new CustomEvent('motion:ik', { detail: { bersaglio: p, errore: 'fuori dallo spazio di lavoro' } }));
+    $('esitoIk').textContent = '✗ Fuori dallo spazio di lavoro: la pinza non ci arriva senza urtare o superare i limiti';
+    return;
+  }
+  $('ikX').value = p[0].toFixed(0); $('ikY').value = p[1].toFixed(0); $('ikZ').value = p[2].toFixed(0);
+  $('ikInc').value = posa.inc.toFixed(0);
+  document.dispatchEvent(new CustomEvent('motion:ik', { detail: { bersaglio: p, errore: null } }));
+  $('esitoIk').textContent = `✓ Raggiungibile · inclinazione ${posa.inc.toFixed(0)}°`;
+  stato.q = posa.q;
+  aggiorna(true);
+}
+
 function costruisciJog() {
   const tasti = [['X', 0, -1], ['X', 0, 1], ['Y', 1, -1], ['Y', 1, 1], ['Z', 2, -1], ['Z', 2, 1]];
   $('jog').innerHTML = tasti.map(([n, , s], k) => `<button class="piccolo" data-k="${k}">${s > 0 ? '+' : '−'}${n}</button>`).join('');
@@ -643,7 +696,7 @@ async function avvia() {
   aggiornaCollegamento();
   aggiorna();
   scena = window.scena = new Scena($('vista3d'));
-  scena.suPiano = ([x, y]) => { $('ikX').value = x.toFixed(0); $('ikY').value = y.toFixed(0); vaiIk(); };
+  scena.suPunto = suPunto;
   try {
     await scena.carica(k => { $('caricamento').textContent = `Carico il modello… ${Math.round(k * 100)}%`; });
     $('caricamento').remove();

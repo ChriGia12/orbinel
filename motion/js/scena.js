@@ -55,15 +55,43 @@ class Scena {
     const ciclo = () => { this.controlli.update(); r.render(s, cam); requestAnimationFrame(ciclo); };
     ciclo();
 
-    // clic con Maiusc sul piano: sceglie il punto per la pinza
-    r.domElement.addEventListener('pointerdown', e => {
-      if (!e.shiftKey || !this.suPiano) return;
+    // Maiusc + clic: sceglie il punto per la pinza (suPunto); Maiusc + movimento: anteprima.
+    // Con Maiusc premuto la telecamera non si sposta, così il clic non trascina la vista.
+    this.cliccabili = [];
+    const scelta = e => {
       const rect = r.domElement.getBoundingClientRect();
       const ray = new THREE.Raycaster();
+      ray.params.Points.threshold = 6;
       ray.setFromCamera({ x: ((e.clientX - rect.left) / rect.width) * 2 - 1, y: -((e.clientY - rect.top) / rect.height) * 2 + 1 }, cam);
-      const p = new THREE.Vector3();
-      if (ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), p)) this.suPiano([p.x, p.y]);
+      const v = x => [x.x, x.y, x.z];
+      const s = { origine: v(ray.ray.origin), direzione: v(ray.ray.direction), punto: null, tipo: null };
+      const oggetto = ray.intersectObjects(this.cliccabili.filter(m => m.visible), false)[0];
+      const nuvola = this.nuvola ? ray.intersectObject(this.nuvola).filter(h => this.nuvolaOk[h.index])[0] : null;
+      const piano = new THREE.Vector3();
+      const suPiano = ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), piano);
+      const primo = [oggetto && { d: oggetto.distance, punto: v(oggetto.point), tipo: 'oggetto' },
+        nuvola && { d: nuvola.distance, punto: v(this.nuvolaPunti[nuvola.index]), tipo: 'nuvola' },
+        suPiano && { d: ray.ray.origin.distanceTo(piano), punto: v(piano), tipo: 'piano' }]
+        .filter(Boolean).sort((a, b) => a.d - b.d)[0];
+      if (primo) Object.assign(s, { punto: primo.punto, tipo: primo.tipo });
+      return s;
+    };
+    let attesa = false;
+    r.domElement.addEventListener('pointerdown', e => {
+      if (e.shiftKey && this.suPunto) this.suPunto(scelta(e), false);
     });
+    r.domElement.addEventListener('pointermove', e => {
+      if (!e.shiftKey || !this.suPunto || attesa) return;
+      attesa = true;
+      requestAnimationFrame(() => { attesa = false; this.suPunto(scelta(e), true); });
+    });
+    const maiusc = e => {
+      if (e.key !== 'Shift') return;
+      this.controlli.enabled = e.type === 'keyup';
+      if (e.type === 'keyup') this.suPunto?.(null, true);
+    };
+    addEventListener('keydown', maiusc);
+    addEventListener('keyup', maiusc);
   }
 
   ridimensiona() {
@@ -150,9 +178,11 @@ class Scena {
     }
   }
 
-  mostraBersaglio(p) {
+  // ok = false: punto non raggiungibile (pallino rosso)
+  mostraBersaglio(p, ok = true) {
     this.bersaglio.visible = !!p;
     if (p) this.bersaglio.position.set(...p);
+    this.bersaglio.material.color.set(ok ? 0xff8a3d : 0xff4d4d);
   }
 
   aggiungiScia(p) {
@@ -174,6 +204,8 @@ class Scena {
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    this.nuvolaPunti = punti.map(p => p.p);
+    this.nuvolaOk = punti.map(p => p.ok);
     this.nuvola = new THREE.Points(g, new THREE.PointsMaterial({ size: 7, vertexColors: true, transparent: true, opacity: 0.55, depthWrite: false }));
     this.scena.add(this.nuvola);
   }
