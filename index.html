@@ -17,6 +17,38 @@
 <link rel="apple-touch-icon" href="brand/icona-180.png">
 <link rel="preload" href="fonts/space-grotesk-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/stile.css">
+<!-- dati strutturati: nome del sito e profili ufficiali, per il riquadro del marchio su Google -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://orbinel.it/#sito",
+      "name": "Orbinel Robotics",
+      "alternateName": ["Orbinel", "orbinel.it"],
+      "url": "https://orbinel.it/",
+      "publisher": { "@id": "https://orbinel.it/#org" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://orbinel.it/#org",
+      "name": "Orbinel Robotics",
+      "alternateName": "Orbinel",
+      "slogan": "Engineering Motion",
+      "url": "https://orbinel.it/",
+      "logo": "https://orbinel.it/brand/icona-scheda-512.png",
+      "email": "info@orbinel.it",
+      "foundingDate": "2026",
+      "foundingLocation": { "@type": "Place", "name": "Italia" },
+      "sameAs": [
+        "https://www.instagram.com/orbinel.it/",
+        "https://www.linkedin.com/company/orbinel-robotics/"
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="barra">
@@ -272,6 +304,7 @@
     <div>
       <h5><span lang="en">Follow</span><span lang="it">Seguici</span></h5>
       <a data-instagram href="#" rel="noopener">Instagram</a>
+      <a href="https://www.linkedin.com/company/orbinel-robotics/" rel="noopener">LinkedIn</a>
       <a data-email href="#"></a>
       <a href="index.html#contatti"><span lang="en">Waitlist</span><span lang="it">Lista d'attesa</span></a>
     </div>
