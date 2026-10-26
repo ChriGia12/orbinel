@@ -155,7 +155,7 @@ function costruisciGiunti() {
 function vaiIk() {
   const p = [+$('ikX').value, +$('ikY').value, +$('ikZ').value];
   const R = orientamento(p, +$('ikInc').value, +$('ikRot').value, stato.q[0]);
-  const r = inversa(p, R, stato.q);
+  const r = inversa(p, R, stato.q, imp.giunti);
   document.dispatchEvent(new CustomEvent('motion:ik', { detail: { bersaglio: p, errore: r.errore || null } }));
   if (r.errore) { $('esitoIk').textContent = '✗ ' + r.errore; scena?.mostraBersaglio(p); return false; }
   const problemi = controlla(r.q, imp.giunti);

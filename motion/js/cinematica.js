@@ -58,8 +58,9 @@ function orientamento(bersaglio, inclinazione, rotazione, q1Attuale) {
   return M.mul(base, M.rot([1, 0, 0], rotazione));
 }
 
-// Cinematica inversa. Ritorna gli angoli più vicini a `attuali`, o un motivo se non si può.
-function inversa(bersaglio, R, attuali) {
+// Cinematica inversa. Ritorna gli angoli più vicini a `attuali`, preferendo quelli dentro `limiti`
+// (min/max di ogni giunto), o un motivo se non si può.
+function inversa(bersaglio, R, attuali, limiti = ROBOT.giunti) {
   const offsetPinza = V.sub(ROBOT.tcp, ROBOT.polso);          // nel sistema della pinza
   const W = V.sub(bersaglio, M.vec(R, offsetPinza));
   const { d1, a2, d4 } = ROBOT;
@@ -89,11 +90,17 @@ function inversa(bersaglio, R, attuali) {
     const c = Math.atan2(m[0][1], m[0][2]) / RAD;
     soluzioni = [[a, b, c], [a + 180, -b, c + 180]];
   }
-  const vicino = (v, rif) => { while (v - rif > 180) v -= 360; while (v - rif < -180) v += 360; return v; };
+  // J4 e J6 si possono scrivere a meno di un giro (a, a ± 360): tra tutte le varianti vince quella
+  // dentro i limiti e poi la più vicina alla posa attuale. Scegliendo solo la più vicina, una posa
+  // finita fuori limite (J4 a 360°) trascinava fuori limite anche tutte le pose successive.
+  const giri = v => { const n = ((v % 360) + 540) % 360 - 180; return [n - 360, n, n + 360]; };
+  // gradi oltre i limiti, solo per J4, J5, J6 (J1, J2, J3 non dipendono da questa scelta): se nessuna
+  // variante è dentro, vince quella che sfora meno, così il polso non scivola di giro in giro
+  const fuori = q => [3, 4, 5].reduce((t, i) => t + Math.max(0, limiti[i].min - q[i], q[i] - limiti[i].max), 0);
   let migliore = null, costo = Infinity;
-  for (const [a, b, c] of soluzioni) {
-    const q = [q1, q2, q3, vicino(a, attuali[3]), b, vicino(c, attuali[5])];
-    const k = q.reduce((t, v, i) => t + Math.abs(v - attuali[i]), 0);
+  for (const [a, b, c] of soluzioni) for (const q4 of giri(a)) for (const q6 of giri(c)) {
+    const q = [q1, q2, q3, q4, b, q6];
+    const k = q.reduce((t, v, i) => t + Math.abs(v - attuali[i]), 0) + fuori(q) * 1e3;
     if (k < costo) { costo = k; migliore = q; }
   }
   return { q: migliore };
