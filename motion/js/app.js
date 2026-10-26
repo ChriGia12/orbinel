@@ -204,7 +204,9 @@ function puntoDalClic(s) {
 
 function suPunto(s, anteprima) {
   if (!s) { scena.mostraBersaglio(null); return; }
-  const { p, posa } = puntoDalClic(s);
+  // con lo snap acceso, un clic su un oggetto diventa una posa di presa (oggetti.js)
+  const snap = s.tipo === 'oggetto' && typeof presaSnap === 'function' ? presaSnap(s) : null;
+  const { p, posa } = snap || puntoDalClic(s);
   scena.mostraBersaglio(p, !!posa);
   if (anteprima) return;
   if (!posa) {
@@ -214,8 +216,10 @@ function suPunto(s, anteprima) {
   }
   $('ikX').value = p[0].toFixed(0); $('ikY').value = p[1].toFixed(0); $('ikZ').value = p[2].toFixed(0);
   $('ikInc').value = posa.inc.toFixed(0);
+  if (snap) { $('ikRot').value = snap.rot.toFixed(0); stato.pinza = Math.max(stato.pinza, snap.pinza); }
   document.dispatchEvent(new CustomEvent('motion:ik', { detail: { bersaglio: p, errore: null } }));
-  $('esitoIk').textContent = `✓ Raggiungibile · inclinazione ${posa.inc.toFixed(0)}°`;
+  $('esitoIk').textContent = snap ? `✓ In posizione di presa · inclinazione ${posa.inc.toFixed(0)}°, rotazione ${snap.rot.toFixed(0)}°: chiudi la pinza`
+    : `✓ Raggiungibile · inclinazione ${posa.inc.toFixed(0)}°`;
   stato.q = posa.q;
   aggiorna(true);
 }

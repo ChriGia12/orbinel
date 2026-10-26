@@ -93,6 +93,89 @@ function contieneTcp(o, tcp) {
   return o.mesh.geometry.boundingBox.clone().expandByScalar(3).containsPoint(p);
 }
 
+// Presa realistica: le due dita tengono solo se appoggiano su facce quasi parallele alle loro piastre
+// (entro 20°, circa l'attrito di plastica su plastica) e quelle facce stanno davvero sotto le piastre.
+// Due spigoli, una punta o una faccia sfiorata con la punta del dito non tengono.
+const CONO_PRESA = Math.cos(20 * RAD);
+const PIASTRA = { indietro: -20, avanti: 24, lato: 10 };   // mm attorno al TCP: lungo l'avvicinamento e di lato
+const colonna = (R, j) => [R[0][j], R[1][j], R[2][j]];
+
+// triangolo (punti 2D) e rettangolo [x0, x1] × [y0, y1] si toccano?
+function triangoloNelRettangolo(t, x0, x1, y0, y1) {
+  if (t.some(([x, y]) => x >= x0 && x <= x1 && y >= y0 && y <= y1)) return true;
+  const dentro = ([px, py]) => {
+    const s = (a, b) => (b[0] - a[0]) * (py - a[1]) - (b[1] - a[1]) * (px - a[0]);
+    const d1 = s(t[0], t[1]), d2 = s(t[1], t[2]), d3 = s(t[2], t[0]);
+    return !((d1 < 0 || d2 < 0 || d3 < 0) && (d1 > 0 || d2 > 0 || d3 > 0));
+  };
+  if ([[x0, y0], [x1, y0], [x1, y1], [x0, y1]].some(dentro)) return true;
+  const incrocia = (a, b, c, d) => {
+    const o = (p, q, r) => Math.sign((q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]));
+    return o(a, b, c) !== o(a, b, d) && o(c, d, a) !== o(c, d, b);
+  };
+  const lati = [[[x0, y0], [x1, y0]], [[x1, y0], [x1, y1]], [[x1, y1], [x0, y1]], [[x0, y1], [x0, y0]]];
+  return [[t[0], t[1]], [t[1], t[2]], [t[2], t[0]]].some(([a, b]) => lati.some(([c, d]) => incrocia(a, b, c, d)));
+}
+
+function presaStabile(o, fk) {
+  const inv = o.mesh.matrix.clone().invert();
+  const rot = new THREE.Matrix3().setFromMatrix4(o.mesh.matrix).transpose();
+  const loc = v => new THREE.Vector3(...v).applyMatrix3(rot);
+  const a = loc(colonna(fk.R, 1)), u = loc(colonna(fk.R, 0)), w = loc(colonna(fk.R, 2));
+  const t = new THREE.Vector3(...fk.tcp).applyMatrix4(inv);
+  const v = o.mesh.geometry.attributes.position.array;
+  let min = Infinity, max = -Infinity;
+  for (let i = 0; i < v.length; i += 3) { const d = v[i] * a.x + v[i + 1] * a.y + v[i + 2] * a.z; min = Math.min(min, d); max = Math.max(max, d); }
+  const appoggi = [false, false];
+  const A = new THREE.Vector3(), B = new THREE.Vector3(), C = new THREE.Vector3(), n = new THREE.Vector3();
+  for (let i = 0; i < v.length && !(appoggi[0] && appoggi[1]); i += 9) {
+    A.fromArray(v, i); B.fromArray(v, i + 3); C.fromArray(v, i + 6);
+    n.subVectors(C, B).cross(A.clone().sub(B)).normalize();
+    if (Math.abs(n.dot(a)) < CONO_PRESA) continue;                      // faccia non parallela alla piastra
+    // la faccia tocca il dito se un suo vertice è sul punto più esterno: entro 20° il dito si appoggia
+    const d = [A, B, C].map(P => P.dot(a));
+    const verso = (d[0] + d[1] + d[2]) / 3 > (min + max) / 2 ? 1 : 0;          // lato dell'oggetto su cui sta
+    const lato = verso ? (d.some(x => x >= max - 0.5) ? 1 : -1) : (d.some(x => x <= min + 0.5) ? 0 : -1);
+    if (lato < 0 || appoggi[lato]) continue;                            // non sta dove tocca il dito
+    const t2 = [A, B, C].map(P => { const r = P.clone().sub(t); return [r.dot(u), r.dot(w)]; });
+    if (triangoloNelRettangolo(t2, PIASTRA.indietro, PIASTRA.avanti, -PIASTRA.lato, PIASTRA.lato)) appoggi[lato] = true;
+  }
+  return appoggi[0] && appoggi[1];
+}
+
+// Snap alla presa: con la casella accesa, Maiusc + clic su un oggetto porta la pinza aperta al suo centro,
+// con le dita perpendicolari a due facce opposte. Prova l'avvicinamento dall'alto fino a quello orizzontale
+// e tiene la posa valida più vicina a quella attuale. Ritorna null se lo snap è spento.
+function presaSnap(s) {
+  if (!document.getElementById('snapPresa').checked) return null;
+  const o = oggetti.lista.find(x => x.mesh === s.oggetto);
+  if (!o || oggetti.preso === o) return null;
+  const c = o.mesh.geometry.boundingBox.getCenter(new THREE.Vector3()).applyMatrix4(o.mesh.matrix);
+  const p = [c.x, c.y, Math.max(c.z, 16)];                // sotto i 15 mm la pinza tocca il tavolo
+  const x = new THREE.Vector3(), y = new THREE.Vector3(), z = new THREE.Vector3();
+  o.mesh.matrix.extractBasis(x, y, z);
+  const facce = [x, y, z].filter(n => Math.abs(n.z) < 0.7)              // dita in verticale: una finirebbe nel tavolo
+    .map(n => ({ n: [n.x, n.y, n.z], w: larghezza(o, [n.x, n.y, n.z]) }))
+    .filter(f => f.w < 2 * ROBOT.pinza.corsa - 1);                         // deve stare tra le dita aperte
+  let migliore = null, costo = Infinity;
+  for (let inc = -90; inc <= 0; inc += 5) {
+    const R0 = orientamento(p, inc, 0, stato.q[0]);
+    const [x0, y0, z0] = [0, 1, 2].map(j => colonna(R0, j));
+    for (const f of facce) {
+      if (Math.abs(V.dot(f.n, x0)) > 0.09) continue;                    // la faccia deve guardare le dita
+      const th = Math.atan2(V.dot(f.n, z0), V.dot(f.n, y0)) / RAD;
+      for (const rot of [th, th > 0 ? th - 180 : th + 180]) {
+        const r = inversa(p, orientamento(p, inc, rot, stato.q[0]), stato.q, imp.giunti);
+        if (r.errore || controlla(r.q, imp.giunti).length) continue;
+        const k = r.q.reduce((t, v, i) => t + Math.abs(v - stato.q[i]), 0);
+        if (k < costo) { costo = k; migliore = { q: r.q, inc, rot, w: f.w }; }
+      }
+    }
+  }
+  if (!migliore) return { p, posa: null };
+  return { p, posa: { q: migliore.q, inc: migliore.inc }, rot: migliore.rot, pinza: Math.min(ROBOT.pinza.corsa, migliore.w / 2 + 4) };
+}
+
 function impostaCaricoOggetti(grammi) {
   analisi.carico = grammi;
   document.getElementById('carico').value = grammi;
@@ -161,7 +244,13 @@ document.addEventListener('motion:posa', e => {
     const o = oggetti.lista.find(x => contieneTcp(x, fk.tcp));
     if (o) {
       const w = larghezza(o, asse);
-      if (apertura <= w && oggetti.aperturaPrima > w) prendi(o, fk);     // le dita lo toccano
+      if (apertura <= w) {
+        scena.posa(q, w / 2);                                             // le dita si fermano sull'oggetto
+        if (oggetti.aperturaPrima > w) {                                  // le dita lo toccano adesso
+          if (presaStabile(o, fk)) prendi(o, fk);
+          else avviso('Presa instabile: le dita non appoggiano su due facce opposte (per esempio stringono due spigoli)');
+        }
+      }
     }
   }
   oggetti.aperturaPrima = apertura;
@@ -190,6 +279,9 @@ function mostraOggetti() {
     }
     file.value = '';
   });
+  const snap = document.getElementById('snapPresa');
+  snap.checked = !!salvato('snap');
+  snap.addEventListener('change', () => salva('snap', snap.checked));
   document.getElementById('btnCubo').addEventListener('click', () => {
     if (scena?.scena) aggiungiOggetto('Cubo 30 mm', new THREE.BoxGeometry(30, 30, 30));
   });

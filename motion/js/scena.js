@@ -69,11 +69,11 @@ class Scena {
       const nuvola = this.nuvola ? ray.intersectObject(this.nuvola).filter(h => this.nuvolaOk[h.index])[0] : null;
       const piano = new THREE.Vector3();
       const suPiano = ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), piano);
-      const primo = [oggetto && { d: oggetto.distance, punto: v(oggetto.point), tipo: 'oggetto' },
+      const primo = [oggetto && { d: oggetto.distance, punto: v(oggetto.point), tipo: 'oggetto', oggetto: oggetto.object },
         nuvola && { d: nuvola.distance, punto: v(this.nuvolaPunti[nuvola.index]), tipo: 'nuvola' },
         suPiano && { d: ray.ray.origin.distanceTo(piano), punto: v(piano), tipo: 'piano' }]
         .filter(Boolean).sort((a, b) => a.d - b.d)[0];
-      if (primo) Object.assign(s, { punto: primo.punto, tipo: primo.tipo });
+      if (primo) Object.assign(s, { punto: primo.punto, tipo: primo.tipo, oggetto: primo.oggetto || null });
       return s;
     };
     let attesa = false;
