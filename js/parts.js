@@ -50,6 +50,17 @@ function mostraMesh(mesh) {
   scena.add(oggetto);
 }
 
+// la camera si allontana per i pezzi più grandi, sempre dalla stessa direzione
+let inquadrato = 0;
+function inquadra(b) {
+  const misura = Math.max(...[0, 1, 2].map(k => b.max[k] - b.min[k]));
+  if (Math.abs(misura - inquadrato) < 15) return;
+  inquadrato = misura;
+  const k = Math.max(1, misura / 45);
+  controlli.target.set(0, 0, (b.min[2] + b.max[2]) / 2);
+  camera.position.set(110 * k, -130 * k, 90 * k);
+}
+
 // --- pannello dei parametri ---
 function mostraScelta() {
   $('sceltaUtensile').innerHTML = Object.entries(UTENSILI).map(([k, u]) =>
@@ -77,7 +88,9 @@ function genera() {
     const b = r.scatola, cm3 = r.volume / 1000;
     const dim = [0, 1, 2].map(k => (b.max[k] - b.min[k]).toFixed(1)).join(' × ');
     const l = lingua();
-    $('infoParts').textContent = `${dim} mm · ${cm3.toFixed(1)} cm³ · ~${(cm3 * DENSITA * 0.55).toFixed(0)} g ${l === 'it' ? 'al 55 %' : 'at 55 %'}`;
+    const servo = r.servo ? (l === 'it' ? ' + servo 55 g' : ' + 55 g servo') : '';
+    $('infoParts').textContent = `${dim} mm · ${cm3.toFixed(1)} cm³ · ~${(cm3 * DENSITA * 0.55).toFixed(0)} g ${l === 'it' ? 'al 55 %' : 'at 55 %'}${servo}`;
+    inquadra(b);
     $('controlliParts').innerHTML = r.controlli.map(c => `<li class="${c.ok ? '' : 'no'}">${c.ok ? '✓' : '✗'} ${c[l]}</li>`).join('');
     $('scaricaParts').disabled = false;
   } catch (e) {
@@ -105,7 +118,7 @@ $('scaricaParts').addEventListener('click', () => {
   if (!stato.ultimo) return;
   const nome = `orbinel-${stato.tipo}-${Object.values(stato.p).map(v => String(v).replace('.', '_')).join('-')}.stl`;
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([stl(stato.ultimo.mesh)], { type: 'model/stl' }));
+  a.href = URL.createObjectURL(new Blob([stl(stato.ultimo.meshStampa)], { type: 'model/stl' }));
   a.download = nome;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);

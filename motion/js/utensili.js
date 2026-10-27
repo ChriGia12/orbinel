@@ -137,6 +137,8 @@ async function montaUtensile(tipo, parametri) {
     // masse: la flangia resta, la pinza e il suo servo lasciano il posto all'utensile
     const { densita, riempimento } = ROBOT.materiale;
     const parti = [proprieta(scena.geo.flangia), proprieta(geo)].map(p => ({ m: p.volume / 1000 * densita * riempimento, c: p.centro }));
+    // un utensile motorizzato porta il suo servo
+    if (r.servo) parti.push({ m: ROBOT.servoDati.massa, c: nelModello(...r.servo) });
     const massa = parti.reduce((t, x) => t + x.m, 0);
     analisi.link.utensile = {
       massa,
@@ -144,7 +146,8 @@ async function montaUtensile(tipo, parametri) {
       giunto: utensili.linkPinza.giunto,
     };
     const b = r.scatola, dim = [0, 1, 2].map(k => (b.max[k] - b.min[k]).toFixed(0)).join(' × ');
-    info.textContent = `${dim} mm · massa stimata ${parti[1].m.toFixed(0)} g · TCP a ${r.tcp.toFixed(0)} mm dalla punta del codolo`;
+    const servo = r.servo ? ` + servo ${ROBOT.servoDati.massa} g` : '';
+    info.textContent = `${dim} mm · massa stimata ${parti[1].m.toFixed(0)} g${servo} · TCP a ${r.tcp.toFixed(0)} mm dalla punta del codolo`;
   }
   aggiornaIngombro();
   document.getElementById('btnStlUtensile').hidden = !utensili.ultimo;
@@ -208,7 +211,7 @@ async function scegliUtensile(tipo, parametri) {
     if (!utensili.ultimo) return;
     const nome = `orbinel-${utensili.tipo}-${Object.values(utensili.parametri).map(v => String(v).replace('.', '_')).join('-')}.stl`;
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([utensili.moduli.G.stl(utensili.ultimo.mesh)], { type: 'model/stl' }));
+    a.href = URL.createObjectURL(new Blob([utensili.moduli.G.stl(utensili.ultimo.meshStampa)], { type: 'model/stl' }));
     a.download = nome;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
