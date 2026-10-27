@@ -21,7 +21,6 @@
   const ONDA = 0.6;                  // ampiezza dell'ondeggiamento da aperti (rad su tutta la lunghezza)
   const FRONTE = 0.75;               // quanto del tentacolo si piega insieme: l'arrotolamento parte dalla punta
   const TORSIONE = 1.4;              // rotazione del piano della spirale lungo il tentacolo, a chiusura completa (rad)
-  const CHIUSA = 0.75;               // fin dove si chiudono nel ciclo: oltre, senza un oggetto in mezzo, si aggrovigliano
   const VORTICE = 0.32;              // a chiusura completa i tentacoli girano tutti un po' nello stesso verso (rad)
   const ANELLI = 150, LATI = 28;
 
@@ -34,9 +33,9 @@
   scena.background = new THREE.Color(getComputedStyle(document.body).backgroundColor || '#0B0D10');
   const camera = new THREE.PerspectiveCamera(30, 1, 1, 3000);
   camera.up.set(0, 0, 1);
-  camera.position.set(300, -330, 15);
+  camera.position.set(380, -415, -5);
   const controlli = new THREE.OrbitControls(camera, renderer.domElement);
-  controlli.target.set(0, 0, -70);
+  controlli.target.set(0, 0, -78);
   controlli.enableDamping = true;
   controlli.enablePan = false;
   controlli.enableZoom = false;
@@ -49,8 +48,13 @@
   const bordo = new THREE.DirectionalLight(0xff6b2c, 0.55); bordo.position.set(-260, 200, 40); scena.add(bordo);
   const sotto = new THREE.DirectionalLight(0x9fb3c8, 0.25); sotto.position.set(60, 80, -300); scena.add(sotto);
 
+  const PAVIMENTO = -170;
   const griglia = new THREE.GridHelper(420, 21, 0x262b33, 0x181b21);
-  griglia.rotation.x = Math.PI / 2; griglia.position.z = -215; scena.add(griglia);
+  griglia.rotation.x = Math.PI / 2; griglia.position.z = PAVIMENTO; scena.add(griglia);
+
+  // la pinza sale e scende tutta insieme: corpo, anelli e tentacoli stanno in questo gruppo
+  const pinza = new THREE.Group();
+  scena.add(pinza);
 
   // --- corpo: un profilo morbido fatto ruotare attorno all'asse ---
   // il codolo (Ø 27,7, come l'attacco di Kheiron) e il collo, poi una spalla larga e bassa che scende in una cupola
@@ -65,13 +69,13 @@
   geoCorpo.rotateX(Math.PI / 2);                 // l'asse della rotazione passa da y a z
   geoCorpo.computeVertexNormals();
   const grafite = new THREE.MeshStandardMaterial({ color: 0x262a31, roughness: 0.34, metalness: 0.4 });
-  scena.add(new THREE.Mesh(geoCorpo, grafite));
+  pinza.add(new THREE.Mesh(geoCorpo, grafite));
   // un solo dettaglio arancione: un filo sottile sulla spalla
   const anello = new THREE.Mesh(new THREE.TorusGeometry(35.55, 0.55, 12, 180), new THREE.MeshStandardMaterial({ color: 0xff6b2c, roughness: 0.4, emissive: 0x5a1e05 }));
-  anello.position.z = -33; scena.add(anello);
+  anello.position.z = -33; pinza.add(anello);
   // giunzione tra corpo e piastra, appena incisa
   const giunta = new THREE.Mesh(new THREE.TorusGeometry(32.9, 0.32, 8, 180), new THREE.MeshStandardMaterial({ color: 0x0e1013, roughness: 0.8 }));
-  giunta.position.z = -49.5; scena.add(giunta);
+  giunta.position.z = -49.5; pinza.add(giunta);
   // dove la cupola incontra la superficie: per mettere a filo l'attacco di ogni tentacolo
   const zCupola = r => { let m = punti[punti.length - 1]; for (const p of punti) if (p.x >= r) m = p; return m.y; };
 
@@ -96,14 +100,27 @@
     for (let j = 0; j < LATI; j++) { const p = ANELLI * (LATI + 1) + j; indici.push(p, punta, p + 1); }
     geo.setIndex(indici);
     const mesh = new THREE.Mesh(geo, materialeTentacolo);
-    scena.add(mesh);
+    pinza.add(mesh);
     // anello di attacco in grafite, inclinato come il tentacolo all'uscita
     const attacco = new THREE.Mesh(new THREE.TorusGeometry(R0 + 0.6, 1.9, 14, 48), grafite);
     attacco.position.set(CORONA * Math.cos(a), CORONA * Math.sin(a), zCupola(CORONA) - 0.4);
     attacco.lookAt(attacco.position.clone().add(new THREE.Vector3(Math.sin(APERTURA) * Math.cos(a), Math.sin(APERTURA) * Math.sin(a), -Math.cos(APERTURA))));
-    scena.add(attacco);
+    pinza.add(attacco);
     return { a, geo, pos, fase: k * 1.37, mesh };
   });
+
+  // --- la pallina da afferrare, come nel video: una pallina da tennis con la sua cucitura ---
+  const RB = 30;
+  const palla = new THREE.Group();
+  palla.add(new THREE.Mesh(new THREE.SphereGeometry(RB, 64, 48), new THREE.MeshStandardMaterial({ color: 0xcdd65a, roughness: 0.95 })));
+  const cucitura = [];
+  for (let k = 0; k <= 240; k++) {
+    const u = (k / 240) * Math.PI * 2;
+    cucitura.push(new THREE.Vector3(0.75 * Math.cos(u) + 0.25 * Math.cos(3 * u), 0.75 * Math.sin(u) - 0.25 * Math.sin(3 * u), 0.85 * Math.sin(2 * u)).setLength(RB + 0.2));
+  }
+  palla.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(cucitura, true), 240, 0.9, 8, true), new THREE.MeshStandardMaterial({ color: 0xf2f1ec, roughness: 0.9 })));
+  palla.rotation.set(0.4, 0.2, 0.7);
+  scena.add(palla);
 
   // Il tentacolo si costruisce passo per passo, portandosi dietro una terna: T lungo il tentacolo, D verso il lato
   // interno (dove corre il cavo e verso cui si piega) e B di lato. A ogni passo la terna ruota per la curvatura
@@ -120,7 +137,9 @@
   };
   const liscia01 = k => { k = Math.min(1, Math.max(0, k)); return k * k * (3 - 2 * k); };
 
-  function aggiornaTentacolo(t, chiusura, tempo) {
+  const q = new THREE.Vector3();
+  // centro: dove sta la pallina nel sistema della pinza; i tentacoli non la attraversano ma ci scorrono sopra
+  function aggiornaTentacolo(t, chiusura, tempo, centro) {
     const fuori = new THREE.Vector3(Math.cos(t.a), Math.sin(t.a), 0);   // verso l'esterno
     const giu = new THREE.Vector3(0, 0, -1);
     // direzione di uscita, aperta verso l'esterno; chiudendosi i tentacoli girano un po' tutti nello stesso verso
@@ -147,6 +166,17 @@
         gira(D, B, TORSIONE / L * attivo * ds);
         T.normalize(); D.addScaledVector(T, -D.dot(T)).normalize(); B.crossVectors(T, D);
         p.addScaledVector(T, ds);
+        // contatto: se il punto entra nella pallina torna sulla superficie e la direzione perde la parte che
+        // spinge dentro, così il resto del tentacolo continua ad arrotolarsi avvolgendola
+        q.copy(p).sub(centro);
+        const d = q.length(), minimo = RB + raggio(s) * 0.92;
+        if (d < minimo) {
+          q.divideScalar(d);
+          const dentroPalla = T.dot(q);
+          if (dentroPalla < 0) T.addScaledVector(q, -dentroPalla).normalize();
+          p.copy(centro).addScaledVector(q, minimo);
+          D.addScaledVector(T, -D.dot(T)).normalize(); B.crossVectors(T, D);
+        }
       } else if (i > 0) p.addScaledVector(T, ds);
       const r = raggio(s);
       // scanalature sul lato interno, una per segmento; si stringono quando il tentacolo si chiude
@@ -174,26 +204,38 @@
   ridimensiona();
   contenitore.querySelector('.caricando')?.remove();
 
-  // ciclo: aperti che ondeggiano, si arrotolano dalla punta alla base, tengono, si srotolano
+  // ciclo del video: la pinza scende aperta sulla pallina, i tentacoli si arrotolano dalla punta e la avvolgono,
+  // la solleva, la tiene, la riappoggia, si apre e risale
+  const SU = 40, GIU = -34;                                  // quota della pinza: sopra la pallina e in presa
   const liscia = k => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
-  const fasi = [[2.2, 0, 0], [3.4, 0, CHIUSA], [1.4, CHIUSA, CHIUSA], [2.8, CHIUSA, 0]];
+  const fasi = [                                             // durata (s), quota da/a, chiusura da/a, pallina presa
+    [1.4, SU, SU, 0, 0, false], [1.8, SU, GIU, 0, 0, false], [3, GIU, GIU, 0, 1, false], [2, GIU, SU, 1, 1, true],
+    [1.4, SU, SU, 1, 1, true], [2, SU, GIU, 1, 1, true], [2.4, GIU, GIU, 1, 0, false], [1.6, GIU, SU, 0, 0, false],
+  ];
   const durata = fasi.reduce((t, f) => t + f[0], 0);
-  function chiusuraAl(t) {
+  function statoAl(t) {
     let y = t % durata;
-    for (const [d, da, a] of fasi) { if (y < d) return da + (a - da) * liscia(y / d); y -= d; }
-    return 0;
+    for (const [d, h0, h1, c0, c1, presa] of fasi) {
+      if (y < d) { const k = liscia(y / d); return { quota: h0 + (h1 - h0) * k, chiusura: c0 + (c1 - c0) * k, presa }; }
+      y -= d;
+    }
+    return { quota: SU, chiusura: 0, presa: false };
   }
+  const centro = new THREE.Vector3();
   let visibile = true;
   new IntersectionObserver(([e]) => { visibile = e.isIntersecting; }).observe(contenitore);
   const t0 = performance.now();
   (function ciclo(ora) {
     requestAnimationFrame(ciclo);
     if (!visibile) return;
-    const t = (ora - t0) / 1000;
-    // data-chiusura (da 0 a 1) ferma la pinza a quella chiusura: per le immagini e i controlli
-    const fissa = contenitore.dataset.chiusura;
-    const c = fissa !== undefined ? +fissa : fermo ? 0.55 : chiusuraAl(t);
-    tentacoli.forEach(x => aggiornaTentacolo(x, c, t));
+    // data-tempo (in secondi) ferma l'animazione a quell'istante del ciclo: per le immagini e i controlli
+    const fisso = contenitore.dataset.tempo;
+    const t = fisso !== undefined ? +fisso : (ora - t0) / 1000;
+    const st = fermo ? { quota: GIU, chiusura: 1, presa: false } : statoAl(t);
+    pinza.position.z = st.quota;
+    palla.position.z = PAVIMENTO + RB + (st.presa ? st.quota - GIU : 0);
+    centro.copy(palla.position).sub(pinza.position);
+    tentacoli.forEach(x => aggiornaTentacolo(x, st.chiusura, t, centro));
     controlli.update();
     renderer.render(scena, camera);
   })(t0);
