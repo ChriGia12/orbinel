@@ -195,6 +195,11 @@
           <button id="btnCopiaReale" disabled title="Porta la simulazione dove si trova il robot">Copia la posa dal robot</button>
           <button id="btnCoppia" disabled>Coppia: —</button>
         </div>
+        <div class="riga" style="margin-top:8px">
+          <button id="btnHome" class="primario" disabled title="Alza il braccio un giunto alla volta, dalla spalla alla base, fino alla posa home">Vai in home</button>
+          <button id="btnParcheggia" disabled title="Stende il braccio in avanti fino ad appoggiarlo sul piano, poi spegne la coppia: da fare prima di togliere la corrente">Parcheggia</button>
+          <button id="btnSalvaParcheggio" disabled title="Con il braccio appoggiato a mano sul piano: salva questa posa come parcheggio">Salva il parcheggio</button>
+        </div>
         <div style="margin-top:10px">
           <label class="muted" style="font-size:12px">Velocità massima: <span id="valVelocita" class="num"></span> °/s</label>
           <input type="range" id="velocita" min="5" max="120" step="5">
@@ -211,7 +216,7 @@
           <span class="reale num" id="pinzaReale"></span>
         </div>
         <div class="riga" style="margin-top:8px">
-          <button id="btnRiposo">Riposo</button>
+          <button id="btnRiposo">Home</button>
           <button id="btnZero">Tutti a zero</button>
         </div>
       </div>
@@ -396,7 +401,8 @@
           <tr><td>Velocità massima (°/s)</td><td><input type="number" data-imp="velocita"></td></tr>
           <tr><td>Accelerazione dei servo (0–254)</td><td><input type="number" data-imp="accelerazione"></td></tr>
           <tr><td>Conto alla rovescia prima delle sequenze (s)</td><td><input type="number" data-imp="conteggio"></td></tr>
-          <tr><td>Posa di riposo (J1…J6, °)</td><td><input type="text" id="impRiposo"></td></tr>
+          <tr><td>Posa home (J1…J6, °)</td><td><input type="text" id="impRiposo"></td></tr>
+          <tr><td>Posa di parcheggio (J1…J6, °)</td><td><input type="text" id="impParcheggio"></td></tr>
         </tbody></table>
       </div>
     </div>
@@ -467,7 +473,7 @@
 
 <script src="lib/three.min.js?v=7a7802bf"></script>
 <script src="lib/OrbitControls.js?v=63530cfe"></script>
-<script src="js/robot.js?v=35e42733"></script>
+<script src="js/robot.js?v=16a567c4"></script>
 <script src="js/cinematica.js?v=203120ed"></script>
 <script src="js/sts.js?v=817b91a4"></script>
 <script src="js/scena.js?v=7d48337e"></script>
@@ -475,7 +481,7 @@
   // dal sito pubblicato Motion sta in motion/ e il sito è la cartella sopra; in anteprima locale il sito è /dist/
   if (/^(127\.0\.0\.1|localhost)$/.test(location.hostname) && location.pathname.startsWith('/motion/')) document.querySelectorAll('#linkSito, #btnSito').forEach(a => { a.href = '/dist/'; });
 </script>
-<script src="js/app.js?v=d15f4913"></script>
+<script src="js/app.js?v=cf566eb4"></script>
 <script src="js/analisi.js?v=ec6d055e"></script>
 <script src="js/utensili.js?v=df52c0de"></script>
 <script src="js/oggetti.js?v=fe4af618"></script>

@@ -10,6 +10,7 @@ const salvato = chiave => { try { return JSON.parse(localStorage.getItem('orbine
 const salva = (chiave, v) => { try { localStorage.setItem('orbinel.kheiron.' + chiave, JSON.stringify(v)); } catch {} };
 
 let imp = Object.assign(impostazioniIniziali(), salvato('impostazioni') || {});
+if (!Array.isArray(imp.parcheggio)) imp.parcheggio = impostazioniIniziali().parcheggio;
 let pose = salvato('pose') || [];
 let sequenza = salvato('sequenza') || [];
 const stato = {
@@ -104,6 +105,78 @@ async function ferma() {
   }
   await bus.muovi(obiettivi);
   avviso('Fermato: ogni servo tiene la posizione in cui era');
+}
+
+async function impostaCoppia(accesa) {
+  impostaSegui(false);
+  if (accesa) {      // prima di riaccendere, obiettivo = posizione attuale: niente scatti
+    const ob = idUsati().filter(id => stato.reale[id]).map(id => ({ id, posizione: stato.reale[id].posizione, velocita: 500 }));
+    await bus.muovi(ob);
+  }
+  await bus.coppia(idUsati(), accesa);
+  stato.coppia = accesa;
+  aggiornaCoppia();
+}
+
+// --- Home e parcheggio ---
+// gruppi di giunti che si muovono insieme, uno dopo l'altro ('p' è la pinza)
+const FASI_HOME = [[1], [2], [3, 4, 5, 'p'], [0]];        // la spalla stacca il braccio dalla base, poi gomito, polso, base
+const FASI_PARCHEGGIO = [[0], [3, 4, 5, 'p'], [2], [1]];  // al contrario: la spalla lo appoggia per ultima
+
+async function movimentoGuidato(nome, aQ, aP, fasi) {
+  if (stato.inEsecuzione) return;
+  if (!bus.collegato) return avviso('Collega prima il robot');
+  if (bus.modo === 'ponte' && bus.arresto) return avviso('Il fungo è premuto');
+  const pr = posaReale();
+  if (!pr) return avviso('Non leggo tutti i servo dei giunti');
+  stato.annulla = false; stato.inEsecuzione = true;
+  impostaSegui(false);
+  try {
+    if (stato.coppia !== true) await impostaCoppia(true);
+    let q = pr.q, p = Math.max(0, Math.min(20, pr.pinza));
+    stato.q = q.slice(); stato.pinza = p; aggiorna();
+    for (const [k, fase] of fasi.entries()) {
+      if (stato.annulla || !puoMuovere()) break;
+      const nq = q.slice();
+      let np = p;
+      fase.forEach(i => { if (i === 'p') np = aP; else nq[i] = aQ[i]; });
+      const salto = Math.max(...nq.map((v, i) => Math.abs(v - q[i])));
+      if (salto < 0.5 && Math.abs(np - p) < 0.5) continue;
+      const durata = Math.max(0.8, salto / (imp.velocita / 2));     // metà della velocità massima
+      avviso(`${nome}: fase ${k + 1} di ${fasi.length}`, durata * 1000 + 500);
+      inviaAlRobot(nq, np, durata);
+      if (!(await anima(q, p, nq, np, durata))) break;
+      await pausa(300);
+      q = nq; p = np;
+    }
+    return !stato.annulla && puoMuovere();
+  } finally {
+    stato.inEsecuzione = false;
+  }
+}
+
+async function vaiInHome() {
+  if (await movimentoGuidato('Vai in home', imp.riposo, imp.pinzaRiposo, FASI_HOME))
+    avviso('Robot in home. Attiva «segue la simulazione» per comandarlo', 5000);
+}
+
+// a fine corsa la coppia si spegne: il braccio si appoggia sul piano col suo peso, senza spingere
+async function parcheggia() {
+  if (!(await movimentoGuidato('Parcheggio', imp.parcheggio, imp.pinzaParcheggio, FASI_PARCHEGGIO))) return;
+  await impostaCoppia(false);
+  avviso('Robot appoggiato sul piano, coppia spenta: ora puoi togliere l\'alimentazione', 6000);
+}
+
+function salvaParcheggio() {
+  const pr = posaReale();
+  if (!pr) return avviso('Non leggo tutti i servo dei giunti');
+  // il parcheggio tocca la base per definizione: si controllano solo i limiti dei giunti
+  const fuori = pr.q.findIndex((v, i) => v < imp.giunti[i].min || v > imp.giunti[i].max);
+  if (fuori >= 0) return avviso(`${ROBOT.giunti[fuori].nome} è fuori dai limiti: controlla lo zero`, 6000);
+  imp.parcheggio = pr.q.map(v => +v.toFixed(1));
+  imp.pinzaParcheggio = +Math.max(0, Math.min(20, pr.pinza)).toFixed(1);
+  salva('impostazioni', imp); mostraImpostazioni();
+  avviso('Posa di parcheggio salvata');
 }
 
 // --- Simulazione ---
@@ -250,7 +323,8 @@ function aggiornaCollegamento() {
     : bus.modo === 'ponte' ? 'Collegato tramite ESP32' : 'Collegato all\'adattatore (USB diretta)';
   $('btnCollega').hidden = c; $('btnScollega').hidden = !c;
   ['segui', 'btnCopiaReale', 'btnCoppia', 'btnCerca', 'btnCoppiaOff', 'btnSalvaZero', 'btnCoppiaOn',
-   'btnPinzaChiusa', 'btnPinzaAperta', 'btnCambiaId', 'btnSalvaPosaReale'].forEach(id => { $(id).disabled = !c; });
+   'btnPinzaChiusa', 'btnPinzaAperta', 'btnCambiaId', 'btnSalvaPosaReale',
+   'btnHome', 'btnParcheggia', 'btnSalvaParcheggio'].forEach(id => { $(id).disabled = !c; });
   $('notaSegui').textContent = !c ? 'Collega la schedina per muovere il robot vero. Senza, muovi solo la simulazione.'
     : bus.modo === 'diretto' ? 'Attenzione: con la USB diretta all\'adattatore il fungo non è attivo. Usa il tasto FERMA o Esc.'
     : 'Con l\'interruttore acceso, ogni movimento della simulazione arriva al robot.';
@@ -443,6 +517,7 @@ function mostraImpostazioni() {
     el.value = el.dataset.imp.split('.').reduce((o, k) => o[k], imp);
   });
   $('impRiposo').value = imp.riposo.join(', ');
+  $('impParcheggio').value = imp.parcheggio.join(', ');
   $('velocita').value = imp.velocita; $('valVelocita').textContent = imp.velocita;
   $('tabAssegnazione').innerHTML = ROBOT.giunti.map((g, i) =>
     `<tr><td>${g.nome}</td><td class="num">${imp.giunti[i].servo.map(s => s.id).join(' e ')}</td></tr>`).join('')
@@ -563,15 +638,11 @@ function collegaEventi() {
   });
   const coppia = async accesa => {
     if (!accesa && !confirm('Senza coppia i servo diventano liberi e il braccio può cadere. Sostienilo. Procedo?')) return;
-    impostaSegui(false);
-    if (accesa) {      // prima di riaccendere, obiettivo = posizione attuale: niente scatti
-      const ob = idUsati().filter(id => stato.reale[id]).map(id => ({ id, posizione: stato.reale[id].posizione, velocita: 500 }));
-      await bus.muovi(ob);
-    }
-    await bus.coppia(idUsati(), accesa);
-    stato.coppia = accesa;
-    aggiornaCoppia();
+    await impostaCoppia(accesa);
   };
+  $('btnHome').addEventListener('click', vaiInHome);
+  $('btnParcheggia').addEventListener('click', parcheggia);
+  $('btnSalvaParcheggio').addEventListener('click', salvaParcheggio);
   $('btnCoppia').addEventListener('click', () => coppia(!stato.coppia));
   $('btnCoppiaOff').addEventListener('click', () => coppia(false));
   $('btnCoppiaOn').addEventListener('click', () => coppia(true));
@@ -687,6 +758,13 @@ function collegaEventi() {
   $('impRiposo').addEventListener('change', e => {
     const v = e.target.value.split(/[,;\s]+/).filter(Boolean).map(Number);
     if (v.length === 6 && v.every(Number.isFinite)) { imp.riposo = v; salvaImpostazioni(); }
+    else { avviso('Servono 6 numeri separati da virgole'); }
+    mostraImpostazioni();
+  });
+  $('impParcheggio').addEventListener('change', e => {
+    const v = e.target.value.split(/[,;\s]+/).filter(Boolean).map(Number);
+    if (!v.length) { imp.parcheggio = impostazioniIniziali().parcheggio; salvaImpostazioni(); }
+    else if (v.length === 6 && v.every(Number.isFinite)) { imp.parcheggio = v; salvaImpostazioni(); }
     else { avviso('Servono 6 numeri separati da virgole'); }
     mostraImpostazioni();
   });

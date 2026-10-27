@@ -63,8 +63,10 @@ function impostazioniIniziali() {
     pinza: { id: 8, chiusa: 2048, aperta: 2700 },   // posizioni del servo con dita chiuse e tutte aperte
     velocita: 30,          // gradi al secondo, per il giunto che si muove di più
     accelerazione: 20,     // registro del servo, 0..254 (x 100 passi/s²)
-    riposo: [0, 0, 0, 0, 0, 0],
+    riposo: [0, 0, 0, 0, 0, 0],      // posa home
     pinzaRiposo: 12,
+    parcheggio: [0, 90, -37, 0, -53, 0],  // braccio steso in avanti, pinza e polso appoggiati sul piano
+    pinzaParcheggio: 12,
     conteggio: 3,          // secondi di conto alla rovescia prima di una sequenza
   };
 }
