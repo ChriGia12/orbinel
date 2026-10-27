@@ -1,0 +1,4 @@
+Contact: mailto:info@orbinel.it
+Expires: 2027-10-26T23:00:00Z
+Preferred-Languages: it, en
+Canonical: https://orbinel.it/.well-known/security.txt
