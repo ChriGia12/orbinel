@@ -1,4 +1,4 @@
-// Pinza a tentacoli, in fase di studio: anteprima animata nella pagina Make. Non è un pezzo del generatore di
+// Pinza a tentacoli, in fase di studio: anteprima animata nella pagina Parts. Non è un pezzo del generatore di
 // Parts né di Motion: mostra l'idea, con forma e movimento indicativi.
 // Sei tentacoli affusolati escono dal fondo arrotondato del corpo, leggermente aperti verso l'esterno, e si
 // arrotolano a spirale verso l'asse: la curvatura cresce verso la punta, dove il tentacolo è più sottile, come
@@ -16,8 +16,13 @@
   const SEGMENTI = 24;               // fessure lungo il tentacolo
   const CORONA = 16.5;               // raggio su cui escono dal fondo del corpo
   const APERTURA = 0.62;             // inclinazione verso l'esterno all'uscita (rad)
-  const GIRO = 6.3;                  // curvatura totale a tentacolo chiuso (rad, circa 360°)
-  const RIPOSO = 0.2;                // anche aperti restano un po' arricciati in punta
+  const GIRO = 10;                   // curvatura totale a tentacolo chiuso (rad, circa un giro e mezzo)
+  const RIPOSO = 0.12;               // anche aperti restano un po' arricciati in punta
+  const ONDA = 0.6;                  // ampiezza dell'ondeggiamento da aperti (rad su tutta la lunghezza)
+  const FRONTE = 0.75;               // quanto del tentacolo si piega insieme: l'arrotolamento parte dalla punta
+  const TORSIONE = 1.4;              // rotazione del piano della spirale lungo il tentacolo, a chiusura completa (rad)
+  const CHIUSA = 0.75;               // fin dove si chiudono nel ciclo: oltre, senza un oggetto in mezzo, si aggrovigliano
+  const VORTICE = 0.32;              // a chiusura completa i tentacoli girano tutti un po' nello stesso verso (rad)
   const ANELLI = 150, LATI = 28;
 
   // --- scena ---
@@ -29,7 +34,7 @@
   scena.background = new THREE.Color(getComputedStyle(document.body).backgroundColor || '#0B0D10');
   const camera = new THREE.PerspectiveCamera(30, 1, 1, 3000);
   camera.up.set(0, 0, 1);
-  camera.position.set(290, -330, 60);
+  camera.position.set(300, -330, 15);
   const controlli = new THREE.OrbitControls(camera, renderer.domElement);
   controlli.target.set(0, 0, -70);
   controlli.enableDamping = true;
@@ -100,37 +105,58 @@
     return { a, geo, pos, fase: k * 1.37, mesh };
   });
 
-  const v = new THREE.Vector3(), T = new THREE.Vector3(), Nn = new THREE.Vector3(), B = new THREE.Vector3();
+  // Il tentacolo si costruisce passo per passo, portandosi dietro una terna: T lungo il tentacolo, D verso il lato
+  // interno (dove corre il cavo e verso cui si piega) e B di lato. A ogni passo la terna ruota per la curvatura
+  // verso D, per una piccola curvatura laterale e per la torsione attorno a T, che fa ruotare il piano della
+  // spirale: così il tentacolo si avvolge in 3D, non solo in un piano.
+  const K = GIRO / totale;                                   // curvatura = K / r: più stretta dove è più sottile
+  const v = new THREE.Vector3(), T = new THREE.Vector3(), D = new THREE.Vector3(), B = new THREE.Vector3(), p = new THREE.Vector3();
+  const x = new THREE.Vector3(), z = new THREE.Vector3(0, 0, 1);
+  const gira = (a, b, ang) => {                              // ruota a verso b (perpendicolari) di ang
+    const c = Math.cos(ang), s = Math.sin(ang);
+    x.copy(a).multiplyScalar(c).addScaledVector(b, s);
+    b.multiplyScalar(c).addScaledVector(a, -s);
+    a.copy(x);
+  };
+  const liscia01 = k => { k = Math.min(1, Math.max(0, k)); return k * k * (3 - 2 * k); };
+
   function aggiornaTentacolo(t, chiusura, tempo) {
     const fuori = new THREE.Vector3(Math.cos(t.a), Math.sin(t.a), 0);   // verso l'esterno
-    const lato = new THREE.Vector3(-Math.sin(t.a), Math.cos(t.a), 0);   // tangente alla corona
     const giu = new THREE.Vector3(0, 0, -1);
-    // il tentacolo parte 10 mm dentro il corpo, nella sua direzione di uscita, così attraversa la cupola pulito
+    // direzione di uscita, aperta verso l'esterno; chiudendosi i tentacoli girano un po' tutti nello stesso verso
+    T.copy(giu).multiplyScalar(Math.cos(APERTURA)).addScaledVector(fuori, Math.sin(APERTURA));
+    D.copy(fuori).multiplyScalar(-Math.cos(APERTURA)).addScaledVector(giu, Math.sin(APERTURA));
+    const vortice = VORTICE * liscia01(chiusura * 1.3);
+    T.applyAxisAngle(z, vortice); D.applyAxisAngle(z, vortice);
+    B.crossVectors(T, D);
+    // parte 10 mm dentro il corpo, nella direzione di uscita, così attraversa la cupola pulito
     const DENTRO = 10, ds = (L + DENTRO) / ANELLI;
-    const p = new THREE.Vector3(CORONA * Math.cos(t.a), CORONA * Math.sin(t.a), zCupola(CORONA))
-      .addScaledVector(fuori, -Math.sin(APERTURA) * DENTRO).addScaledVector(giu, -Math.cos(APERTURA) * DENTRO);
+    p.set(CORONA * Math.cos(t.a), CORONA * Math.sin(t.a), zCupola(CORONA)).addScaledVector(T, -DENTRO);
+    const morbido = fermo ? 0 : 1 - 0.75 * chiusura;
     for (let i = 0; i <= ANELLI; i++) {
-      const s = Math.max(0, i * ds - DENTRO), f = integrale(s) / totale;
-      // angolo dalla verticale: parte aperto verso l'esterno e ruota verso l'asse, di più verso la punta;
-      // un'ondulazione lenta, diversa per ogni tentacolo, lo rende meno rigido
-      const onda = fermo ? 0 : 0.09 * Math.sin(tempo * 1.3 + t.fase + s / 18) * (s / L);
-      const c = RIPOSO + (1 - RIPOSO) * chiusura;
-      const th = i * ds < DENTRO ? APERTURA : APERTURA * (1 - 0.55 * chiusura) - c * GIRO * f + onda;
-      const sw = fermo ? 0 : 0.12 * Math.sin(tempo * 0.9 + t.fase * 2 + s / 26) * (s / L);
-      T.copy(giu).multiplyScalar(Math.cos(th)).addScaledVector(fuori, Math.sin(th)).addScaledVector(lato, sw).normalize();
-      if (i > 0) p.addScaledVector(T, ds);
-      // sezione: normale verso l'esterno della curva (lato della spina) e lato
-      B.copy(lato);
-      Nn.crossVectors(B, T).normalize();
+      const s = Math.max(0, i * ds - DENTRO), u = s / L, f = integrale(s) / totale;
+      if (i > 0 && i * ds > DENTRO) {
+        // quanto è già arrotolato questo punto: il fronte parte dalla punta e scende verso la base
+        const attivo = Math.max(RIPOSO * u * u, liscia01((chiusura * (1 + FRONTE) - (1 - u)) / FRONTE));
+        // ondeggiamento: due onde lente che corrono lungo il tentacolo, più ampie verso la punta
+        const onda = ONDA / L * morbido * u;
+        const kD = K / raggio(s) * attivo + onda * Math.sin(2 * Math.PI * (1.3 * u) - tempo * 1.6 + t.fase);
+        const kB = onda * 0.8 * Math.sin(2 * Math.PI * (1.1 * u) - tempo * 1.2 + t.fase * 1.7);
+        gira(T, D, kD * ds);
+        gira(T, B, kB * ds);
+        gira(D, B, TORSIONE / L * attivo * ds);
+        T.normalize(); D.addScaledVector(T, -D.dot(T)).normalize(); B.crossVectors(T, D);
+        p.addScaledVector(T, ds);
+      } else if (i > 0) p.addScaledVector(T, ds);
       const r = raggio(s);
       // scanalature sul lato interno, una per segmento; si stringono quando il tentacolo si chiude
       const n = (SEGMENTI * f) % 1;
-      const fessura = Math.pow(Math.max(0, 1 - Math.abs(n - 0.5) * 4.2), 1.5) * (0.32 - 0.14 * chiusura);
+      const fessura = Math.pow(Math.max(0, 1 - Math.abs(n - 0.5) * 4.2), 1.5) * (0.3 - 0.16 * chiusura);
       for (let j = 0; j <= LATI; j++) {
         const phi = (j / LATI) * Math.PI * 2;
-        const dentro = Math.max(0, -Math.cos(phi));            // 1 sul lato interno della spirale
-        const rr = r * (1 - fessura * Math.pow(dentro, 2));
-        v.copy(p).addScaledVector(Nn, rr * Math.cos(phi)).addScaledVector(B, rr * Math.sin(phi));
+        const dentro = Math.max(0, Math.cos(phi));             // 1 sul lato interno, verso D
+        const rr = r * (1 - fessura * dentro * dentro);
+        v.copy(p).addScaledVector(D, rr * Math.cos(phi)).addScaledVector(B, rr * Math.sin(phi));
         t.pos.set([v.x, v.y, v.z], (i * (LATI + 1) + j) * 3);
       }
       if (i === ANELLI) t.pos.set([p.x + T.x * RT, p.y + T.y * RT, p.z + T.z * RT], (ANELLI + 1) * (LATI + 1) * 3);
@@ -148,14 +174,14 @@
   ridimensiona();
   contenitore.querySelector('.caricando')?.remove();
 
-  // ciclo: aperti, si chiudono a spirale, tengono, si riaprono
-  const liscia = k => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
-  const fasi = [[1.6, 0.06, 0.06], [2.4, 0.06, 0.82], [1.4, 0.82, 0.82], [2.2, 0.82, 0.06]];
+  // ciclo: aperti che ondeggiano, si arrotolano dalla punta alla base, tengono, si srotolano
+  const liscia = k => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
+  const fasi = [[2.2, 0, 0], [3.4, 0, CHIUSA], [1.4, CHIUSA, CHIUSA], [2.8, CHIUSA, 0]];
   const durata = fasi.reduce((t, f) => t + f[0], 0);
   function chiusuraAl(t) {
-    let x = t % durata;
-    for (const [d, da, a] of fasi) { if (x < d) return da + (a - da) * liscia(x / d); x -= d; }
-    return 0.06;
+    let y = t % durata;
+    for (const [d, da, a] of fasi) { if (y < d) return da + (a - da) * liscia(y / d); y -= d; }
+    return 0;
   }
   let visibile = true;
   new IntersectionObserver(([e]) => { visibile = e.isIntersecting; }).observe(contenitore);
