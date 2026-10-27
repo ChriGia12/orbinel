@@ -16,11 +16,12 @@
   const SEGMENTI = 24;               // fessure lungo il tentacolo
   const CORONA = 16.5;               // raggio su cui escono dal fondo del corpo
   const APERTURA = 0.18;             // inclinazione verso l'esterno all'uscita (rad): quasi verticali, come nel video
-  const GIRO = 10;                   // curvatura totale verso l'interno, in presa (rad, circa un giro e mezzo)
+  const GIRO = 5;                    // curvatura totale verso l'interno, in presa (rad): basta per stringere i fianchi
   const GIRO_RITRATTO = 17;          // curvatura totale verso l'esterno, ritratti a rosetta (rad, quasi tre giri)
   const RIPOSO = 0.12;               // anche aperti restano un po' arricciati in punta
   const ONDA = 0.6;                  // ampiezza dell'ondeggiamento da aperti (rad su tutta la lunghezza)
   const FRONTE = 0.75;               // quanto del tentacolo si piega insieme: l'arrotolamento parte dalla punta
+  const FRONTE_PRESA = 0.5;          // in presa si piega soprattutto il tratto finale, quello che pende lungo i fianchi
   const TORSIONE = 1.4;              // rotazione del piano della spirale lungo il tentacolo, a chiusura completa (rad)
   const PESO = 0.05;                // quanto ricade un tratto disteso senza appoggio (rad per mm)
   const VORTICE = 0.32;              // a chiusura completa i tentacoli girano tutti un po' nello stesso verso (rad)
@@ -125,107 +126,115 @@
   pezzo(2 * SCATOLA.x - 6, 0.8, 0.7, 0, 0, SCATOLA.z + 0.05, new THREE.MeshStandardMaterial({ color: 0x5c4426, roughness: 1 }));
   scena.add(scatola);
 
-  // Il tentacolo si costruisce passo per passo, portandosi dietro una terna: T lungo il tentacolo, D verso il lato
-  // interno (dove corre il cavo e verso cui si piega) e B di lato. A ogni passo la terna ruota per la curvatura
-  // verso D, per una piccola curvatura laterale e per la torsione attorno a T, che fa ruotare il piano della
-  // spirale: così il tentacolo si avvolge in 3D, non solo in un piano.
-  const K = GIRO / totale;                                   // curvatura = K / r: più stretta dove è più sottile
-  const v = new THREE.Vector3(), T = new THREE.Vector3(), D = new THREE.Vector3(), B = new THREE.Vector3(), p = new THREE.Vector3();
-  const x = new THREE.Vector3(), z = new THREE.Vector3(0, 0, 1);
-  const gira = (a, b, ang) => {                              // ruota a verso b (perpendicolari) di ang
-    const c = Math.cos(ang), s = Math.sin(ang);
-    x.copy(a).multiplyScalar(c).addScaledVector(b, s);
-    b.multiplyScalar(c).addScaledVector(a, -s);
-    a.copy(x);
-  };
+  // --- fisica dei tentacoli ---
+  // Ogni tentacolo è una catena di M punti con il suo peso. A ogni passo: i punti si muovono per inerzia e gravità;
+  // poi, dalla base alla punta, ogni punto è tirato verso la posizione che avrebbe se il tentacolo avesse la sua
+  // curva «a riposo» (rigidità alla flessione, alta alla base e bassa in punta), rimesso alla distanza giusta dal
+  // precedente e spinto fuori da scatola, piano e corpo, con attrito dove tocca. I due cavi cambiano solo la curva
+  // a riposo: il cavo esterno la arrotola verso fuori (rosetta), quello interno verso l'asse, con una torsione che
+  // ruota il piano della spirale. Il resto (appoggiarsi, ricadere, avvolgersi, staccarsi) viene dalla fisica.
+  const M = 40, l = L / M, DENTRO = 10;
+  const K = GIRO / totale, KR = GIRO_RITRATTO / totale;
+  const GRAVITA = 2600, SMORZA = 0.965, ITERAZIONI = 10, ATTRITO = 0.55, PASSO = 1 / 120;
   const liscia01 = k => { k = Math.min(1, Math.max(0, k)); return k * k * (3 - 2 * k); };
+  const zc = new THREE.Vector3(0, 0, 1);
+  const d = new THREE.Vector3(), D = new THREE.Vector3(), q = new THREE.Vector3(), w = new THREE.Vector3();
 
-  const q = new THREE.Vector3();
-  // un punto del tentacolo non entra nella scatola né nel piano: torna sulla superficie e la direzione perde la
-  // parte che spinge dentro, così il resto del tentacolo ci scorre sopra e ne prende la forma
-  function appoggia(r, centro, pavimento, stringi) {
-    // dentro la scatola (allargata del raggio): si esce dalla faccia più vicina
-    q.copy(p).sub(centro);
-    const pen = [SCATOLA.x + r * 0.92 - Math.abs(q.x), SCATOLA.y + r * 0.92 - Math.abs(q.y), SCATOLA.z + r * 0.92 - Math.abs(q.z)];
+  function base(t, presa) {
+    const fuori = new THREE.Vector3(Math.cos(t.a), Math.sin(t.a), 0), giu = new THREE.Vector3(0, 0, -1);
+    const T0 = giu.clone().multiplyScalar(Math.cos(APERTURA)).addScaledVector(fuori, Math.sin(APERTURA));
+    const D0 = fuori.clone().multiplyScalar(-Math.cos(APERTURA)).addScaledVector(giu, Math.sin(APERTURA));
+    const vortice = VORTICE * liscia01(presa * 1.3);
+    T0.applyAxisAngle(zc, vortice); D0.applyAxisAngle(zc, vortice);
+    const P0 = new THREE.Vector3(CORONA * Math.cos(t.a), CORONA * Math.sin(t.a), zCupola(CORONA));
+    return { P0, T0, D0 };
+  }
+  tentacoli.forEach(t => {
+    const { P0, T0 } = base(t, 0);
+    t.x = [...Array(M + 1)].map((_, i) => P0.clone().addScaledVector(T0, i * l));
+    t.y = t.x.map(v => v.clone());
+  });
+
+  // un punto non entra nella scatola, nel piano né nel corpo; ritorna true se tocca qualcosa
+  function scosta(c, r, centro, pavimento) {
     let tocca = false;
-    // stringendo, i tratti vicini a una faccia (entro 14 mm) vengono tirati contro di lei e la seguono
-    if (stringi > 0 && Math.min(pen[0], pen[1], pen[2]) <= 0) {
-      const fuoriDi = pen.filter(v => v <= 0);
-      if (fuoriDi.length === 1 && pen[pen.findIndex(v => v <= 0)] > -14) {
-        const k = pen.findIndex(v => v <= 0), asse = ['x', 'y', 'z'][k], verso = Math.sign(q[asse]) || 1;
-        p[asse] += verso * pen[k] * Math.min(1, stringi * 1.4);
-        T[asse] *= 1 - Math.min(1, stringi * 1.4); T.normalize();
-        pen[k] = 0.0001;
-      }
-    }
+    q.copy(c).sub(centro);
+    const pen = [SCATOLA.x + r - Math.abs(q.x), SCATOLA.y + r - Math.abs(q.y), SCATOLA.z + r - Math.abs(q.z)];
     if (pen[0] > 0 && pen[1] > 0 && pen[2] > 0) {
-      const k = pen.indexOf(Math.min(...pen)), asse = ['x', 'y', 'z'][k], verso = Math.sign(q[asse]) || 1;
-      p[asse] += verso * pen[k];
-      if (T[asse] * verso < 0) { T[asse] = 0; T.normalize(); }
-      // il lato interno (dove tira il cavo) guarda la scatola: stringendo la preme invece di girarle attorno
-      D.set(0, 0, 0); D[asse] = -verso;
+      const k = pen.indexOf(Math.min(...pen)), asse = ['x', 'y', 'z'][k];
+      c[asse] += (Math.sign(q[asse]) || 1) * pen[k];
       tocca = true;
     }
-    if (p.z < pavimento + r) {
-      p.z = pavimento + r;
-      if (T.z < 0) { T.z = 0; T.normalize(); }
-    }
-    D.addScaledVector(T, -D.dot(T)).normalize(); B.crossVectors(T, D);
+    if (c.z < pavimento + r) { c.z = pavimento + r; tocca = true; }
+    // il corpo, approssimato con una sfera: i tentacoli arrotolati non ci entrano
+    q.copy(c); q.z += 38;
+    const dc = q.length();
+    if (dc < 34 + r) { c.addScaledVector(q, (34 + r - dc) / dc); }
     return tocca;
   }
 
-  // Due cavi per tentacolo, come nel video. ritratto (0–1): il cavo esterno arrotola il tentacolo verso l'esterno e
-  // verso l'alto, a rosetta accanto al corpo; srotolandosi si stende prima vicino alla base e per ultima la punta.
-  // presa (0–1): il cavo interno arrotola la punta verso l'asse, sotto l'oggetto, con la torsione e il vortice.
-  // centro e pavimento: il centro della scatola e il piano, nel sistema della pinza.
-  function aggiornaTentacolo(t, ritratto, presa, tempo, centro, pavimento) {
-    const fuori = new THREE.Vector3(Math.cos(t.a), Math.sin(t.a), 0);   // verso l'esterno
-    const giu = new THREE.Vector3(0, 0, -1);
-    T.copy(giu).multiplyScalar(Math.cos(APERTURA)).addScaledVector(fuori, Math.sin(APERTURA));
-    D.copy(fuori).multiplyScalar(-Math.cos(APERTURA)).addScaledVector(giu, Math.sin(APERTURA));
-    const vortice = VORTICE * liscia01(presa * 1.3);
-    T.applyAxisAngle(z, vortice); D.applyAxisAngle(z, vortice);
-    B.crossVectors(T, D);
-    // parte 10 mm dentro il corpo, nella direzione di uscita, così attraversa la cupola pulito
-    const DENTRO = 10, ds = (L + DENTRO) / ANELLI;
-    p.set(CORONA * Math.cos(t.a), CORONA * Math.sin(t.a), zCupola(CORONA)).addScaledVector(T, -DENTRO);
-    const morbido = fermo ? 0 : (1 - ritratto) * (1 - 0.75 * presa);
-    let aderente = 0;                                      // 1 dove il tentacolo appoggia sulla scatola, poi sfuma
+  function passo(st, tempo, centro, pavimento, spinta) {
+    const morbido = fermo ? 0 : (1 - st.ritratto) * (1 - 0.75 * st.chiusura);
+    for (const t of tentacoli) {
+      const { P0, T0, D0 } = base(t, st.chiusura);
+      // inerzia e gravità; spinta: quanto si è mosso il corpo, che i punti liberi seguono in ritardo
+      for (let i = 2; i <= M; i++) {
+        const x = t.x[i], y = t.y[i];
+        w.copy(x).sub(y).multiplyScalar(SMORZA);
+        y.copy(x);
+        x.add(w); x.z -= GRAVITA * PASSO * PASSO + spinta;
+      }
+      t.x[0].copy(P0); t.x[1].copy(P0).addScaledVector(T0, l);
+      t.y[0].copy(t.x[0]); t.y[1].copy(t.x[1]);
+      for (let it = 0; it < ITERAZIONI; it++) {
+        D.copy(D0);
+        for (let i = 2; i <= M; i++) {
+          const a = t.x[i - 2], b = t.x[i - 1], c = t.x[i];
+          const s = (i - 1) * l, u = s / L;
+          d.copy(b).sub(a).normalize();
+          D.addScaledVector(d, -D.dot(d)).normalize();
+          const fuoriAttivo = liscia01((st.ritratto * (1 + FRONTE) - (1 - u)) / FRONTE);
+          const dentroAttivo = Math.max(RIPOSO * u * u * (1 - st.ritratto), liscia01((st.chiusura * (1 + FRONTE_PRESA) - (1 - u)) / FRONTE_PRESA));
+          // torsione: il lato verso cui si piega gira lentamente attorno al tentacolo
+          D.applyAxisAngle(d, TORSIONE * dentroAttivo / M);
+          const onda = ONDA * morbido * u / M * Math.sin(2 * Math.PI * 1.3 * u - tempo * 1.6 + t.fase);
+          const th = (K * dentroAttivo - KR * fuoriAttivo) / raggio(s) * l + onda;
+          // dove dovrebbe stare il punto con la curva a riposo
+          w.copy(d).multiplyScalar(Math.cos(th)).addScaledVector(D, Math.sin(th)).multiplyScalar(l).add(b);
+          const rigido = 0.45 - 0.3 * u + 0.35 * Math.max(fuoriAttivo, dentroAttivo);
+          c.lerp(w, Math.min(1, rigido));
+          // distanza fissa dal punto precedente
+          w.copy(c).sub(b).setLength(l);
+          c.copy(b).add(w);
+          if (scosta(c, raggio(s) * 0.95, centro, pavimento)) t.y[i].lerp(c, ATTRITO);
+        }
+      }
+    }
+  }
+
+  // superficie del tentacolo dalla catena: una curva liscia per i punti, con le sezioni orientate per trasporto
+  const v = new THREE.Vector3(), Tg = new THREE.Vector3(), Dg = new THREE.Vector3(), Bg = new THREE.Vector3();
+  function disegna(t, presa) {
+    const { T0, D0 } = base(t, presa);
+    const punti = [t.x[0].clone().addScaledVector(T0, -DENTRO), ...t.x];
+    const curva = new THREE.CatmullRomCurve3(punti, false, 'centripetal');
+    curva.arcLengthDivisions = 160;
+    const lungo = curva.getSpacedPoints(ANELLI);
+    Dg.copy(D0);
     for (let i = 0; i <= ANELLI; i++) {
-      const s = Math.max(0, i * ds - DENTRO), u = s / L, f = integrale(s) / totale;
-      if (i > 0 && i * ds > DENTRO) {
-        // fronte del cavo esterno: arrotolato dove u > 1 − ritratto; quello interno parte dalla punta
-        const fuoriAttivo = liscia01((ritratto * (1 + FRONTE) - (1 - u)) / FRONTE);
-        const dentroAttivo = Math.max(RIPOSO * u * u * (1 - ritratto), liscia01((presa * (1 + FRONTE) - (1 - u)) / FRONTE));
-        // ondeggiamento: due onde lente che corrono lungo il tentacolo, più ampie verso la punta
-        const onda = ONDA / L * morbido * u;
-        // dove appoggia, il cavo interno lo schiaccia contro la scatola invece di arricciarlo
-        const kD = (K * dentroAttivo * (1 - 0.9 * aderente) - GIRO_RITRATTO / totale * fuoriAttivo) / raggio(s)
-          + onda * Math.sin(2 * Math.PI * (1.3 * u) - tempo * 1.6 + t.fase);
-        const kB = onda * 0.8 * Math.sin(2 * Math.PI * (1.1 * u) - tempo * 1.2 + t.fase * 1.7);
-        gira(T, D, kD * ds);
-        gira(T, B, kB * ds);
-        gira(D, B, TORSIONE / L * dentroAttivo * (1 - aderente) * ds);
-        // peso: dove è disteso il tentacolo ricade verso il basso; sopra la scatola lo tiene il contatto,
-        // oltre il bordo scende lungo il fianco
-        x.set(0, 0, -1).addScaledVector(T, T.z);
-        T.addScaledVector(x, PESO * (1 - fuoriAttivo) * (1 - 0.6 * dentroAttivo) * ds);
-        T.normalize(); D.addScaledVector(T, -D.dot(T)).normalize(); B.crossVectors(T, D);
-        p.addScaledVector(T, ds);
-        aderente = appoggia(raggio(s), centro, pavimento, presa) ? 1 : aderente * 0.9;
-      } else if (i > 0) p.addScaledVector(T, ds);
-      const r = raggio(s);
-      // scanalature sul lato interno, una per segmento; si stringono quando il tentacolo si chiude
-      const n = (SEGMENTI * f) % 1;
+      const s = Math.max(0, (i / ANELLI) * (L + DENTRO) - DENTRO), f = integrale(s) / totale;
+      Tg.copy(lungo[Math.min(ANELLI, i + 1)]).sub(lungo[Math.max(0, i - 1)]).normalize();
+      Dg.addScaledVector(Tg, -Dg.dot(Tg)).normalize();
+      Bg.crossVectors(Tg, Dg);
+      const r = raggio(s), n = (SEGMENTI * f) % 1;
       const fessura = Math.pow(Math.max(0, 1 - Math.abs(n - 0.5) * 4.2), 1.5) * (0.3 - 0.16 * presa);
       for (let j = 0; j <= LATI; j++) {
-        const phi = (j / LATI) * Math.PI * 2;
-        const dentro = Math.max(0, Math.cos(phi));             // 1 sul lato interno, verso D
+        const phi = (j / LATI) * Math.PI * 2, dentro = Math.max(0, Math.cos(phi));
         const rr = r * (1 - fessura * dentro * dentro);
-        v.copy(p).addScaledVector(D, rr * Math.cos(phi)).addScaledVector(B, rr * Math.sin(phi));
+        v.copy(lungo[i]).addScaledVector(Dg, rr * Math.cos(phi)).addScaledVector(Bg, rr * Math.sin(phi));
         t.pos.set([v.x, v.y, v.z], (i * (LATI + 1) + j) * 3);
       }
-      if (i === ANELLI) t.pos.set([p.x + T.x * RT, p.y + T.y * RT, p.z + T.z * RT], (ANELLI + 1) * (LATI + 1) * 3);
+      if (i === ANELLI) t.pos.set([lungo[i].x + Tg.x * RT, lungo[i].y + Tg.y * RT, lungo[i].z + Tg.z * RT], (ANELLI + 1) * (LATI + 1) * 3);
     }
     t.geo.attributes.position.needsUpdate = true;
     t.geo.computeVertexNormals();
@@ -244,7 +253,7 @@
   // tentacoli si srotolano sopra di lei prendendone la forma e ricadono lungo i fianchi, poi le punte si arrotolano
   // stringendola, la solleva, la tiene, la riappoggia, la lascia, i tentacoli si ritraggono, la pinza risale e li distende
   const ALTO = PAVIMENTO + 2 * SCATOLA.z;                     // faccia alta della scatola appoggiata
-  const SU = ALTO + 64.4 + L + 15, GIU = ALTO + 64.4 + 6;    // tentacoli distesi sopra la scatola; cupola appena sopra
+  const SU = ALTO + 64.4 + L + 15, GIU = ALTO + 64.4 + 24;   // tentacoli distesi sopra la scatola; spazio per srotolarsi
   const liscia = k => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
   const fasi = [                                             // durata (s), quota da/a, ritratto da/a, presa da/a, scatola presa
     [1.6, SU, SU, 0, 0, 0, 0, false], [1.8, SU, SU, 0, 1, 0, 0, false], [2, SU, GIU, 1, 1, 0, 0, false],
@@ -265,22 +274,47 @@
     }
     return { quota: SU, ritratto: 0, chiusura: 0, presa: false };
   }
+  // la simulazione avanza a passi fissi; data-tempo (in secondi) la ricalcola da capo fino a quell'istante
   const centro = new THREE.Vector3();
+  let tSim = 0, quotaPrima = SU, spintaPrima = 0, ultimo = null, tempoFisso = null;
+  function avanza(fino) {
+    while (tSim + PASSO <= fino) {
+      tSim += PASSO;
+      const st = fermo ? { quota: GIU, ritratto: 0, chiusura: 1, presa: false } : statoAl(tSim);
+      pinza.position.z = st.quota;
+      scatola.position.z = PAVIMENTO + SCATOLA.z + (st.presa ? st.quota - GIU : 0);
+      centro.copy(scatola.position).sub(pinza.position);
+      // nel sistema della pinza, quando lei accelera i tentacoli restano indietro
+      const mosso = st.quota - quotaPrima;
+      passo(st, tSim, centro, PAVIMENTO - st.quota, mosso - spintaPrima);
+      quotaPrima = st.quota; spintaPrima = mosso;
+      ultimo = st;
+    }
+  }
+  function ricomincia() {
+    tSim = 0; quotaPrima = SU; spintaPrima = 0;
+    tentacoli.forEach(t => {
+      const { P0, T0 } = base(t, 0);
+      t.x.forEach((v, i) => v.copy(P0).addScaledVector(T0, i * l));
+      t.y.forEach((v, i) => v.copy(t.x[i]));
+    });
+  }
   let visibile = true;
   new IntersectionObserver(([e]) => { visibile = e.isIntersecting; }).observe(contenitore);
-  const t0 = performance.now();
+  let prima = performance.now(), tempoReale = 0;
   (function ciclo(ora) {
     requestAnimationFrame(ciclo);
+    const dt = Math.min(0.05, (ora - prima) / 1000); prima = ora;
     if (!visibile) return;
-    // data-tempo (in secondi) ferma l'animazione a quell'istante del ciclo: per le immagini e i controlli
     const fisso = contenitore.dataset.tempo;
-    const t = fisso !== undefined ? +fisso : (ora - t0) / 1000;
-    const st = fermo ? { quota: GIU, ritratto: 0, chiusura: 1, presa: false } : statoAl(t);
-    pinza.position.z = st.quota;
-    scatola.position.z = PAVIMENTO + SCATOLA.z + (st.presa ? st.quota - GIU : 0);
-    centro.copy(scatola.position).sub(pinza.position);
-    tentacoli.forEach(x => aggiornaTentacolo(x, st.ritratto, st.chiusura, t, centro, PAVIMENTO - st.quota));
+    if (fisso !== undefined) {
+      if (+fisso !== tempoFisso) { tempoFisso = +fisso; ricomincia(); avanza(tempoFisso); }
+    } else {
+      tempoReale += dt;
+      avanza(tempoReale);
+    }
+    if (ultimo) tentacoli.forEach(t => disegna(t, ultimo.chiusura));
     controlli.update();
     renderer.render(scena, camera);
-  })(t0);
+  })(prima);
 })();
