@@ -15,8 +15,9 @@
   const L = 112, R0 = 7.2, RT = 0.8; // lunghezza, raggio alla base e in punta (mm)
   const SEGMENTI = 24;               // fessure lungo il tentacolo
   const CORONA = 16.5;               // raggio su cui escono dal fondo del corpo
-  const APERTURA = 0.62;             // inclinazione verso l'esterno all'uscita (rad)
-  const GIRO = 10;                   // curvatura totale a tentacolo chiuso (rad, circa un giro e mezzo)
+  const APERTURA = 0.18;             // inclinazione verso l'esterno all'uscita (rad): quasi verticali, come nel video
+  const GIRO = 10;                   // curvatura totale verso l'interno, in presa (rad, circa un giro e mezzo)
+  const GIRO_RITRATTO = 17;          // curvatura totale verso l'esterno, ritratti a rosetta (rad, quasi tre giri)
   const RIPOSO = 0.12;               // anche aperti restano un po' arricciati in punta
   const ONDA = 0.6;                  // ampiezza dell'ondeggiamento da aperti (rad su tutta la lunghezza)
   const FRONTE = 0.75;               // quanto del tentacolo si piega insieme: l'arrotolamento parte dalla punta
@@ -110,7 +111,7 @@
   });
 
   // --- la pallina da afferrare, come nel video: una pallina da tennis con la sua cucitura ---
-  const RB = 30;
+  const RB = 24;
   const palla = new THREE.Group();
   palla.add(new THREE.Mesh(new THREE.SphereGeometry(RB, 64, 48), new THREE.MeshStandardMaterial({ color: 0xcdd65a, roughness: 0.95 })));
   const cucitura = [];
@@ -138,50 +139,62 @@
   const liscia01 = k => { k = Math.min(1, Math.max(0, k)); return k * k * (3 - 2 * k); };
 
   const q = new THREE.Vector3();
-  // centro: dove sta la pallina nel sistema della pinza; i tentacoli non la attraversano ma ci scorrono sopra
-  function aggiornaTentacolo(t, chiusura, tempo, centro) {
+  // un punto del tentacolo non entra nella pallina né nel piano: torna sulla superficie e la direzione perde la
+  // parte che spinge dentro, così il resto del tentacolo ci scorre sopra e ne prende la forma
+  function appoggia(r, centro, pavimento) {
+    q.copy(p).sub(centro);
+    const d = q.length(), minimo = RB + r * 0.92;
+    if (d < minimo) {
+      q.divideScalar(d);
+      const dentro = T.dot(q);
+      if (dentro < 0) T.addScaledVector(q, -dentro).normalize();
+      p.copy(centro).addScaledVector(q, minimo);
+    }
+    if (p.z < pavimento + r) {
+      p.z = pavimento + r;
+      if (T.z < 0) { T.z = 0; T.normalize(); }
+    }
+    D.addScaledVector(T, -D.dot(T)).normalize(); B.crossVectors(T, D);
+  }
+
+  // Due cavi per tentacolo, come nel video. ritratto (0–1): il cavo esterno arrotola il tentacolo verso l'esterno e
+  // verso l'alto, a rosetta accanto al corpo; srotolandosi si stende prima vicino alla base e per ultima la punta.
+  // presa (0–1): il cavo interno arrotola la punta verso l'asse, sotto l'oggetto, con la torsione e il vortice.
+  // centro e pavimento: la pallina e il piano, nel sistema della pinza.
+  function aggiornaTentacolo(t, ritratto, presa, tempo, centro, pavimento) {
     const fuori = new THREE.Vector3(Math.cos(t.a), Math.sin(t.a), 0);   // verso l'esterno
     const giu = new THREE.Vector3(0, 0, -1);
-    // direzione di uscita, aperta verso l'esterno; chiudendosi i tentacoli girano un po' tutti nello stesso verso
     T.copy(giu).multiplyScalar(Math.cos(APERTURA)).addScaledVector(fuori, Math.sin(APERTURA));
     D.copy(fuori).multiplyScalar(-Math.cos(APERTURA)).addScaledVector(giu, Math.sin(APERTURA));
-    const vortice = VORTICE * liscia01(chiusura * 1.3);
+    const vortice = VORTICE * liscia01(presa * 1.3);
     T.applyAxisAngle(z, vortice); D.applyAxisAngle(z, vortice);
     B.crossVectors(T, D);
     // parte 10 mm dentro il corpo, nella direzione di uscita, così attraversa la cupola pulito
     const DENTRO = 10, ds = (L + DENTRO) / ANELLI;
     p.set(CORONA * Math.cos(t.a), CORONA * Math.sin(t.a), zCupola(CORONA)).addScaledVector(T, -DENTRO);
-    const morbido = fermo ? 0 : 1 - 0.75 * chiusura;
+    const morbido = fermo ? 0 : (1 - ritratto) * (1 - 0.75 * presa);
     for (let i = 0; i <= ANELLI; i++) {
       const s = Math.max(0, i * ds - DENTRO), u = s / L, f = integrale(s) / totale;
       if (i > 0 && i * ds > DENTRO) {
-        // quanto è già arrotolato questo punto: il fronte parte dalla punta e scende verso la base
-        const attivo = Math.max(RIPOSO * u * u, liscia01((chiusura * (1 + FRONTE) - (1 - u)) / FRONTE));
+        // fronte del cavo esterno: arrotolato dove u > 1 − ritratto; quello interno parte dalla punta
+        const fuoriAttivo = liscia01((ritratto * (1 + FRONTE) - (1 - u)) / FRONTE);
+        const dentroAttivo = Math.max(RIPOSO * u * u * (1 - ritratto), liscia01((presa * (1 + FRONTE) - (1 - u)) / FRONTE));
         // ondeggiamento: due onde lente che corrono lungo il tentacolo, più ampie verso la punta
         const onda = ONDA / L * morbido * u;
-        const kD = K / raggio(s) * attivo + onda * Math.sin(2 * Math.PI * (1.3 * u) - tempo * 1.6 + t.fase);
+        const kD = (K * dentroAttivo - GIRO_RITRATTO / totale * fuoriAttivo) / raggio(s)
+          + onda * Math.sin(2 * Math.PI * (1.3 * u) - tempo * 1.6 + t.fase);
         const kB = onda * 0.8 * Math.sin(2 * Math.PI * (1.1 * u) - tempo * 1.2 + t.fase * 1.7);
         gira(T, D, kD * ds);
         gira(T, B, kB * ds);
-        gira(D, B, TORSIONE / L * attivo * ds);
+        gira(D, B, TORSIONE / L * dentroAttivo * ds);
         T.normalize(); D.addScaledVector(T, -D.dot(T)).normalize(); B.crossVectors(T, D);
         p.addScaledVector(T, ds);
-        // contatto: se il punto entra nella pallina torna sulla superficie e la direzione perde la parte che
-        // spinge dentro, così il resto del tentacolo continua ad arrotolarsi avvolgendola
-        q.copy(p).sub(centro);
-        const d = q.length(), minimo = RB + raggio(s) * 0.92;
-        if (d < minimo) {
-          q.divideScalar(d);
-          const dentroPalla = T.dot(q);
-          if (dentroPalla < 0) T.addScaledVector(q, -dentroPalla).normalize();
-          p.copy(centro).addScaledVector(q, minimo);
-          D.addScaledVector(T, -D.dot(T)).normalize(); B.crossVectors(T, D);
-        }
+        appoggia(raggio(s), centro, pavimento);
       } else if (i > 0) p.addScaledVector(T, ds);
       const r = raggio(s);
       // scanalature sul lato interno, una per segmento; si stringono quando il tentacolo si chiude
       const n = (SEGMENTI * f) % 1;
-      const fessura = Math.pow(Math.max(0, 1 - Math.abs(n - 0.5) * 4.2), 1.5) * (0.3 - 0.16 * chiusura);
+      const fessura = Math.pow(Math.max(0, 1 - Math.abs(n - 0.5) * 4.2), 1.5) * (0.3 - 0.16 * presa);
       for (let j = 0; j <= LATI; j++) {
         const phi = (j / LATI) * Math.PI * 2;
         const dentro = Math.max(0, Math.cos(phi));             // 1 sul lato interno, verso D
@@ -204,22 +217,28 @@
   ridimensiona();
   contenitore.querySelector('.caricando')?.remove();
 
-  // ciclo del video: la pinza scende aperta sulla pallina, i tentacoli si arrotolano dalla punta e la avvolgono,
-  // la solleva, la tiene, la riappoggia, si apre e risale
-  const SU = 40, GIU = -34;                                  // quota della pinza: sopra la pallina e in presa
+  // ciclo del video: la pinza arriva con i tentacoli ritratti a rosetta, scende sopra la pallina, i tentacoli si
+  // srotolano sopra di lei prendendone la forma e intanto le punte cominciano ad arrotolarsi sotto, la solleva, la tiene, la riappoggia,
+  // la lascia, i tentacoli si ritraggono e la pinza risale
+  const SU = 35, GIU = -50;                                  // quota della pinza: in alto e appena sopra la pallina
   const liscia = k => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
-  const fasi = [                                             // durata (s), quota da/a, chiusura da/a, pallina presa
-    [1.4, SU, SU, 0, 0, false], [1.8, SU, GIU, 0, 0, false], [3, GIU, GIU, 0, 1, false], [2, GIU, SU, 1, 1, true],
-    [1.4, SU, SU, 1, 1, true], [2, SU, GIU, 1, 1, true], [2.4, GIU, GIU, 1, 0, false], [1.6, GIU, SU, 0, 0, false],
+  const fasi = [                                             // durata (s), quota da/a, ritratto da/a, presa da/a, pallina presa
+    [1.2, SU, SU, 1, 1, 0, 0, false], [1.8, SU, GIU, 1, 1, 0, 0, false], [2.6, GIU, GIU, 1, 0, 0, 0.45, false],
+    [1.8, GIU, GIU, 0, 0, 0.45, 1, false], [2, GIU, SU, 0, 0, 1, 1, true], [1.2, SU, SU, 0, 0, 1, 1, true],
+    [2, SU, GIU, 0, 0, 1, 1, true], [1.4, GIU, GIU, 0, 0.45, 1, 0, false], [1.8, GIU, GIU, 0.45, 1, 0, 0, false],
+    [1.6, GIU, SU, 1, 1, 0, 0, false],
   ];
   const durata = fasi.reduce((t, f) => t + f[0], 0);
   function statoAl(t) {
     let y = t % durata;
-    for (const [d, h0, h1, c0, c1, presa] of fasi) {
-      if (y < d) { const k = liscia(y / d); return { quota: h0 + (h1 - h0) * k, chiusura: c0 + (c1 - c0) * k, presa }; }
+    for (const [d, h0, h1, r0, r1, p0, p1, presa] of fasi) {
+      if (y < d) {
+        const k = liscia(y / d);
+        return { quota: h0 + (h1 - h0) * k, ritratto: r0 + (r1 - r0) * k, chiusura: p0 + (p1 - p0) * k, presa };
+      }
       y -= d;
     }
-    return { quota: SU, chiusura: 0, presa: false };
+    return { quota: SU, ritratto: 1, chiusura: 0, presa: false };
   }
   const centro = new THREE.Vector3();
   let visibile = true;
@@ -231,11 +250,11 @@
     // data-tempo (in secondi) ferma l'animazione a quell'istante del ciclo: per le immagini e i controlli
     const fisso = contenitore.dataset.tempo;
     const t = fisso !== undefined ? +fisso : (ora - t0) / 1000;
-    const st = fermo ? { quota: GIU, chiusura: 1, presa: false } : statoAl(t);
+    const st = fermo ? { quota: GIU, ritratto: 0, chiusura: 1, presa: false } : statoAl(t);
     pinza.position.z = st.quota;
     palla.position.z = PAVIMENTO + RB + (st.presa ? st.quota - GIU : 0);
     centro.copy(palla.position).sub(pinza.position);
-    tentacoli.forEach(x => aggiornaTentacolo(x, st.chiusura, t, centro));
+    tentacoli.forEach(x => aggiornaTentacolo(x, st.ritratto, st.chiusura, t, centro, PAVIMENTO - st.quota));
     controlli.update();
     renderer.render(scena, camera);
   })(t0);
