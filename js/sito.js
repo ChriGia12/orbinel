@@ -84,8 +84,8 @@
 
   // --- moduli: inviano JSON all'indirizzo configurato ---
   const testi = {
-    it: { invio: 'Invio…', ok: 'Grazie! Controlla la tua email e conferma l\'iscrizione.', no: 'Invio non riuscito. Riprova tra poco.', manca: 'I moduli non sono ancora attivi: il sito è in anteprima.', email: 'Serve un indirizzo email valido.' },
-    en: { invio: 'Sending…', ok: 'Thank you! Check your inbox and confirm your subscription.', no: 'Could not send. Please try again shortly.', manca: 'Forms are not active yet: this is a preview.', email: 'Please enter a valid email address.' },
+    it: { invio: 'Invio…', ok: 'Grazie! Controlla la tua email e conferma l\'iscrizione.', no: 'Invio non riuscito. Riprova tra poco.', manca: 'I moduli non sono ancora attivi: il sito è in anteprima.', email: 'Serve un indirizzo email valido.', consenso: 'Per inviare il modulo serve il consenso al trasferimento dei dati tramite FormSubmit. In alternativa scrivici a info@orbinel.it.' },
+    en: { invio: 'Sending…', ok: 'Thank you! Check your inbox and confirm your subscription.', no: 'Could not send. Please try again shortly.', manca: 'Forms are not active yet: this is a preview.', email: 'Please enter a valid email address.', consenso: 'To send the form we need your consent to the data transfer through FormSubmit. Otherwise, email us at info@orbinel.it.' },
   };
   document.querySelectorAll('form[data-modulo]').forEach(f => f.addEventListener('submit', async e => {
     e.preventDefault();
@@ -101,6 +101,8 @@
     // la lista d'attesa la conferma Brevo (doppia conferma + benvenuto): niente risposta di FormSubmit, se Brevo è attivo
     if (risposte[dati.modulo] && !(dati.modulo === 'lista' && conf.newsletter)) dati._autoresponse = risposte[dati.modulo][dati.lingua] || risposte[dati.modulo].en;
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(dati.email || '')) { esito.className = 'esito no'; esito.textContent = t.email; return; }
+    // consenso esplicito al trasferimento extra-UE tramite FormSubmit (art. 49.1.a GDPR, vedi privacy.html)
+    if (f.querySelector('[name=consenso_trasferimento]') && !dati.consenso_trasferimento) { esito.className = 'esito no'; esito.textContent = t.consenso; return; }
     if (!conf.moduli) { esito.className = 'esito no'; esito.textContent = t.manca; return; }
     // anti-spam: campo trappola compilato o invio troppo rapido dopo l'apertura della pagina → si finge un invio riuscito
     if (dati._honey || performance.now() < 3000) { esito.className = 'esito ok'; esito.textContent = t.ok; f.reset(); return; }
