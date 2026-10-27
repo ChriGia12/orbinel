@@ -7,7 +7,8 @@
   // --- lingua: scelta salvata, altrimenti quella del browser ---
   let lingua = null;
   try { lingua = localStorage.getItem('orbinel.lingua'); } catch {}
-  if (!lingua) lingua = (navigator.language || 'en').toLowerCase().startsWith('it') ? 'it' : 'en';
+  // pagine rivolte al pubblico italiano (es. l'informativa privacy) partono in italiano se non c'è una scelta salvata
+  if (!lingua) lingua = html.dataset.linguaPredefinita || ((navigator.language || 'en').toLowerCase().startsWith('it') ? 'it' : 'en');
   const imposta = l => {
     html.dataset.lingua = l;
     html.lang = l;
