@@ -89,6 +89,9 @@ p { margin: 0 0 1em; color: var(--tenue); }
 .scena3d .orbita::after { content: ""; position: absolute; width: 12px; height: 12px; border-radius: 50%; background: var(--arancio); top: 14.6%; right: 14.6%; transform: translate(50%, -50%); box-shadow: 0 0 24px var(--arancio); }
 .scena3d .orbita.lenta { animation: gira 40s linear infinite; }
 @keyframes gira { to { transform: rotate(360deg); } }
+.schema-fig { margin: 0; }
+.schema-fig svg { width: 100%; max-width: 440px; height: auto; margin: 0 auto; }
+.schema-fig figcaption { max-width: 440px; margin: 14px auto 0; font-size: 13px; color: var(--tenue2); }
 .scena3d .caricando { position: absolute; inset: 0; display: grid; place-items: center; color: var(--tenue2); font-size: 13px; }
 .griglia-sfondo { position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background-image: linear-gradient(var(--linea) 1px, transparent 1px), linear-gradient(90deg, var(--linea) 1px, transparent 1px);
