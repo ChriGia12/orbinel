@@ -272,11 +272,11 @@
 
   // --- regia: cinque robot, 7 secondi ciascuno: monta (0–2,6), lavora (2,6–6), si smonta (6–7) ---
   const SCENE = [
-    { nome: 'kheiron', testo: '<b>Kheiron</b> · 6 assi', camera: [[820, -760, 520], [60, 0, 170]] },
-    { nome: 'scara', testo: '<b>SCARA</b> · 4 assi · concept' },
-    { nome: 'cobot', testo: '<b>Cobot</b> · 7 assi · concept' },
-    { nome: 'duo', testo: '<b>Doppio braccio</b> · 2 × 5 assi · concept' },
-    { nome: 'rover', testo: 'Stessi moduli · <b>base mobile</b> · concept', camera: [[1190, -1100, 700], [110, 0, 230]] },
+    { nome: 'kheiron', testo: '<span lang="en"><b>Kheiron</b> · 6 axes</span><span lang="it"><b>Kheiron</b> · 6 assi</span>', camera: [[820, -760, 520], [60, 0, 170]] },
+    { nome: 'scara', testo: '<span lang="en"><b>SCARA</b> · 4 axes · concept</span><span lang="it"><b>SCARA</b> · 4 assi · concept</span>' },
+    { nome: 'cobot', testo: '<span lang="en"><b>Cobot</b> · 7 axes · concept</span><span lang="it"><b>Cobot</b> · 7 assi · concept</span>' },
+    { nome: 'duo', testo: '<span lang="en"><b>Dual arm</b> · 2 × 5 axes · concept</span><span lang="it"><b>Doppio braccio</b> · 2 × 5 assi · concept</span>' },
+    { nome: 'rover', testo: '<span lang="en">Same modules · <b>mobile base</b> · concept</span><span lang="it">Stessi moduli · <b>base mobile</b> · concept</span>', camera: [[1190, -1100, 700], [110, 0, 230]] },
   ];
   const PASSO = 7, DURATA = PASSO * SCENE.length, didascalia = box.querySelector('.didascalia');
   const scrivi = testo => { if (didascalia.dataset.t !== testo) { didascalia.dataset.t = testo; didascalia.innerHTML = testo; } };
