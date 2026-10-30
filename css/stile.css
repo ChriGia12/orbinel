@@ -116,6 +116,13 @@ p { margin: 0 0 1em; color: var(--tenue); }
 .intestazione p { margin: 0; }
 
 /* schede */
+.squadra { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 24px; }
+.membro { gap: 8px; }
+.membro .iniziali { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--arancio); color: var(--bg); font: 500 16px/1 var(--font-titoli); margin-bottom: 8px; }
+.membro h3 { margin: 0; }
+.membro .ruolo { margin: 0; color: var(--arancio); font-size: 14px; }
+.membro p { font-size: 15px; }
+@media (max-width: 900px) { .squadra { grid-template-columns: minmax(0, 1fr); } }
 .schede { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 @media (min-width: 1180px) { #ecosistema .schede { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 .schede > .compare:nth-child(5) { transition-delay: 240ms; }
