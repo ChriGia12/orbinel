@@ -88,6 +88,10 @@
     it: { invio: 'Invio…', ok: 'Grazie! Controlla la tua email e conferma l\'iscrizione.', no: 'Invio non riuscito. Riprova tra poco.', manca: 'I moduli non sono ancora attivi: il sito è in anteprima.', email: 'Serve un indirizzo email valido.', consenso: 'Per inviare il modulo serve il consenso al trasferimento dei dati tramite FormSubmit. In alternativa scrivici a info@orbinel.it.' },
     en: { invio: 'Sending…', ok: 'Thank you! Check your inbox and confirm your subscription.', no: 'Could not send. Please try again shortly.', manca: 'Forms are not active yet: this is a preview.', email: 'Please enter a valid email address.', consenso: 'To send the form we need your consent to the data transfer through FormSubmit. Otherwise, email us at info@orbinel.it.' },
   };
+  // contatti.html?motivo=team: il pulsante "Candidati" della pagina Team sceglie già il motivo
+  const motivo = new URLSearchParams(location.search).get('motivo');
+  const sceltaMotivo = document.querySelector('select[name=motivo]');
+  if (motivo && sceltaMotivo?.querySelector(`option[value="${CSS.escape(motivo)}"]`)) sceltaMotivo.value = motivo;
   document.querySelectorAll('form[data-modulo]').forEach(f => f.addEventListener('submit', async e => {
     e.preventDefault();
     const t = testi[html.dataset.lingua] || testi.en;
