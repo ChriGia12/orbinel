@@ -16,7 +16,7 @@
 <link rel="preload" href="fonts/space-grotesk-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
 <!-- i pezzi del robot partono subito, insieme alla pagina: sono il file più pesante della scena 3D -->
 <link rel="preload" href="motion/robot/kheiron/stl/pacchetto.bin" as="fetch" crossorigin>
-<link rel="stylesheet" href="css/stile.css?v=472c4785">
+<link rel="stylesheet" href="css/stile.css?v=d2e0cae6">
 </head>
 <body>
 <header class="barra">
@@ -55,16 +55,16 @@
     <div class="racconto-palco">
       <div class="racconto-scena" data-kheiron="racconto"><img class="racconto-riserva" src="img/kheiron.png" alt="Kheiron, render" width="1200" height="900"><div class="caricando">0%</div></div>
       <div class="racconto-etichette" aria-hidden="true">
-      <div class="etichetta3d sx" data-passo="1" data-pezzo="torretta_j2" data-punto="0,0,80"><i></i><span><span lang="en">J1 · base · ±150°</span><span lang="it">J1 · base · ±150°</span></span></div>
-      <div class="etichetta3d sx" data-passo="1" data-pezzo="braccio" data-punto="0,0,125"><i></i><span><span lang="en">J2 · shoulder · ±100°</span><span lang="it">J2 · spalla · ±100°</span></span></div>
-      <div class="etichetta3d su" data-passo="1" data-pezzo="avambraccio" data-punto="0,0,255"><i></i><span><span lang="en">J3 · elbow · −120…+45°</span><span lang="it">J3 · gomito · −120…+45°</span></span></div>
-      <div class="etichetta3d giu" data-passo="1" data-pezzo="polso_a" data-punto="76,0,255"><i></i><span><span lang="en">J4 · roll · ±170°</span><span lang="it">J4 · rollio · ±170°</span></span></div>
-      <div class="etichetta3d su" data-passo="1" data-pezzo="polso_b" data-punto="130,0,255"><i></i><span><span lang="en">J5 · wrist · ±95°</span><span lang="it">J5 · polso · ±95°</span></span></div>
-      <div class="etichetta3d giu" data-passo="1" data-pezzo="flangia" data-punto="196,0,255"><i></i><span><span lang="en">J6 · tool roll · ±170°</span><span lang="it">J6 · rollio pinza · ±170°</span></span></div>
+      <div class="etichetta3d sx" data-passo="1" data-pezzo="torretta_j2" data-punto="0,0,80"><i></i><span><span lang="en">J1<em> · base · ±150°</em></span><span lang="it">J1<em> · base · ±150°</em></span></span></div>
+      <div class="etichetta3d sx" data-passo="1" data-pezzo="braccio" data-punto="0,0,125"><i></i><span><span lang="en">J2<em> · shoulder · ±100°</em></span><span lang="it">J2<em> · spalla · ±100°</em></span></span></div>
+      <div class="etichetta3d su" data-passo="1" data-pezzo="avambraccio" data-punto="0,0,255"><i></i><span><span lang="en">J3<em> · elbow · −120…+45°</em></span><span lang="it">J3<em> · gomito · −120…+45°</em></span></span></div>
+      <div class="etichetta3d giu" data-passo="1" data-pezzo="polso_a" data-punto="76,0,255"><i></i><span><span lang="en">J4<em> · roll · ±170°</em></span><span lang="it">J4<em> · rollio · ±170°</em></span></span></div>
+      <div class="etichetta3d su" data-passo="1" data-pezzo="polso_b" data-punto="130,0,255"><i></i><span><span lang="en">J5<em> · wrist · ±95°</em></span><span lang="it">J5<em> · polso · ±95°</em></span></span></div>
+      <div class="etichetta3d giu" data-passo="1" data-pezzo="flangia" data-punto="196,0,255"><i></i><span><span lang="en">J6<em> · tool roll · ±170°</em></span><span lang="it">J6<em> · rollio pinza · ±170°</em></span></span></div>
       <div class="etichetta3d sx" data-passo="2" data-pezzo="base"><i></i><span><span lang="en">Base</span><span lang="it">Base</span></span></div>
       <div class="etichetta3d sx" data-passo="2" data-pezzo="torretta_j2"><i></i><span><span lang="en">Turret</span><span lang="it">Torretta</span></span></div>
       <div class="etichetta3d sx" data-passo="2" data-pezzo="braccio"><i></i><span><span lang="en">Upper arm</span><span lang="it">Braccio</span></span></div>
-      <div class="etichetta3d su" data-passo="2" data-pezzo="avambraccio"><i></i><span><span lang="en">Forearm</span><span lang="it">Avambraccio</span></span></div>
+      <div class="etichetta3d sx" data-passo="2" data-pezzo="avambraccio"><i></i><span><span lang="en">Forearm</span><span lang="it">Avambraccio</span></span></div>
       <div class="etichetta3d giu" data-passo="2" data-pezzo="polso_b"><i></i><span><span lang="en">Spherical wrist</span><span lang="it">Polso sferico</span></span></div>
       <div class="etichetta3d su" data-passo="2" data-pezzo="pinza_palmo"><i></i><span><span lang="en">Gripper</span><span lang="it">Pinza</span></span></div>
       <div class="etichetta3d sx" data-passo="3" data-pezzo="servo0"><i></i><span><span lang="en">J1</span><span lang="it">J1</span></span></div>
@@ -291,13 +291,13 @@
 </footer>
 
 <script src="js/config.js?v=3917c46d"></script>
-<script src="js/sito.js?v=e2a0bd17"></script>
+<script src="js/sito.js?v=267234a6"></script>
 <script src="motion/lib/three.min.js?v=7a7802bf"></script>
 <script src="motion/lib/OrbitControls.js?v=63530cfe"></script>
 <script src="motion/js/robot.js?v=16a567c4"></script>
 <script src="motion/js/cinematica.js?v=203120ed"></script>
 <script src="motion/js/scena.js?v=7d48337e"></script>
 <script src="motion/js/vetrina.js?v=2e16f66a"></script>
-<script src="js/racconto.js?v=ad708173"></script>
+<script src="js/racconto.js?v=ea73d1b6"></script>
 </body>
 </html>

@@ -77,16 +77,17 @@
     [mesh('servo7'), V(0, 0, 58)],
   ].filter(([m]) => m);
 
-  // stati dei passi: telecamera (posizione, bersaglio), esploso, trasparenza dei pezzi, pinza esplosa
+  // stati dei passi: telecamera (posizione, bersaglio), esploso, trasparenza dei pezzi, pinza esplosa,
+  // z = quanto il telefono rinuncia a far stare tutto il robot nella larghezza
   const stati = [
-    { cam: [640, -600, 380], mira: [120, 0, 165], e: 0, g: 0, pe: 0 },   // Kheiron
-    { cam: [140, -820, 250], mira: [110, 0, 175], e: 0, g: 0, pe: 0 },   // assi
-    { cam: [760, -700, 560], mira: [150, 0, 230], e: 1, g: 0, pe: 0 },   // esploso
-    { cam: [560, -520, 470], mira: [110, 0, 170], e: 0, g: 1, pe: 0 },   // servo
-    { cam: [600, -400, 430], mira: [235, 0, 245], e: 0, g: 0, pe: 1 },   // pinza
-    { cam: [700, -560, 520], mira: [170, 0, 120], e: 0, g: 0, pe: 0 },   // movimento
+    { cam: [640, -600, 380], mira: [120, 0, 165], e: 0, g: 0, pe: 0, z: 1 },   // Kheiron
+    { cam: [140, -820, 250], mira: [110, 0, 175], e: 0, g: 0, pe: 0, z: 1 },   // assi
+    { cam: [760, -700, 560], mira: [150, 0, 230], e: 1, g: 0, pe: 0, z: 1 },   // esploso
+    { cam: [560, -520, 470], mira: [110, 0, 170], e: 0, g: 1, pe: 0, z: 1 },   // servo
+    { cam: [600, -400, 430], mira: [235, 0, 245], e: 0, g: 0, pe: 1, z: 0.6 }, // pinza: sul telefono si avvicina di più
+    { cam: [700, -560, 520], mira: [170, 0, 120], e: 0, g: 0, pe: 0, z: 1 },   // movimento
   ];
-  const chiavi = ['e', 'g', 'pe'];
+  const chiavi = ['e', 'g', 'pe', 'z'];
   const liscia = k => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
   const obiettivo = x => {
     const i = Math.max(0, Math.min(stati.length - 1, Math.floor(x))), j = Math.min(stati.length - 1, i + 1);
@@ -148,7 +149,7 @@
     if (el.dataset.punto) ancora.position.set(...el.dataset.punto.split(',').map(Number));
     else { m.geometry.computeBoundingBox(); m.geometry.boundingBox.getCenter(ancora.position); }
     m.add(ancora);
-    return { el, ancora, passo: +el.dataset.passo };
+    return { el, ancora, passo: +el.dataset.passo, su: el.classList.contains('su'), sx: el.classList.contains('sx') };
   }).filter(Boolean);
 
   // stato attuale, che insegue l'obiettivo
@@ -182,15 +183,18 @@
   let presenza = 0, ciclo5 = 0;
   let prima = performance.now();
   const p = new THREE.Vector3();
-  const ciclo = adesso => {
+  // tutto si aggiorna appena prima che la scena venga disegnata: robot, telecamera ed etichette
+  // usano lo stesso fotogramma, così le etichette restano attaccate ai pezzi anche mentre si muovono
+  const ciclo = () => {
+    const adesso = performance.now();
     const dt = Math.min(0.05, (adesso - prima) / 1000); prima = adesso;
     const k = fermo ? 1 : 1 - Math.exp(-dt * 6);
     const ob = obiettivo(s);
-    const lontano = 1.18 * (contenitore.clientWidth > 900 ? 1 : lontanoTelefono);
+    const lontano = 1.18 * (contenitore.clientWidth > 900 ? 1 : Math.max(0.9, lontanoTelefono * ob.z));
     cam.lerp(V(...ob.mira).add(V(...ob.cam).sub(V(...ob.mira)).multiplyScalar(lontano)), k);
     mira.lerp(V(...ob.mira), k);
     chiavi.forEach(c => { ora[c] += (ob[c] - ora[c]) * k; });
-    sc.camera.position.copy(cam); sc.controlli.target.copy(mira); sc.camera.lookAt(mira);
+    sc.camera.position.copy(cam); sc.controlli.target.copy(mira); sc.camera.lookAt(mira); sc.camera.updateMatrixWorld();
 
     // ultimo passo: quando arriva, il braccio fa da solo il ciclo di presa e deposito e lo ripete;
     // quando si esce, torna morbido al riposo. Nel passo della pinza le dita si aprono e chiudono.
@@ -226,9 +230,14 @@
       e.ancora.getWorldPosition(p); p.project(sc.camera);
       const visibile = forza > 0.02 && p.z < 1;
       e.el.style.opacity = visibile ? forza.toFixed(3) : '0';
-      if (visibile) e.el.style.transform = `translate(${((p.x + 1) / 2 * W).toFixed(1)}px, ${((1 - p.y) / 2 * H).toFixed(1)}px)`;
+      if (!visibile) continue;
+      const x = (p.x + 1) / 2 * W, y = (1 - p.y) / 2 * H;
+      // un'etichetta che salirebbe sotto la barra in alto si gira verso il basso
+      if (e.su) { const giu = y < 140; e.el.classList.toggle('su', !giu); e.el.classList.toggle('giu', giu); }
+      // una che uscirebbe dal bordo sinistro passa a destra del punto
+      if (e.sx) { const dx = x - 51 - (e.el.lastElementChild.offsetWidth || 0) < 8; e.el.classList.toggle('sx', !dx); e.el.classList.toggle('dx', dx); }
+      e.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
     }
-    requestAnimationFrame(ciclo);
   };
-  requestAnimationFrame(ciclo);
+  sc.scena.onBeforeRender = ciclo;
 })();

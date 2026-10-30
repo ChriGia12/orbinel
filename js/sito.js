@@ -32,6 +32,14 @@
     hamburger.setAttribute('aria-expanded', aperto);
   });
   menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('aperto')));
+  // nel menu da telefono le sottovoci si aprono solo toccando la freccia accanto alla voce
+  menu?.querySelectorAll('.menu-voce').forEach(v => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'apri-tendina'; b.setAttribute('aria-expanded', 'false');
+    b.setAttribute('aria-label', (v.querySelector(':scope > a')?.textContent.trim() || '') + ': sottovoci');
+    b.addEventListener('click', () => b.setAttribute('aria-expanded', v.classList.toggle('aperta')));
+    v.querySelector(':scope > a').after(b);
+  });
 
   // --- comparsa allo scorrimento ---
   if ('IntersectionObserver' in window) {

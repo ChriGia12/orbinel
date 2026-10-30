@@ -73,6 +73,7 @@ p { margin: 0 0 1em; color: var(--tenue); }
 .tendina a:first-child { padding-top: 16px; } .tendina a:last-child { padding-bottom: 16px; }
 @media (hover: hover) and (pointer: fine) { .menu-voce:hover .tendina { display: block; } }
 .menu-voce:focus-within .tendina { display: block; }
+.apri-tendina { display: none; }
 .lingua { display: inline-flex; border: 1px solid var(--linea2); border-radius: 999px; padding: 2px; }
 .lingua button { background: none; border: 0; color: var(--tenue); font: 500 12px var(--font-titoli); letter-spacing: .08em; padding: 8px 8px; border-radius: 999px; cursor: pointer; }
 .lingua button.attivo { background: var(--testo); color: var(--bg); }
@@ -251,10 +252,15 @@ fieldset.campo { border: 0; padding: 0; margin: 0; }
   .menu { display: none; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 0; background: var(--bg); border-bottom: 1px solid var(--linea); padding: 8px 16px 16px; }
   .menu.aperto { display: flex; }
   .menu a { padding: 16px 0; border-bottom: 1px solid var(--linea); font-size: 16px; }
-  .menu-voce { display: block; }
-  .menu-voce > a { display: block; }
+  .menu-voce { display: grid; grid-template-columns: 1fr 48px; border-bottom: 1px solid var(--linea); }
+  .menu-voce > a { display: block; border-bottom: 0; }
   .menu-voce > a::after { display: none; }
-  .tendina { position: static; display: block; padding: 0; min-width: 0; }
+  .apri-tendina { display: grid; place-items: center; background: none; border: 0; color: var(--tenue); cursor: pointer; }
+  .apri-tendina::before { content: ""; width: 8px; height: 8px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform .25s var(--ease-out); }
+  .menu-voce.aperta .apri-tendina::before { transform: translateY(2px) rotate(-135deg); }
+  .tendina { position: static; display: block; padding: 0 0 8px; min-width: 0; grid-column: 1 / -1; }
+  .menu-voce:not(.aperta) .tendina { display: none; }
+  .tendina a { border-bottom: 0; }
   .tendina::before { display: none; }
   .tendina a, .tendina a:first-child, .tendina a:last-child { padding: 8px 0 8px 16px; font-size: 15px; color: var(--tenue2); }
   .menu .lingua { align-self: flex-start; margin-top: 16px; }
@@ -326,6 +332,7 @@ fieldset.campo { border: 0; padding: 0; margin: 0; }
 /* etichette tecniche: un punto sul pezzo, una linea sottile, il nome */
 .racconto-etichette { position: absolute; inset: 0; pointer-events: none; }
 .etichetta3d { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; font: 500 12px/1.2 var(--font-titoli); color: var(--testo); white-space: nowrap; }
+.etichetta3d em { font-style: normal; }
 .etichetta3d i { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: var(--arancio); }
 .etichetta3d::before { content: ""; position: absolute; background: var(--tenue2); }
 .etichetta3d > span { position: absolute; padding: 4px 8px; border: 1px solid var(--linea2); border-radius: 6px; background: rgba(11, 13, 16, .82); }
@@ -363,6 +370,8 @@ fieldset.campo { border: 0; padding: 0; margin: 0; }
   .passo .dati-rapidi span { font-size: 11px; line-height: 1.4; }
   .passo .dati-rapidi div { padding-left: 8px; }
   .etichetta3d { font-size: 11px; }
+  .etichetta3d em { display: none; }
+  .passo .dati-rapidi b { white-space: normal; }
 }
 @media (prefers-reduced-motion: reduce) {
   .racconto.animato .passo .testo > *, .racconto.animato .passo.attivo .testo > * { transform: none; transition: opacity .2s linear; }
