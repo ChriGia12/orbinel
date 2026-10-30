@@ -14,6 +14,7 @@
     html.lang = l;
     document.querySelectorAll('.lingua button').forEach(b => b.classList.toggle('attivo', b.dataset.lingua === l));
     document.querySelectorAll('[data-ph-it]').forEach(el => { el.placeholder = el.dataset[l === 'it' ? 'phIt' : 'phEn']; });
+    document.querySelectorAll('[data-alt-it]').forEach(el => { el.alt = el.dataset[l === 'it' ? 'altIt' : 'altEn']; });
     const titolo = document.querySelector(`meta[name="titolo-${l}"]`);
     if (titolo) document.title = titolo.content;
     try { localStorage.setItem('orbinel.lingua', l); } catch {}
@@ -41,8 +42,9 @@
     v.querySelector(':scope > a').after(b);
   });
 
-  // --- comparsa allo scorrimento ---
-  if ('IntersectionObserver' in window) {
+  // --- comparsa allo scorrimento (con le animazioni ridotte tutto è visibile da subito) ---
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.querySelectorAll('.compare').forEach(el => el.classList.add('visto'));
+  else if ('IntersectionObserver' in window) {
     const os = new IntersectionObserver(voci => voci.forEach(v => {
       if (v.isIntersecting) { v.target.classList.add('visto'); os.unobserve(v.target); }
     }), { rootMargin: '0px 0px -8% 0px' });

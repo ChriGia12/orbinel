@@ -18,7 +18,7 @@
 <link rel="preload" href="fonts/space-grotesk-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
 <!-- i pezzi del robot partono subito, insieme alla pagina: sono il file più pesante della scena 3D -->
 <link rel="preload" href="motion/robot/kheiron/stl/pacchetto.bin" as="fetch" crossorigin>
-<link rel="stylesheet" href="css/stile.css?v=d2e0cae6">
+<link rel="stylesheet" href="css/stile.css?v=43f60e27">
 <!-- dati strutturati: nome del sito e profili ufficiali, per il riquadro del marchio su Google -->
 <script type="application/ld+json">
 {
@@ -114,11 +114,8 @@
   <!-- MANIFESTO -->
   <section class="sezione">
     <div class="contenitore compare">
-      <div class="occhiello"><span lang="en">Why Orbinel</span><span lang="it">Perché Orbinel</span></div>
-      <p class="manifesto">
-        <span lang="en">Robots should be understood, not just bought. <em>Every Orbinel robot is modular, documented down to the last screw, and simulated before it moves — so you can build it, change it and learn from it.</em></span>
-        <span lang="it">I robot vanno capiti, non solo comprati. <em>Ogni robot Orbinel è modulare, documentato fino all'ultima vite e simulato prima di muoversi: così puoi costruirlo, modificarlo e impararci.</em></span>
-      </p>
+      <p class="manifesto"><span lang="en">Robots should be understood, not just bought.</span><span lang="it">I robot vanno capiti, non solo comprati.</span></p>
+      <p class="grande manifesto-segue"><span lang="en">Every Orbinel robot is modular, documented down to the last screw, and simulated before it moves — so you can build it, change it and learn from it.</span><span lang="it">Ogni robot Orbinel è modulare, documentato fino all'ultima vite e simulato prima di muoversi: così puoi costruirlo, modificarlo e impararci.</span></p>
     </div>
   </section>
 
@@ -127,41 +124,40 @@
     <div class="contenitore">
       <div class="intestazione compare">
         <div>
-          <div class="occhiello"><span lang="en">Ecosystem</span><span lang="it">Ecosistema</span></div>
           <h2><span lang="en">Five areas,<br>one system.</span><span lang="it">Cinque aree,<br>un solo sistema.</span></h2>
         </div>
         <p class="grande"><span lang="en">Hardware, parts, manufacturing, software and education share the same models and the same kinematics. What you learn in the simulator is what the real robot does.</span><span lang="it">Hardware, componenti, produzione, software e formazione condividono gli stessi modelli e la stessa cinematica. Quello che impari nel simulatore è quello che fa il robot vero.</span></p>
       </div>
-      <div class="schede">
-        <a class="scheda compare" href="kheiron.html">
-          <div class="icona-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="18" r="2.5"/><circle cx="11" cy="9" r="2"/><circle cx="18.5" cy="6.5" r="1.5"/><path d="M7.2 15.8 10 10.8M12.8 8.4l4.3-1.4M3 21h6"/></svg></div>
+      <div class="aree">
+        <a class="area compare" href="kheiron.html">
           <h3>Orbinel Build</h3>
           <p><span lang="en">Robots you build yourself, in three tiers: digital Build Pack, kit, or assembled and tested.</span><span lang="it">Robot da costruire da sé, in tre livelli: Build Pack digitale, kit, oppure montato e testato.</span></p>
-          <div class="piede"><span class="etichetta sviluppo"><span lang="en">In development</span><span lang="it">In sviluppo</span></span><span>→</span></div>
+          <span class="etichetta sviluppo"><span lang="en">In development</span><span lang="it">In sviluppo</span></span>
+          <span class="freccia" aria-hidden="true">→</span>
         </a>
-        <a class="scheda compare" href="parts.html">
-          <div class="icona-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <a class="area compare" href="parts.html">
           <h3>Orbinel Parts</h3>
           <p><span lang="en">Interchangeable grippers, tools and accessories on a shared interface — plus a parametric generator.</span><span lang="it">Pinze, utensili e accessori intercambiabili su un attacco comune, più un generatore parametrico.</span></p>
-          <div class="piede"><span class="etichetta attivo"><span lang="en">Generator online</span><span lang="it">Generatore online</span></span><span>→</span></div>
+          <span class="etichetta attivo"><span lang="en">Generator online</span><span lang="it">Generatore online</span></span>
+          <span class="freccia" aria-hidden="true">→</span>
         </a>
-        <a class="scheda compare" href="make.html">
-          <div class="icona-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16M7 5v4h10V5M10 9v3l2 2 2-2V9"/><path d="M5 20h14M8 17h8"/></svg></div>
+        <a class="area compare" href="make.html">
           <h3>Orbinel Make</h3>
           <p><span lang="en">On-demand 3D printing of small batches: robot parts, prototypes, technical spares.</span><span lang="it">Stampa 3D su richiesta di piccoli lotti: parti dei robot, prototipi, ricambi tecnici.</span></p>
-          <div class="piede"><span class="etichetta sviluppo"><span lang="en">Requests open soon</span><span lang="it">Richieste a breve</span></span><span>→</span></div>
+          <span class="etichetta sviluppo"><span lang="en">Requests open soon</span><span lang="it">Richieste a breve</span></span>
+          <span class="freccia" aria-hidden="true">→</span>
         </a>
-        <a class="scheda compare" href="#motion">
-          <div class="icona-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 16c3 0 3-8 6-8s3 8 6 8 3-8 6-8"/><circle cx="9" cy="8" r="1.2" fill="currentColor"/></svg></div>
+        <a class="area compare" href="#motion">
           <h3>Orbinel Motion</h3>
           <p><span lang="en">The simulator, in your browser: 3D robot, analysis, sequences and lessons. Plug in a real Kheiron and the same app drives it.</span><span lang="it">Il simulatore, nel browser: robot in 3D, analisi, sequenze e lezioni. Colleghi un Kheiron vero e la stessa app lo comanda.</span></p>
-          <div class="piede"><span class="etichetta attivo"><span lang="en">Preview available</span><span lang="it">Anteprima disponibile</span></span><span>→</span></div>
+          <span class="etichetta attivo"><span lang="en">Preview available</span><span lang="it">Anteprima disponibile</span></span>
+          <span class="freccia" aria-hidden="true">→</span>
         </a>
-        <a class="scheda compare" href="learn.html">
-          <div class="icona-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5M22 9v6"/></svg></div>
+        <a class="area compare" href="learn.html">
           <h3>Orbinel Learn</h3>
           <p><span lang="en">A robotics lab for schools: simulator and lessons first, then the real robot.</span><span lang="it">Un laboratorio di robotica per le scuole: prima simulatore e lezioni, poi il robot vero.</span></p>
-          <div class="piede"><span class="etichetta sviluppo"><span lang="en">Pilot programme</span><span lang="it">Progetto pilota</span></span><span>→</span></div>
+          <span class="etichetta sviluppo"><span lang="en">Pilot programme</span><span lang="it">Progetto pilota</span></span>
+          <span class="freccia" aria-hidden="true">→</span>
         </a>
       </div>
     </div>
@@ -231,7 +227,6 @@
   <section class="sezione" id="chi">
     <div class="contenitore dueColonne">
       <div class="compare">
-        <div class="occhiello"><span lang="en">About</span><span lang="it">Chi siamo</span></div>
         <h2><span lang="en">From an orbit,<br>a system.</span><span lang="it">Da un'orbita,<br>un sistema.</span></h2>
       </div>
       <div class="compare">
@@ -336,7 +331,7 @@
 
 
 <script src="js/config.js?v=3917c46d"></script>
-<script src="js/sito.js?v=267234a6"></script>
+<script src="js/sito.js?v=49b46c23"></script>
 <script src="motion/lib/three.min.js?v=7a7802bf" defer></script>
 <script src="motion/lib/OrbitControls.js?v=63530cfe" defer></script>
 <script src="motion/lib/RoomEnvironment.js?v=32a729c3" defer></script>
