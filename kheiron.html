@@ -16,7 +16,7 @@
 <link rel="preload" href="fonts/space-grotesk-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
 <!-- i pezzi del robot partono subito, insieme alla pagina: sono il file più pesante della scena 3D -->
 <link rel="preload" href="motion/robot/kheiron/stl/pacchetto.bin" as="fetch" crossorigin>
-<link rel="stylesheet" href="css/stile.css?v=790a06c6">
+<link rel="stylesheet" href="css/stile.css?v=683fef90">
 </head>
 <body>
 <header class="barra">
@@ -42,7 +42,7 @@
       <a href="parts.html"><span lang="en">Parts</span><span lang="it">Parts</span></a>
       <a href="make.html"><span lang="en">Make</span><span lang="it">Make</span></a>
       <a href="learn.html"><span lang="en">Learn</span><span lang="it">Learn</span></a>
-      <a href="chi-siamo.html"><span lang="en">About</span><span lang="it">Chi siamo</span></a>
+      <div class="menu-voce"><a href="chi-siamo.html"><span lang="en">About</span><span lang="it">Chi siamo</span></a><div class="tendina"><a href="squadra.html">Team</a></div></div>
       <a href="contatti.html"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
       <div class="lingua" role="group" aria-label="Language"><button type="button" data-lingua="en">EN</button><button type="button" data-lingua="it">IT</button></div>
     </nav>
@@ -50,22 +50,90 @@
   </div>
 </header>
 
-<main>
-  <section class="apertura" style="min-height:auto;padding:56px 0 72px">
-    <div class="griglia-sfondo"></div>
-    <div class="contenitore">
-      <div>
-        <div class="stato"><i></i><span lang="en">Prototype in development</span><span lang="it">Prototipo in sviluppo</span></div>
-        <div class="occhiello"><span lang="en">Orbinel · first robot</span><span lang="it">Orbinel · primo robot</span></div>
-        <h1>Kheiron.</h1>
-        <p class="grande"><span lang="en">A six-axis arm you can build, understand and extend. Named after the centaur who taught the heroes — because it is made to teach as much as to move.</span><span lang="it">Un braccio a sei assi da costruire, capire e ampliare. Prende il nome dal centauro maestro degli eroi: è fatto per insegnare tanto quanto per muoversi.</span></p>
-        <div class="pulsanti">
-          <a class="pulsante primario" href="#livelli"><span lang="en">Ways to get it</span><span lang="it">Come averlo</span> <span class="freccia">→</span></a>
-          <a class="pulsante" href="motion/"><span lang="en">Try it in the simulator</span><span lang="it">Provalo nel simulatore</span></a>
-        </div>
-        <p style="font-size:13px;margin-top:24px"><span lang="en">Drag to rotate, scroll to zoom.</span><span lang="it">Trascina per ruotare, scorri per lo zoom.</span></p>
+<main class="pagina-kheiron">
+  <section class="racconto" data-racconto>
+    <div class="racconto-palco">
+      <div class="racconto-scena" data-kheiron="racconto"><img class="racconto-riserva" src="img/kheiron.png" alt="Kheiron, render" width="1200" height="900"><div class="caricando">0%</div></div>
+      <div class="racconto-etichette" aria-hidden="true">
+      <div class="etichetta3d sx" data-passo="1" data-pezzo="torretta_j2" data-punto="0,0,80"><i></i><span><span lang="en">J1 · base · ±150°</span><span lang="it">J1 · base · ±150°</span></span></div>
+      <div class="etichetta3d sx" data-passo="1" data-pezzo="braccio" data-punto="0,0,125"><i></i><span><span lang="en">J2 · shoulder · ±100°</span><span lang="it">J2 · spalla · ±100°</span></span></div>
+      <div class="etichetta3d su" data-passo="1" data-pezzo="avambraccio" data-punto="0,0,255"><i></i><span><span lang="en">J3 · elbow · −120…+45°</span><span lang="it">J3 · gomito · −120…+45°</span></span></div>
+      <div class="etichetta3d giu" data-passo="1" data-pezzo="polso_a" data-punto="76,0,255"><i></i><span><span lang="en">J4 · roll · ±170°</span><span lang="it">J4 · rollio · ±170°</span></span></div>
+      <div class="etichetta3d su" data-passo="1" data-pezzo="polso_b" data-punto="130,0,255"><i></i><span><span lang="en">J5 · wrist · ±95°</span><span lang="it">J5 · polso · ±95°</span></span></div>
+      <div class="etichetta3d giu" data-passo="1" data-pezzo="flangia" data-punto="196,0,255"><i></i><span><span lang="en">J6 · tool roll · ±170°</span><span lang="it">J6 · rollio pinza · ±170°</span></span></div>
+      <div class="etichetta3d sx" data-passo="2" data-pezzo="base"><i></i><span><span lang="en">Base</span><span lang="it">Base</span></span></div>
+      <div class="etichetta3d sx" data-passo="2" data-pezzo="torretta_j2"><i></i><span><span lang="en">Turret</span><span lang="it">Torretta</span></span></div>
+      <div class="etichetta3d sx" data-passo="2" data-pezzo="braccio"><i></i><span><span lang="en">Upper arm</span><span lang="it">Braccio</span></span></div>
+      <div class="etichetta3d su" data-passo="2" data-pezzo="avambraccio"><i></i><span><span lang="en">Forearm</span><span lang="it">Avambraccio</span></span></div>
+      <div class="etichetta3d giu" data-passo="2" data-pezzo="polso_b"><i></i><span><span lang="en">Spherical wrist</span><span lang="it">Polso sferico</span></span></div>
+      <div class="etichetta3d su" data-passo="2" data-pezzo="pinza_palmo"><i></i><span><span lang="en">Gripper</span><span lang="it">Pinza</span></span></div>
+      <div class="etichetta3d sx" data-passo="3" data-pezzo="servo0"><i></i><span><span lang="en">J1</span><span lang="it">J1</span></span></div>
+      <div class="etichetta3d sx" data-passo="3" data-pezzo="servo1"><i></i><span><span lang="en">J2 · two servos, mirrored</span><span lang="it">J2 · due servo a specchio</span></span></div>
+      <div class="etichetta3d sx" data-passo="3" data-pezzo="servo3"><i></i><span><span lang="en">J3</span><span lang="it">J3</span></span></div>
+      <div class="etichetta3d su" data-passo="3" data-pezzo="servo5"><i></i><span><span lang="en">J4 · J5 · J6</span><span lang="it">J4 · J5 · J6</span></span></div>
+      <div class="etichetta3d giu" data-passo="3" data-pezzo="servo7"><i></i><span><span lang="en">Gripper</span><span lang="it">Pinza</span></span></div>
+      <div class="etichetta3d giu" data-passo="4" data-pezzo="flangia"><i></i><span><span lang="en">Flange</span><span lang="it">Flangia</span></span></div>
+      <div class="etichetta3d su" data-passo="4" data-pezzo="pinza_coperchio"><i></i><span><span lang="en">Cover</span><span lang="it">Coperchio</span></span></div>
+      <div class="etichetta3d dx" data-passo="4" data-pezzo="pinza_pignone"><i></i><span><span lang="en">Pinion</span><span lang="it">Pignone</span></span></div>
+      <div class="etichetta3d giu" data-passo="4" data-pezzo="pinza_dito_sx"><i></i><span><span lang="en">Fingers on racks</span><span lang="it">Dita su cremagliera</span></span></div>
       </div>
-      <div class="scena3d" data-kheiron="interattivo"><div class="orbita"></div><div class="caricando">0%</div></div>
+      <ol class="racconto-indice"><li><a href="#passo-0"><b>01</b><span lang="en">Kheiron</span><span lang="it">Kheiron</span></a></li><li><a href="#passo-1"><b>02</b><span lang="en">Axes</span><span lang="it">Assi</span></a></li><li><a href="#passo-2"><b>03</b><span lang="en">Structure</span><span lang="it">Struttura</span></a></li><li><a href="#passo-3"><b>04</b><span lang="en">Servos</span><span lang="it">Servo</span></a></li><li><a href="#passo-4"><b>05</b><span lang="en">Gripper</span><span lang="it">Pinza</span></a></li><li><a href="#passo-5"><b>06</b><span lang="en">Motion</span><span lang="it">Movimento</span></a></li></ol>
+    </div>
+    <div class="racconto-passi">
+      <article class="passo passo-apertura" id="passo-0">
+        <div class="contenitore"><div class="testo">
+          <div class="stato"><i></i><span lang="en">Prototype in development</span><span lang="it">Prototipo in sviluppo</span></div>
+          <div class="occhiello"><span lang="en">Orbinel · first robot</span><span lang="it">Orbinel · primo robot</span></div>
+          <h1>Kheiron.</h1>
+          <p class="grande"><span lang="en">A six-axis arm you can build, understand and extend. Named after the centaur who taught the heroes — because it is made to teach as much as to move.</span><span lang="it">Un braccio a sei assi da costruire, capire e ampliare. Prende il nome dal centauro maestro degli eroi: è fatto per insegnare tanto quanto per muoversi.</span></p>
+          <div class="pulsanti">
+            <a class="pulsante primario" href="#livelli"><span lang="en">Ways to get it</span><span lang="it">Come averlo</span> <span class="freccia">→</span></a>
+            <a class="pulsante" href="motion/"><span lang="en">Try it in the simulator</span><span lang="it">Provalo nel simulatore</span></a>
+          </div>
+          <p class="scendi"><span lang="en">Scroll to take it apart</span><span lang="it">Scorri per smontarlo</span></p>
+        </div></div>
+      </article>
+      <article class="passo" id="passo-1">
+        <div class="contenitore"><div class="testo">
+          <div class="occhiello"><span lang="en">Kinematics</span><span lang="it">Cinematica</span></div>
+          <h2><span lang="en">Six axes.<br>Spherical wrist.</span><span lang="it">Sei assi.<br>Polso sferico.</span></h2>
+          <p class="grande"><span lang="en">Three axes bring the gripper to the point, three orient it. The spherical wrist splits the two problems, so inverse kinematics has a closed-form solution — computed instantly, even in a browser.</span><span lang="it">Tre assi portano la pinza nel punto, tre la orientano. Il polso sferico separa i due problemi: la cinematica inversa ha una soluzione in forma chiusa, calcolata in un istante, anche nel browser.</span></p>
+          <div class="dati-rapidi"><div><b>6</b><span><span lang="en">rotary axes</span><span lang="it">assi rotoidali</span></span></div><div><b>125 · 130 · 130</b><span><span lang="en">mm: shoulder, arm, forearm</span><span lang="it">mm: spalla, braccio, avambraccio</span></span></div><div><b>±170°</b><span><span lang="en">wrist roll</span><span lang="it">rollio del polso</span></span></div></div>
+        </div></div>
+      </article>
+      <article class="passo" id="passo-2">
+        <div class="contenitore"><div class="testo">
+          <div class="occhiello"><span lang="en">Structure</span><span lang="it">Struttura</span></div>
+          <h2><span lang="en">Every part printed.<br>Every part visible.</span><span lang="it">Ogni pezzo stampato.<br>Ogni pezzo in vista.</span></h2>
+          <p class="grande"><span lang="en">Seven groups printed in PETG, from the base to the gripper. Nothing is hidden: STL and STEP files of every part come with the Build Pack and its assembly guide.</span><span lang="it">Sette gruppi stampati in PETG, dalla base alla pinza. Niente è nascosto: i file STL e STEP di ogni pezzo arrivano con il Build Pack e la sua guida di montaggio.</span></p>
+          <div class="dati-rapidi"><div><b>585 g</b><span><span lang="en">of filament</span><span lang="it">di filamento</span></span></div><div><b>720 g</b><span><span lang="en">moving mass, from CAD</span><span lang="it">massa in movimento, dal CAD</span></span></div><div><b>PETG</b><span><span lang="en">one material, one colour</span><span lang="it">un materiale, un colore</span></span></div></div>
+        </div></div>
+      </article>
+      <article class="passo" id="passo-3">
+        <div class="contenitore"><div class="testo">
+          <div class="occhiello"><span lang="en">Actuators</span><span lang="it">Attuatori</span></div>
+          <h2><span lang="en">Eight servos,<br>one cable.</span><span lang="it">Otto servo,<br>un solo cavo.</span></h2>
+          <p class="grande"><span lang="en">Feetech STS3215 serial servos at 12 V, daisy-chained on the same bus: each has its own address and a magnetic encoder. The shoulder has two, mirrored, because one alone cannot hold the arm stretched out.</span><span lang="it">Servo seriali Feetech STS3215 a 12 V, in catena sullo stesso bus: ognuno ha un suo indirizzo e un encoder magnetico. Sulla spalla sono due, a specchio, perché uno solo non regge il braccio disteso.</span></p>
+          <div class="dati-rapidi"><div><b>8</b><span><span lang="en">STS3215 servos</span><span lang="it">servo STS3215</span></span></div><div><b>0.088°</b><span><span lang="en">encoder resolution</span><span lang="it">risoluzione encoder</span></span></div><div><b>30 kg·cm</b><span><span lang="en">peak torque</span><span lang="it">coppia di picco</span></span></div></div>
+        </div></div>
+      </article>
+      <article class="passo" id="passo-4">
+        <div class="contenitore"><div class="testo">
+          <div class="occhiello"><span lang="en">Gripper</span><span lang="it">Pinza</span></div>
+          <h2><span lang="en">Parallel,<br>like in industry.</span><span lang="it">Parallela,<br>come nell’industria.</span></h2>
+          <p class="grande"><span lang="en">One pinion drives two racks: the fingers stay parallel and close centred on the part. The housing is closed, and the tool changes with a keyed shank and two screws.</span><span lang="it">Un pignone muove due cremagliere: le dita restano parallele e si chiudono centrate sul pezzo. La scatola è chiusa e l’utensile si cambia con un codolo e due viti.</span></p>
+          <div class="dati-rapidi"><div><b>0–40 mm</b><span><span lang="en">opening</span><span lang="it">apertura</span></span></div><div><b>1</b><span><span lang="en">servo</span><span lang="it">servo</span></span></div><div><b>2 × M3</b><span><span lang="en">tool change</span><span lang="it">cambio utensile</span></span></div></div>
+        </div></div>
+      </article>
+      <article class="passo" id="passo-5">
+        <div class="contenitore"><div class="testo">
+          <div class="occhiello"><span lang="en">Motion</span><span lang="it">Movimento</span></div>
+          <h2><span lang="en">Programmed like<br>a real robot.</span><span lang="it">Si programma<br>come un robot vero.</span></h2>
+          <p class="grande"><span lang="en">Pick, lift, place: paths computed with inverse kinematics, the same ones you use in Orbinel Motion — where you can try Kheiron before you build it.</span><span lang="it">Prende, solleva, appoggia: traiettorie calcolate con la cinematica inversa, le stesse che usi in Orbinel Motion, dove puoi provare Kheiron prima di costruirlo.</span></p>
+          <div class="dati-rapidi"><div><b>≈ 400 mm</b><span><span lang="en">reach from the shoulder</span><span lang="it">sbraccio dalla spalla</span></span></div><div><b>100 g</b><span><span lang="en">payload, design target</span><span lang="it">carico, obiettivo</span></span></div><div><b>1</b><span><span lang="en">hardware emergency stop</span><span lang="it">arresto d’emergenza fisico</span></span></div></div>
+          <div class="pulsanti" style="margin-top:32px"><a class="pulsante primario" href="motion/"><span lang="en">Open Orbinel Motion</span><span lang="it">Apri Orbinel Motion</span> <span class="freccia">→</span></a></div>
+        </div></div>
+      </article>
     </div>
   </section>
 
@@ -230,6 +298,6 @@
 <script src="motion/js/cinematica.js?v=203120ed"></script>
 <script src="motion/js/scena.js?v=7d48337e"></script>
 <script src="motion/js/vetrina.js?v=2e16f66a"></script>
-<script src="js/kheiron3d.js?v=6637155f"></script>
+<script src="js/racconto.js?v=2eff1070"></script>
 </body>
 </html>
