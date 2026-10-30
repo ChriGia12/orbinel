@@ -310,6 +310,7 @@ fieldset.campo { border: 0; padding: 0; margin: 0; }
 .passo h2 { font-size: clamp(32px, 4vw, 48px); }
 .passo .dati-rapidi { margin-top: 32px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .passo .dati-rapidi b { font-size: 20px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.passo .dati-rapidi + .pulsanti { margin-top: 32px; }
 .passo .scendi { margin-top: 48px; font-size: 13px; color: var(--tenue2); display: flex; align-items: center; gap: 8px; }
 .passo .scendi::before { content: ""; width: 1px; height: 24px; background: var(--linea2); }
 
@@ -346,18 +347,21 @@ fieldset.campo { border: 0; padding: 0; margin: 0; }
 
 @media (max-width: 900px) {
   .racconto-indice { display: none; }
-  .racconto-riserva { right: 50%; top: 32%; width: 88%; transform: translate(50%, -50%); }
+  .racconto-riserva { right: 50%; top: 28%; width: 88%; transform: translate(50%, -50%); }
   .passo { align-items: flex-end; padding: 0 0 16px; }
-  .passo .testo { max-width: none; padding: 24px; border: 1px solid var(--linea); border-radius: var(--r); background: rgba(11, 13, 16, .88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-  .passo h1 { font-size: 48px; margin-bottom: 16px; }
-  .passo h2 { font-size: 30px; }
-  .passo .grande { font-size: 16px; }
-  .passo .stato { margin-bottom: 16px; }
-  .passo .dati-rapidi { margin-top: 16px; gap: 16px; }
-  .passo .dati-rapidi b { font-size: 18px; }
-  .passo .dati-rapidi span { font-size: 12px; line-height: 1.4; }
+  .passo .testo { max-width: none; padding: 16px; border: 1px solid var(--linea); border-radius: var(--r); background: rgba(11, 13, 16, .9); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .passo .occhiello { margin-bottom: 8px; }
+  .passo h1 { font-size: 40px; margin-bottom: 8px; }
+  .passo h2 { font-size: 24px; margin-bottom: 8px; }
+  .passo h2 br { display: none; }
+  .passo .grande { font-size: 14px; line-height: 1.5; margin: 0; }
+  .passo .stato, .passo .scendi { display: none; }
+  .passo .pulsanti, .passo .dati-rapidi + .pulsanti { margin-top: 16px; gap: 8px; }
+  .passo .pulsanti .pulsante { padding: 8px 16px; font-size: 14px; }
+  .passo .dati-rapidi { margin-top: 16px; gap: 8px; }
+  .passo .dati-rapidi b { font-size: 16px; }
+  .passo .dati-rapidi span { font-size: 11px; line-height: 1.4; }
   .passo .dati-rapidi div { padding-left: 8px; }
-  .passo .scendi { display: none; }
   .etichetta3d { font-size: 11px; }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -157,15 +157,24 @@
   const grigio = sc.materiali.servo.color.clone(), arancio = new THREE.Color(0xff6b2c);
   const pezzo = sc.materiali.pezzo;
 
-  // inquadratura: su schermo largo il robot sta a destra del testo, sul telefono sopra
+  // inquadratura: su schermo largo il robot sta a destra del testo; sul telefono sta nello spazio libero
+  // tra la barra in alto e il riquadro di testo più alto, così nessun testo lo copre
+  let lontanoTelefono = 1;
   const inquadra = () => {
     const W = contenitore.clientWidth, H = contenitore.clientHeight;
     if (!W || !H) return;
-    const largo = W > 900;
-    sc.camera.setViewOffset(W, H, largo ? -W * 0.15 : 0, largo ? -H * 0.03 : H * 0.19, W, H);
+    if (W > 900) {
+      sc.camera.setViewOffset(W, H, -W * 0.15, -H * 0.03, W, H);
+    } else {
+      const testo = Math.max(...passi.map(p => p.querySelector('.testo').offsetHeight)) + 16;
+      const barra = 68, libero = Math.max(160, H - testo - barra);
+      sc.camera.setViewOffset(W, H, -W * 0.06, H / 2 - (barra + libero * 0.56), W, H);
+      lontanoTelefono = Math.max(0.8 * H / W, 0.62 * H / (0.85 * libero));   // il robot sta nella larghezza e nello spazio libero
+    }
     sc.camera.updateProjectionMatrix();
   };
   new ResizeObserver(inquadra).observe(contenitore);
+  new ResizeObserver(inquadra).observe(racconto.querySelector('.racconto-passi'));
   inquadra();
   racconto.classList.add('pronto');
 
@@ -177,8 +186,7 @@
     const dt = Math.min(0.05, (adesso - prima) / 1000); prima = adesso;
     const k = fermo ? 1 : 1 - Math.exp(-dt * 6);
     const ob = obiettivo(s);
-    const formato = contenitore.clientWidth / contenitore.clientHeight;
-    const lontano = formato < 0.8 ? 1.18 * 0.9 / formato : 1.18;   // telefono in verticale: il robot deve stare nella larghezza
+    const lontano = 1.18 * (contenitore.clientWidth > 900 ? 1 : lontanoTelefono);
     cam.lerp(V(...ob.mira).add(V(...ob.cam).sub(V(...ob.mira)).multiplyScalar(lontano)), k);
     mira.lerp(V(...ob.mira), k);
     chiavi.forEach(c => { ora[c] += (ob[c] - ora[c]) * k; });
