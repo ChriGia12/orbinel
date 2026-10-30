@@ -18,7 +18,7 @@
 <link rel="preload" href="fonts/space-grotesk-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
 <!-- i pezzi del robot partono subito, insieme alla pagina: sono il file più pesante della scena 3D -->
 <link rel="preload" href="motion/robot/kheiron/stl/pacchetto.bin" as="fetch" crossorigin>
-<link rel="stylesheet" href="css/stile.css?v=add12bea">
+<link rel="stylesheet" href="css/stile.css?v=16c6e728">
 <!-- dati strutturati: nome del sito e profili ufficiali, per il riquadro del marchio su Google -->
 <script type="application/ld+json">
 {
@@ -57,15 +57,27 @@
   <div class="contenitore">
     <a class="logo" href="index.html" aria-label="Orbinel Robotics"><img src="brand/logo-web.png" alt="Orbinel Robotics" width="875" height="234"></a>
     <nav class="menu" aria-label="Principale">
-      <a href="index.html" aria-current="page"><span lang="en">Home</span><span lang="it">Home</span></a>
-      <a href="kheiron.html"><span lang="en">Kheiron</span><span lang="it">Kheiron</span></a>
+      <div class="voce">
+        <a href="index.html" aria-current="page"><span lang="en">Home</span><span lang="it">Home</span></a>
+        <div class="tendina">
+          <a href="index.html#kheiron"><span lang="en">First robot</span><span lang="it">Primo robot</span></a>
+          <a href="index.html#motion"><span lang="en">Simulator</span><span lang="it">Simulatore</span></a>
+          <a href="index.html#roadmap"><span lang="en">Roadmap</span><span lang="it">Roadmap</span></a>
+        </div>
+      </div>
+      <div class="voce">
+        <a href="kheiron.html"><span lang="en">Kheiron</span><span lang="it">Kheiron</span></a>
+        <div class="tendina">
+          <a href="kheiron.html#specifiche"><span lang="en">Specifications</span><span lang="it">Specifiche</span></a>
+          <a href="kheiron.html#livelli"><span lang="en">Ways to get it</span><span lang="it">Come averlo</span></a>
+          <a href="kheiron.html#diario"><span lang="en">Dev log</span><span lang="it">Diario di sviluppo</span></a>
+        </div>
+      </div>
       <a href="parts.html"><span lang="en">Parts</span><span lang="it">Parts</span></a>
       <a href="make.html"><span lang="en">Make</span><span lang="it">Make</span></a>
-      <a href="index.html#motion"><span lang="en">Simulator</span><span lang="it">Simulatore</span></a>
       <a href="learn.html"><span lang="en">Learn</span><span lang="it">Learn</span></a>
-      <a href="index.html#roadmap"><span lang="en">Roadmap</span><span lang="it">Roadmap</span></a>
       <a href="chi-siamo.html"><span lang="en">About</span><span lang="it">Chi siamo</span></a>
-      <a href="index.html#contatti"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
+      <a href="contatti.html"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
       <div class="lingua" role="group" aria-label="Language"><button type="button" data-lingua="en">EN</button><button type="button" data-lingua="it">IT</button></div>
     </nav>
     <button class="hamburger" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -156,7 +168,7 @@
   </section>
 
   <!-- KHEIRON -->
-  <section class="sezione">
+  <section class="sezione" id="kheiron">
     <div class="contenitore dueColonne">
       <div class="compare">
         <div class="occhiello"><span lang="en">First robot</span><span lang="it">Primo robot</span></div>
@@ -304,6 +316,7 @@
       <a href="index.html#roadmap">Roadmap</a>
       <a href="kheiron.html#diario"><span lang="en">Dev log</span><span lang="it">Diario di sviluppo</span></a>
       <a href="chi-siamo.html"><span lang="en">About</span><span lang="it">Chi siamo</span></a>
+      <a href="contatti.html"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
       <a href="privacy.html">Privacy</a>
     </div>
     <div>
@@ -322,7 +335,7 @@
 
 
 <script src="js/config.js?v=3917c46d"></script>
-<script src="js/sito.js?v=bc12bb55"></script>
+<script src="js/sito.js?v=8d10ff34"></script>
 <script src="motion/lib/three.min.js?v=7a7802bf" defer></script>
 <script src="motion/lib/OrbitControls.js?v=63530cfe" defer></script>
 <script src="motion/lib/RoomEnvironment.js?v=32a729c3" defer></script>

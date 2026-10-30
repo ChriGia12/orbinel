@@ -16,22 +16,34 @@
 <link rel="icon" href="brand/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="brand/icona-180.png">
 <link rel="preload" href="fonts/space-grotesk-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/stile.css?v=add12bea">
+<link rel="stylesheet" href="css/stile.css?v=16c6e728">
 </head>
 <body>
 <header class="barra">
   <div class="contenitore">
     <a class="logo" href="index.html" aria-label="Orbinel Robotics"><img src="brand/logo-web.png" alt="Orbinel Robotics" width="875" height="234"></a>
     <nav class="menu" aria-label="Principale">
-      <a href="index.html"><span lang="en">Home</span><span lang="it">Home</span></a>
-      <a href="kheiron.html"><span lang="en">Kheiron</span><span lang="it">Kheiron</span></a>
+      <div class="voce">
+        <a href="index.html"><span lang="en">Home</span><span lang="it">Home</span></a>
+        <div class="tendina">
+          <a href="index.html#kheiron"><span lang="en">First robot</span><span lang="it">Primo robot</span></a>
+          <a href="index.html#motion"><span lang="en">Simulator</span><span lang="it">Simulatore</span></a>
+          <a href="index.html#roadmap"><span lang="en">Roadmap</span><span lang="it">Roadmap</span></a>
+        </div>
+      </div>
+      <div class="voce">
+        <a href="kheiron.html"><span lang="en">Kheiron</span><span lang="it">Kheiron</span></a>
+        <div class="tendina">
+          <a href="kheiron.html#specifiche"><span lang="en">Specifications</span><span lang="it">Specifiche</span></a>
+          <a href="kheiron.html#livelli"><span lang="en">Ways to get it</span><span lang="it">Come averlo</span></a>
+          <a href="kheiron.html#diario"><span lang="en">Dev log</span><span lang="it">Diario di sviluppo</span></a>
+        </div>
+      </div>
       <a href="parts.html"><span lang="en">Parts</span><span lang="it">Parts</span></a>
       <a href="make.html"><span lang="en">Make</span><span lang="it">Make</span></a>
-      <a href="index.html#motion"><span lang="en">Simulator</span><span lang="it">Simulatore</span></a>
       <a href="learn.html"><span lang="en">Learn</span><span lang="it">Learn</span></a>
-      <a href="index.html#roadmap"><span lang="en">Roadmap</span><span lang="it">Roadmap</span></a>
       <a href="chi-siamo.html" aria-current="page"><span lang="en">About</span><span lang="it">Chi siamo</span></a>
-      <a href="index.html#contatti"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
+      <a href="contatti.html"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
       <div class="lingua" role="group" aria-label="Language"><button type="button" data-lingua="en">EN</button><button type="button" data-lingua="it">IT</button></div>
     </nav>
     <button class="hamburger" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -82,14 +94,12 @@
   <section class="sezione">
     <div class="contenitore dueColonne">
       <div class="compare">
-        <div class="occhiello"><span lang="en">Founder</span><span lang="it">Fondatore</span></div>
-        <h2>Christian Giancola</h2>
-        <p style="margin-top:8px">Founder &amp; CEO</p>
+        <div class="occhiello"><span lang="en">Team</span><span lang="it">Team</span></div>
+        <h2><span lang="en">The people<br>behind Orbinel.</span><span lang="it">Le persone<br>dietro Orbinel.</span></h2>
       </div>
       <div class="compare">
-        <p class="grande"><span lang="en">Mechanical Engineering student at the University of Bologna, focused on industrial robotics, additive manufacturing and computational design.</span><span lang="it">Studente di Ingegneria Meccanica all'Università di Bologna, si occupa di robotica industriale, manifattura additiva e progettazione computazionale.</span></p>
-        <p><span lang="en">During his university internship he built a workflow for robotic additive manufacturing on a six-axis KUKA industrial robot — toolpaths, simulation and KRL programs generated with Rhino, Grasshopper, KUKA|prc and Python. Orbinel started from there: the same ideas, on a robot anyone can build. He designs Kheiron, writes Motion and runs the project end to end.</span><span lang="it">Durante il tirocinio universitario ha sviluppato un flusso di lavoro per la stampa 3D robotizzata con un robot industriale KUKA a sei assi: percorsi utensile, simulazione e programmi KRL generati con Rhino, Grasshopper, KUKA|prc e Python. Orbinel nasce da lì: le stesse idee, su un robot che chiunque può costruire. Progetta Kheiron, scrive Motion e segue il progetto in prima persona.</span></p>
-        <div class="pulsanti"><a class="pulsante" href="https://www.linkedin.com/in/christian-giancola/" rel="noopener">LinkedIn <span class="freccia">→</span></a><a class="pulsante" href="https://chrigia12.github.io/portfolio/" rel="noopener">Portfolio <span class="freccia">→</span></a><a class="pulsante" data-email href="#"></a></div>
+        <p class="grande"><span lang="en">A small team of engineering students and young graduates, growing project by project.</span><span lang="it">Una piccola squadra di studenti e giovani laureati in ingegneria, che cresce progetto dopo progetto.</span></p>
+        <div class="pulsanti"><a class="pulsante" href="squadra.html"><span lang="en">Meet the team</span><span lang="it">Conosci il team</span> <span class="freccia">→</span></a></div>
       </div>
     </div>
   </section>
@@ -119,7 +129,7 @@
       <div class="schede">
         <a class="scheda compare" href="learn.html#pilota"><h3 style="margin-top:0"><span lang="en">Teachers and schools</span><span lang="it">Docenti e scuole</span></h3><p><span lang="en">Try the lessons and join the school pilot.</span><span lang="it">Prova le lezioni e partecipa al progetto pilota.</span></p><div class="piede"><span>Orbinel Learn</span><span>→</span></div></a>
         <a class="scheda compare" href="motion/"><h3 style="margin-top:0"><span lang="en">Makers and developers</span><span lang="it">Maker e sviluppatori</span></h3><p><span lang="en">Use the simulator, report bugs, suggest features.</span><span lang="it">Usa il simulatore, segnala problemi, proponi idee.</span></p><div class="piede"><span>Orbinel Motion</span><span>→</span></div></a>
-        <a class="scheda compare" href="index.html#contatti"><h3 style="margin-top:0"><span lang="en">Partners and mentors</span><span lang="it">Partner e mentor</span></h3><p><span lang="en">Collaborations, advice, press: write to us.</span><span lang="it">Collaborazioni, consigli, stampa: scrivici.</span></p><div class="piede"><span lang="en">Contact</span><span lang="it">Contatti</span><span>→</span></div></a>
+        <a class="scheda compare" href="contatti.html"><h3 style="margin-top:0"><span lang="en">Partners and mentors</span><span lang="it">Partner e mentor</span></h3><p><span lang="en">Collaborations, advice, press: write to us.</span><span lang="it">Collaborazioni, consigli, stampa: scrivici.</span></p><div class="piede"><span lang="en">Contact</span><span lang="it">Contatti</span><span>→</span></div></a>
       </div>
     </div>
   </section>
@@ -143,6 +153,7 @@
       <a href="index.html#roadmap">Roadmap</a>
       <a href="kheiron.html#diario"><span lang="en">Dev log</span><span lang="it">Diario di sviluppo</span></a>
       <a href="chi-siamo.html"><span lang="en">About</span><span lang="it">Chi siamo</span></a>
+      <a href="contatti.html"><span lang="en">Contact</span><span lang="it">Contatti</span></a>
       <a href="privacy.html">Privacy</a>
     </div>
     <div>
@@ -160,6 +171,6 @@
 </footer>
 
 <script src="js/config.js?v=3917c46d"></script>
-<script src="js/sito.js?v=bc12bb55"></script>
+<script src="js/sito.js?v=8d10ff34"></script>
 </body>
 </html>

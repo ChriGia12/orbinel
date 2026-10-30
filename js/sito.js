@@ -96,7 +96,7 @@
     dati.interessi = [...f.querySelectorAll('input[name=interessi]:checked')].map(i => i.value);
     dati.modulo = f.dataset.modulo;
     dati.lingua = html.dataset.lingua;
-    const oggetti = { lista: 'lista d\'attesa', make: 'richiesta di stampa (Make)', 'learn-pilota': 'candidatura scuola (Learn)' };
+    const oggetti = { lista: 'lista d\'attesa', make: 'richiesta di stampa (Make)', 'learn-pilota': 'candidatura scuola (Learn)', contatti: 'messaggio dal sito' };
     dati._subject = `Orbinel · ${oggetti[dati.modulo] || dati.modulo}`;
     dati._template = 'table';
     // la lista d'attesa la conferma Brevo (doppia conferma + benvenuto): niente risposta di FormSubmit, se Brevo è attivo
@@ -114,8 +114,8 @@
       if (!r.ok || risposta.success === false || risposta.success === 'false') throw new Error(risposta.message || r.status);
       await iscriviNewsletter(dati);
       const conferme = {
-        it: { make: 'Richiesta ricevuta! Ti rispondiamo entro 48 ore: controlla anche la tua email.', 'learn-pilota': 'Candidatura ricevuta! La ricontattiamo entro 48 ore.' },
-        en: { make: 'Request received! We reply within 48 hours: check your inbox too.', 'learn-pilota': 'Application received! We will contact you within 48 hours.' },
+        it: { contatti: 'Messaggio ricevuto! Ti rispondiamo entro 48 ore.', make: 'Richiesta ricevuta! Ti rispondiamo entro 48 ore: controlla anche la tua email.', 'learn-pilota': 'Candidatura ricevuta! La ricontattiamo entro 48 ore.' },
+        en: { contatti: 'Message received! We reply within 48 hours.', make: 'Request received! We reply within 48 hours: check your inbox too.', 'learn-pilota': 'Application received! We will contact you within 48 hours.' },
       };
       esito.className = 'esito ok'; esito.textContent = (conferme[html.dataset.lingua] || conferme.en)[dati.modulo] || t.ok; f.reset();
     } catch { esito.className = 'esito no'; esito.textContent = t.no; }
