@@ -3,7 +3,8 @@
 'use strict';
 
 // lingua delle lezioni (it/en): cambia solo i testi, non le verifiche
-let linguaLezioni = (() => { try { return localStorage.getItem('orbinel.learn.lingua') || 'it'; } catch { return 'it'; } })();
+// senza una scelta fatta qui, segue la lingua di Motion e del sito (js/lingua.js)
+let linguaLezioni = (() => { try { return localStorage.getItem('orbinel.learn.lingua') || LINGUA; } catch { return LINGUA; } })();
 function testo(l) {
   const en = linguaLezioni === 'en' && LEZIONI_EN[l.id];
   if (!en) return { titolo: l.titolo, durata: l.durata, obiettivi: l.obiettivi, teoria: l.teoria, esercizi: l.esercizi.map(e => e.testo), domanda: l.domanda };

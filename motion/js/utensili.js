@@ -158,11 +158,11 @@ async function montaUtensile(tipo, parametri) {
 // --- pannello ---
 function mostraParametriUtensile() {
   const G = utensili.moduli?.G, u = G?.UTENSILI[utensili.tipo];
-  document.getElementById('descrizioneUtensile').textContent = u ? u.descrizione.it
+  document.getElementById('descrizioneUtensile').textContent = u ? (u.descrizione[LINGUA] || u.descrizione.it)
     : 'La pinza a due dita di serie, con il suo servo.';
   document.getElementById('parametriUtensile').innerHTML = u ? Object.entries(u.parametri).map(([k, d]) => `
     <div class="giunto">
-      <label for="u-${k}">${d.it}</label>
+      <label for="u-${k}">${d[LINGUA] || d.it}</label>
       <input type="range" id="u-${k}" data-u="${k}" min="${d.min}" max="${d.max}" step="${d.passo}" value="${utensili.parametri[k]}">
       <span class="num" id="uo-${k}" style="font-size:12px;text-align:right">${utensili.parametri[k]} ${d.unita}</span>
     </div>`).join('') : '';
@@ -189,7 +189,7 @@ async function scegliUtensile(tipo, parametri) {
   const riempi = () => {
     const U = utensili.moduli?.G.UTENSILI || {};
     scelta.innerHTML = '<option value="pinza">Pinza di serie</option>'
-      + Object.entries(U).map(([k, u]) => `<option value="${k}">${u.nome.it}</option>`).join('');
+      + Object.entries(U).map(([k, u]) => `<option value="${k}">${u.nome[LINGUA] || u.nome.it}</option>`).join('');
     scelta.value = utensili.tipo;
   };
   riempi();
